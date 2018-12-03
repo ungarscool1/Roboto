@@ -50,7 +50,7 @@ public class Main {
         final Properties[] propritete = {new Properties()};
         propritete[0].load(new FileInputStream("bot.properties"));
         String token = propritete[0].getProperty("token");
-        
+
         // Vote system
         HashMap<User,Integer> inCreateVote = new HashMap<>();
         HashMap<User,String> voteName = new HashMap<>();
