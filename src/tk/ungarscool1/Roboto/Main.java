@@ -2,6 +2,7 @@ package tk.ungarscool1.Roboto;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.activity.Activity;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
@@ -19,6 +20,7 @@ import tk.ungarscool1.cachet2bot.Status;
 import java.awt.*;
 import java.io.*;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -61,11 +63,10 @@ public class Main {
         HashMap<User,String> voteOpt3 = new HashMap<>();
         // End of vote sys
         DiscordAnex DiscordAnex = new DiscordAnex();
-        int startyMdhms[] = {DiscordAnex.year(),DiscordAnex.month(),DiscordAnex.day(),DiscordAnex.hours(),DiscordAnex.minutes(),DiscordAnex.seconds()};
-        LocalDate start = LocalDate.now();
+        long startTime = System.currentTimeMillis() / 1000L;
         String version = "3.6 Alpha";
         // Statistics
-        String statis[] = {propritete[0].getProperty("statistic"), propritete[0].getProperty("apiToken"), propritete[0].getProperty("statisticUrl"), propritete[0].getProperty("metricId")};
+        String statis[] = {propritete[0].getProperty("statistic"), propritete[0].getProperty("apiToken"), propritete[0].getProperty("statisticUrl"), propritete[0].getProperty("metricId"), propritete[0].getProperty("componentId")};
 
         Stats stats = new Stats(statis);
 
@@ -158,8 +159,35 @@ public class Main {
                     stats.sendStats();
                     embed.setTitle("Ping");
                     embed.setColor(Color.GREEN);
-                    embed.addField("Bot response: ","Pong");
-
+                    long messageTime = event.getMessage().getCreationTimestamp().getEpochSecond();
+                    long timestamp = System.currentTimeMillis() / 1000L;
+                    System.out.println("C'est = ? "+(timestamp==messageTime));
+                    String ping = "Erreur";
+                    String output;
+                    embed.addField("Diff entre le temps d'envoi et le temps de reception", (timestamp - messageTime) + " ms");
+                    try {
+                        Runtime runtime = Runtime.getRuntime();
+                        Process proc = runtime.exec("ping eu-west0.discord.gg -c 2");
+                        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+                        String[] pinging = {};
+                        while((output = stdInput.readLine()) != null) {
+                            if (output.contains("avg")) {
+                                pinging = output.split("/");
+                                ping = pinging[5] + "ms";
+                            } else {
+                                if (ping.equalsIgnoreCase("Erreur")) {
+                                    ping = output;
+                                } else {
+                                    ping = ping + "\n" + output;
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ping = "Une erreur est survenue";
+                    }
+                    embed.addField("Ping avec "+msgSrv.getRegion().getKey(), ping);
+                    embed.addField("Total", (Integer.valueOf(ping) + (timestamp - messageTime)) + " ms");
                     event.getChannel().sendMessage(embed);
                 }
 
@@ -354,6 +382,56 @@ public class Main {
 
                 }
 
+                if(containsIgnoreCase(message,"!info")) {
+                    stats.sendStats();
+                    embed.setTitle("Information du serveur " + msgSrv.getName());
+                    embed.setColor(Color.GREEN);
+                    embed.addField("Créateur",msgSrv.getOwner().getDiscriminatedName(),true);
+                    String locName = msgSrv.getRegion().getName();
+                    if (locName.equalsIgnoreCase("EU Central")) locName = "Europe Centrale";
+                    else if (locName.equalsIgnoreCase("EU West")) locName = "Europe occidentale";
+                    else if (locName.equalsIgnoreCase("US East")) locName = "L'Est des Etats-Unis";
+                    else if (locName.equalsIgnoreCase("US West")) locName = "L'Ouest des Etats-Unis";
+                    else if (locName.equalsIgnoreCase("US Central")) locName = "Le centre des Etats-Unis";
+                    else if (locName.equalsIgnoreCase("US South")) locName = "Sud des Etats-Unis";
+                    else if (locName.equalsIgnoreCase("Russia")) locName = "Russie";
+                    else if (locName.equalsIgnoreCase("Singapore")) locName = "Singapour";
+                    else if (locName.equalsIgnoreCase("Brazil")) locName = "Brésil";
+
+                    embed.addField("Localisation du serveur",locName, true);
+                    embed.addField("Nombre de membres",msgSrv.getMembers().size()+"", true);
+                    embed.addField("Nombre de channel",msgSrv.getChannels().size()+"", true);
+                    embed.addField("Nombre de rôles", msgSrv.getRoles().size()+"", true);
+                    embed.addField("ID du serveur", msgSrv.getIdAsString(), true);
+                    embed.addField("Date de création du serveur", Timestamp.from(msgSrv.getCreationTimestamp()).toString(), true);
+                    embed.addField("Nombre de personnes connectées", "Non implémentée", true);
+                    embed.addField("Nombre de bots", "Non implémentées", true);
+                    embed.addField("Niveau de vérification", "Low", true);
+
+
+                    event.getChannel().sendMessage(embed);
+                }
+
+                if (message.equalsIgnoreCase("!ui")) {
+                    stats.sendStats();
+                    embed.setColor(Color.GREEN);
+                    embed.addInlineField("Nom", author.getDiscriminatedName());
+                    embed.addInlineField("Surnom", author.getDisplayName());
+                    embed.addInlineField("ID", author.getId()+"");
+                    embed.addField("Jeu", author.asUser().get().getActivity().map(Activity::getName).orElse("Ne joue pas actuellement"));
+                    embed.addInlineField("Date d'arrivée", Timestamp.from(msgSrv.getJoinedAtTimestamp(author.asUser().get()).get()).toString());
+                    embed.addInlineField("Date de création du compte", Timestamp.from(author.getCreationTimestamp()).toString());
+                    List<Role> roles = msgSrv.getRoles(author.asUser().get());
+                    StringBuilder rolesString = new StringBuilder();
+                    for (Role role: roles) {
+                        rolesString.append("+ "+role.getName()+"\n");
+                    }
+                    embed.addField("Rôle(s)", "```diff\n"+rolesString.toString()+"\n```", false);
+
+                    event.getChannel().sendMessage(embed);
+                }
+
+
                 if (containsIgnoreCase(message,"@exec")) {
                     stats.sendStats();
                     if (!author.isBotOwner()) {
@@ -445,25 +523,6 @@ public class Main {
                         arg = arg.substring(10);
                         event.getChannel().sendMessage(arg);
 
-                    }  else if(containsIgnoreCase(message,"getServerInfo")) {
-                        embed.setTitle("Information de ce serveur");
-                        embed.setColor(Color.GREEN);
-                        embed.addField("Nom du serveur",msgSrv.getName());
-                        embed.addField("Nombre de membres",msgSrv.getMembers().size()+"");
-                        embed.addField("Nombre de channel",msgSrv.getChannels().size()+"");
-                        String locName = msgSrv.getRegion().getName();
-                        if (locName.equalsIgnoreCase("EU Central")) locName = "Europe Centrale";
-                        else if (locName.equalsIgnoreCase("EU West")) locName = "Europe occidentale";
-                        else if (locName.equalsIgnoreCase("US East")) locName = "L'Est des Etats-Unis";
-                        else if (locName.equalsIgnoreCase("US West")) locName = "L'Ouest des Etats-Unis";
-                        else if (locName.equalsIgnoreCase("US Central")) locName = "Le centre des Etats-Unis";
-                        else if (locName.equalsIgnoreCase("US South")) locName = "Sud des Etats-Unis";
-                        else if (locName.equalsIgnoreCase("Russia")) locName = "Russie";
-                        else if (locName.equalsIgnoreCase("Singapore")) locName = "Singapour";
-                        else if (locName.equalsIgnoreCase("Brazil")) locName = "Brésil";
-
-                        embed.addField("Localisation du serveur",locName);
-                        event.getChannel().sendMessage(embed);
                     } else if(containsIgnoreCase(message,"getSystemInfo")) {
                         float CPUtemp = 0, GPUtemp = 0;
                         Runtime rt = Runtime.getRuntime();
@@ -739,21 +798,38 @@ public class Main {
                     stats.sendStats();
                     embed.setTitle("Uptime");
                     embed.setColor(Color.YELLOW);
-                    embed.addField("Démarrer à ",startyMdhms[3]+":"+startyMdhms[4]+":"+startyMdhms[5]);
-                    embed.addField("Démarrer le:",startyMdhms[2]+"/"+startyMdhms[1]+"/"+startyMdhms[0]);
 
-                    long time = (startyMdhms[1]*30*24*60*60)+(startyMdhms[2]*24*60*60)+(startyMdhms[3]*60*60)+(startyMdhms[4]*60)+startyMdhms[5];
-                    long curTime = (DiscordAnex.month()*30*24*60*60)+(DiscordAnex.day()*24*60*60)+(DiscordAnex.hours()*60*60)+(DiscordAnex.minutes()*60)+DiscordAnex.seconds();
+                    long curTime = System.currentTimeMillis() / 1000L;
 
-                    long timeElaps = curTime - time;
-                    embed.addField("Start Time:",time+"").addField("Current Time:",curTime+"").addField("Time elapsed", timeElaps+"");
-                    long month=0,day=0,hour=0,minute=0,second=0;
-                    month = timeElaps/60/60/24/30;
-                    day = (timeElaps/60/60/24)-(month*30);
-                    hour = (timeElaps/60/60)-(month*30*24)-(day*24);
-                    minute = (timeElaps/60)-(month*30*24*60)-(day*24*60)-(hour*60*60);
-                    second = (timeElaps/60)-(month*30*24*60*60)-(day*24*60*60)-(hour*60*60)-(minute*60);
-                    embed.addField("Uptime",month+" mois "+day+" jours "+hour+":"+minute+":"+second);
+                    long timeElaps = curTime - startTime;
+
+                    StringBuilder result = new StringBuilder();
+
+                    double time = timeElaps / 3600d; // Fait des heures
+                    if ((int)time>0) {
+
+                        result.append((int)time+"h ");
+                        time -= (int) time; // Retire la partie entière
+                    }
+
+                    time *= 60d; // Fait des minutes
+
+                    if ((int)time>0) {
+                        result.append((int)time+ "m ");
+                        time -= (int) time; // Retire la partie entière
+                    }
+
+                    time *= 60d; // Fait des secondes
+                    if ((long)time>0) {
+                        result.append((long)time+ "s ");
+                        time -= (long) time; // Retire la partie entière
+                    }
+                    if (result.length()==0) {
+                        result.append("Vous n'avez pas encore joué");
+                    }
+
+                    embed.addField("Uptime",result.toString());
+
                     event.getChannel().sendMessage(embed);
                 }
                 /**
