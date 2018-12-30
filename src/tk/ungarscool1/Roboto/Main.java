@@ -10,6 +10,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.server.ServerUpdater;
+import org.javacord.api.entity.server.VerificationLevel;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
@@ -64,7 +65,7 @@ public class Main {
         // End of vote sys
         DiscordAnex DiscordAnex = new DiscordAnex();
         long startTime = System.currentTimeMillis() / 1000L;
-        String version = "3.6 Alpha";
+        String version = "4.0.1 Alpha";
         // Statistics
         String statis[] = {propritete[0].getProperty("statistic"), propritete[0].getProperty("apiToken"), propritete[0].getProperty("statisticUrl"), propritete[0].getProperty("metricId"), propritete[0].getProperty("componentId")};
 
@@ -311,7 +312,10 @@ public class Main {
                     embed.setTitle("Nouveauté");
                     embed.setColor(Color.YELLOW);
                     embed.setDescription("```diff\n" +
-                            "+ Télémétrie\n"+
+                            "+ Refactor du ping\n" +
+                            "+ Refactor des infos du serveur\n" +
+                            "+ Refactor des infos des memebres du serveur\n" +
+                            "+ Refactor de l'uptime\n"+
                             "```");
                     event.getChannel().sendMessage(embed);
                 }
@@ -406,7 +410,17 @@ public class Main {
                     embed.addField("Date de création du serveur", Timestamp.from(msgSrv.getCreationTimestamp()).toString(), true);
                     embed.addField("Nombre de personnes connectées", "Non implémentée", true);
                     embed.addField("Nombre de bots", "Non implémentées", true);
-                    embed.addField("Niveau de vérification", "Low", true);
+                    String verifLvl = "Aucun";
+                    if (msgSrv.getVerificationLevel().equals(VerificationLevel.LOW)) {
+                        verifLvl = "Bas";
+                    } else if (msgSrv.getVerificationLevel().equals(VerificationLevel.MEDIUM)) {
+                        verifLvl = "Medium";
+                    } else if (msgSrv.getVerificationLevel().equals(VerificationLevel.HIGH)) {
+                        verifLvl = "(╯°□°）╯︵ ┻━┻";
+                    }  else if (msgSrv.getVerificationLevel().equals(VerificationLevel.VERY_HIGH)) {
+                        verifLvl = "┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻";
+                    }
+                    embed.addField("Niveau de vérification", verifLvl, true);
 
 
                     event.getChannel().sendMessage(embed);
@@ -414,7 +428,11 @@ public class Main {
 
                 if (message.equalsIgnoreCase("!ui")) {
                     stats.sendStats();
-                    embed.setColor(Color.GREEN);
+                    if (msgSrv.getRoleColor(author.asUser().get()).isPresent()) {
+                        embed.setColor(msgSrv.getRoleColor(author.asUser().get()).get());
+                    } else {
+                        embed.setColor(Color.GREEN);
+                    }
                     embed.addInlineField("Nom", author.getDiscriminatedName());
                     embed.addInlineField("Surnom", author.getDisplayName());
                     embed.addInlineField("ID", author.getId()+"");
