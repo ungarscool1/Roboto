@@ -312,10 +312,8 @@ public class Main {
                     embed.setTitle("Nouveauté");
                     embed.setColor(Color.YELLOW);
                     embed.setDescription("```diff\n" +
-                            "+ Refactor du ping\n" +
-                            "+ Refactor des infos du serveur\n" +
-                            "+ Refactor des infos des memebres du serveur\n" +
-                            "+ Refactor de l'uptime\n"+
+                            "+ Ajout de l'implémentation \"Verification level\" sur !info\n" +
+                            "+ Ajout de la couleur du rôle principal sur !ui\n" +
                             "```");
                     event.getChannel().sendMessage(embed);
                 }
