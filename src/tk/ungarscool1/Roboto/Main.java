@@ -68,7 +68,6 @@ public class Main {
         String version = "4.0.1 Alpha";
         // Statistics
         String statis[] = {propritete[0].getProperty("statistic"), propritete[0].getProperty("apiToken"), propritete[0].getProperty("statisticUrl"), propritete[0].getProperty("metricId"), propritete[0].getProperty("componentId")};
-
         Stats stats = new Stats(statis);
 
         new DiscordApiBuilder().setToken(token).login().thenAccept((DiscordApi api) -> {
@@ -169,12 +168,12 @@ public class Main {
                     try {
                         Runtime runtime = Runtime.getRuntime();
                         Process proc = runtime.exec("ping eu-west0.discord.gg -c 2");
-                        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+                        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
                         String[] pinging = {};
                         while((output = stdInput.readLine()) != null) {
                             if (output.contains("avg")) {
                                 pinging = output.split("/");
-                                ping = pinging[5] + "ms";
+                                ping = pinging[4] + "ms";
                             } else {
                                 if (ping.equalsIgnoreCase("Erreur")) {
                                     ping = output;
@@ -312,8 +311,8 @@ public class Main {
                     embed.setTitle("Nouveauté");
                     embed.setColor(Color.YELLOW);
                     embed.setDescription("```diff\n" +
-                            "+ Ajout de l'implémentation \"Verification level\" sur !info\n" +
-                            "+ Ajout de la couleur du rôle principal sur !ui\n" +
+                            "+ Debug de l'API pour les stats d'utilisation de Roboto" +
+                            "~ Tentative de debug du ping\n" +
                             "```");
                     event.getChannel().sendMessage(embed);
                 }
