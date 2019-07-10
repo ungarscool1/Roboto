@@ -1,22 +1,22 @@
 package com.github.ungarscool1.Roboto.listeners.commands;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import com.github.ungarscool1.Roboto.entity.game.PFC;
 import com.github.ungarscool1.Roboto.entity.game.PFCbr;
+import com.github.ungarscool1.Roboto.entity.game.Puissance4;
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
 
 public class GameCommand implements MessageCreateListener {
 
 	public static HashMap<Message, PFC> PFCs = new HashMap<Message, PFC>();
 	public static HashMap<Message, PFCbr> PFCbrs = new HashMap<Message, PFCbr>();
+	public static HashMap<Message, Puissance4> P4 = new HashMap<Message, Puissance4>();
 	
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
@@ -38,7 +38,7 @@ public class GameCommand implements MessageCreateListener {
 					message.addReactions("✅","❌");
 					pfc.setJoinMessage(message);
 					PFCs.put(message, pfc);
-					ReacListener.updatePFCs();
+					ReacListener.updateGames();
 				} else if (args[0].equalsIgnoreCase("pfcBR")) {
 					int slots = 0;
 					System.out.println("Length args = " + args.length);
@@ -55,26 +55,31 @@ public class GameCommand implements MessageCreateListener {
 						message.addReactions("✅","❌");
 						pfc.setJoinMessage(message);
 						PFCbrs.put(message, pfc);
-						ReacListener.updatePFCs();
+						ReacListener.updateGames();
 					}
+				} else if (args[0].equalsIgnoreCase("^4") || args[0].equalsIgnoreCase("puissance4")) {
+					Puissance4 p4 = new Puissance4(message.getAuthor().asUser().get());
+					message = message.getChannel().sendMessage(p4.joinMessage()).join();
+					message.addReactions("✅","❌");
+					p4.setJoinMessage(message);
+					P4.put(message, p4);
+					ReacListener.updateGames();
 				}
 			} else {
 				message.getChannel().sendMessage(new EmbedBuilder()
 						.setTitle("Aides de la commande !game")
 						.addField("pfc [nombre de manche (optionel)]", "Jouer à Pierre Feuille Ciseaux")
-						.addField("pfcbr <nombre de participant>", "Jouer au Pierre Feuille Ciseaux: Battle Royal"));
+						.addField("pfcbr <nombre de participant>", "Jouer au Pierre Feuille Ciseaux: Battle Royal")
+						.addField("^4", "Jouer à un Puissance 4"));
 			}
 		}
 		
 	}
 	
-	public static void updatePFCs(HashMap<Message, PFC> pfcs) {
-		System.out.println("On a mis à jour GameCommand.PFCs");
+	public static void updateGames(HashMap<Message, PFC> pfcs, HashMap<Message, PFCbr> pFCbrs2, HashMap<Message, Puissance4> p4) {
 		PFCs = pfcs;
-	}
-
-	public static void updatePFCbrs(HashMap<Message, PFCbr> pFCbrs2) {
 		PFCbrs = pFCbrs2;
+		P4 = p4;
 	}
 
 }

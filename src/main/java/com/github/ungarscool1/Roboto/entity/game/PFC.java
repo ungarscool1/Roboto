@@ -155,7 +155,7 @@ public class PFC {
 		
 		
 		GameCommand.PFCs.remove(joinMessage);
-		ReacListener.updatePFCs();
+		ReacListener.updateGames();
 		
 		listener.remove();
 		th.stop();

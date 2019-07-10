@@ -24,7 +24,6 @@ public class PFCbr {
 	private ArrayList<User> players = new ArrayList<>();
 	private HashMap<User, Integer> score = new HashMap<>();
 	private HashMap<User, Boolean> played = new HashMap<>();
-	// En gros le BR fait des instence de PFC
 	private HashMap<User, PFC> PFCs = new HashMap<>();
 	private int slots;
 	private boolean inGame;
@@ -118,10 +117,14 @@ public class PFCbr {
 		
 		
 		GameCommand.PFCs.remove(joinMessage);
-		ReacListener.updatePFCs();
+		ReacListener.updateGames();
 		th.stop();
 	}
 	
+	/**
+	 * This func will create instance of PFC
+	 * That make battle between 2 players
+	 */
 	private void createGame() {
 		System.out.println("Creating games...");
 		for (int i = 0; i < players.size(); i+=2) {
@@ -136,6 +139,11 @@ public class PFCbr {
 		}
 	}
 	
+	/**
+	 * This func is exec from PFC
+	 * @param winner
+	 * @param looser
+	 */
 	public void win(User winner, User looser) {
 		players.remove(looser);
 		score.replace(winner, (score.get(winner) + 1));
