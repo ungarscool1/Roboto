@@ -19,13 +19,18 @@ import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.util.event.ListenerManager;
 
 import com.github.ungarscool1.Roboto.Main;
+import com.github.ungarscool1.Roboto.listeners.ReacListener;
+import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
 
 public class Puissance4 {
 
 	private Message joinMessage;
+	private Message lastMessage;
 	private ArrayList<User> players = new ArrayList<>();
-	private int player = 1;
+	private int player;
 	private boolean inGame = false;
+	private int maxCoups = 36;
+	private int coups;
 	private ListenerManager<ReactionAddListener> listener;
 	private Thread th;
 	private int[][] grid = {
@@ -42,6 +47,8 @@ public class Puissance4 {
 	private BufferedImage gridImg = new BufferedImage(700, 600, BufferedImage.TYPE_INT_ARGB);
 	
 	public Puissance4(User Owner) {
+		player = 1 + (int)(Math.random() * 2);
+		System.out.println("Joueur n°"+player+" jouera en 1er");
 		join(Owner);
 		this.inGame = false;
 		try {
@@ -100,12 +107,27 @@ public class Puissance4 {
 		return "disconnected";
 	}
 	
+	private void finish() {
+		joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
+		joinMessage.delete("^4 party is finished");
+		GameCommand.P4.remove(joinMessage);
+		ReacListener.updateGames();
+		listener.remove();
+		th.stop();
+	}
+	
 	private void message() {
-		EmbedBuilder embed = new EmbedBuilder();
-		embed.setTitle("Puissance 4: C'est le tour de " + players.get(player - 1).getDisplayName(joinMessage.getServer().get()));
-		embed.setImage(gridImg);
-		embed.setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get()));
-		joinMessage.getChannel().sendMessage(embed).join().addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣");
+		coups++;
+		if (coups <= maxCoups) {
+			EmbedBuilder embed = new EmbedBuilder();
+			embed.setTitle("Puissance 4: C'est le tour de " + players.get(player - 1).getDisplayName(joinMessage.getServer().get()));
+			embed.setDescription("Coups " + coups + "/" + maxCoups);
+			embed.setImage(gridImg);
+			embed.setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get()));
+			lastMessage = joinMessage.getChannel().sendMessage(embed).join();
+			lastMessage.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣");
+		} else 
+			finish();
 	}
 	
 	private boolean checkP4() {
@@ -175,140 +197,266 @@ public class Puissance4 {
 		    					 if (grid[5][0] == 0) {
 		    						 grid[5][0] = player;
 		    						 draw(120, 530);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[4][0] == 0) {
 		    						 grid[4][0] = player;
 		    						 draw(120, 460);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[3][0] == 0) {
 		    						 grid[3][0] = player;
 		    						 draw(120, 390);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[2][0] == 0) {
 		    						 grid[2][0] = player;
 		    						 draw(120, 320);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[1][0] == 0) {
 		    						 grid[1][0] = player;
 		    						 draw(120, 250);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[0][0] == 0) {
 		    						 grid[0][0] = player;
 		    						 draw(120, 180);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 }
-		    					 if (checkP4()) {
-			    					 joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
-			    				 }
 		    				 } else if (finalEmoji.equals("2⃣")) {
 		    					 if (grid[5][1] == 0) {
 		    						 grid[5][1] = player;
 		    						 draw(200, 530);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[4][1] == 0) {
 		    						 grid[4][1] = player;
 		    						 draw(200, 460);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[3][1] == 0) {
 		    						 grid[3][1] = player;
 		    						 draw(200, 390);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[2][1] == 0) {
 		    						 grid[2][1] = player;
 		    						 draw(200, 320);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[1][1] == 0) {
 		    						 grid[1][1] = player;
 		    						 draw(200, 250);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[0][1] == 0) {
 		    						 grid[0][1] = player;
 		    						 draw(200, 180);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 }
-		    					 if (checkP4()) {
-			    					 joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
-			    				 }
 		    				 } else if (finalEmoji.equals("3⃣")) {
 		    					 if (grid[5][2] == 0) {
 		    						 grid[5][2] = player;
 		    						 draw(280, 530);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[4][2] == 0) {
 		    						 grid[4][2] = player;
 		    						 draw(280, 460);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[3][2] == 0) {
 		    						 grid[3][2] = player;
 		    						 draw(280, 390);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[2][2] == 0) {
 		    						 grid[2][2] = player;
 		    						 draw(280, 320);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[1][2] == 0) {
 		    						 grid[1][2] = player;
 		    						 draw(280, 250);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[0][2] == 0) {
 		    						 grid[0][2] = player;
 		    						 draw(280, 180);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 }
-		    					 if (checkP4()) {
-			    					 joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
-			    				 }
 		    				 } else if (finalEmoji.equals("4⃣")) {
 		    					 if (grid[5][3] == 0) {
 		    						 grid[5][3] = player;
 		    						 draw(360, 530);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[4][3] == 0) {
 		    						 grid[4][3] = player;
 		    						 draw(360, 460);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[3][3] == 0) {
 		    						 grid[3][3] = player;
 		    						 draw(360, 390);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[2][3] == 0) {
 		    						 grid[2][3] = player;
 		    						 draw(360, 320);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[1][3] == 0) {
 		    						 grid[1][3] = player;
 		    						 draw(360, 250);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[0][3] == 0) {
 		    						 grid[0][3] = player;
 		    						 draw(360, 180);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 }
-		    					 if (checkP4()) {
-			    					 joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
-			    				 }
 		    				 } else if (finalEmoji.equals("5⃣")) {
 		    					 if (grid[5][4] == 0) {
 		    						 grid[5][4] = player;
 		    						 draw(440, 530);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[4][4] == 0) {
 		    						 grid[4][4] = player;
 		    						 draw(440, 460);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[3][4] == 0) {
 		    						 grid[3][4] = player;
 		    						 draw(440, 390);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[2][4] == 0) {
 		    						 grid[2][4] = player;
 		    						 draw(440, 320);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[1][4] == 0) {
 		    						 grid[1][4] = player;
 		    						 draw(440, 250);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[0][4] == 0) {
 		    						 grid[0][4] = player;
 		    						 draw(440, 180);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 }
-		    					 if (checkP4()) {
-			    					 joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
-			    				 }
 		    				 } else if (finalEmoji.equals("6⃣")) {
 		    					 if (grid[5][5] == 0) {
 		    						 grid[5][5] = player;
 		    						 draw(520, 530);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[4][5] == 0) {
 		    						 grid[4][5] = player;
 		    						 draw(520, 460);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[3][5] == 0) {
 		    						 grid[3][5] = player;
 		    						 draw(520, 390);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[2][5] == 0) {
 		    						 grid[2][5] = player;
 		    						 draw(520, 320);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[1][5] == 0) {
 		    						 grid[1][5] = player;
 		    						 draw(520, 250);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 } else if (grid[0][5] == 0) {
 		    						 grid[0][5] = player;
 		    						 draw(520, 180);
+		    						 lastMessage.delete("Delete ^4 message from P4.gameHandler");
+		    						 if (checkP4()) {
+				    					 finish();
+				    				 }
 		    					 }
-		    					 if (checkP4()) {
-			    					 joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
-			    				 }
 		    				 }
 		    			 }
 		    		 }
