@@ -2,9 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.ungarscool1</groupId>
   <artifactId>Roboto</artifactId>
-  <version>5.0.0-Alpha</version>
+  <version>3.0.0</version>
   <name>Roboto</name>
   <description>Mon bot discord Roboto</description>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   
   <dependencies>
         <dependency>
