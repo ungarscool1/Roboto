@@ -5,6 +5,7 @@ import org.javacord.api.DiscordApiBuilder;
 
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
 import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
+import com.github.ungarscool1.Roboto.listeners.commands.UtilsCommand;
 import com.github.ungarscool1.Roboto.listeners.commands.VoteCommand;
 
 public class Main {
@@ -14,6 +15,7 @@ public class Main {
         API = api;
         api.addMessageCreateListener(new VoteCommand());
         api.addMessageCreateListener(new GameCommand());
+        api.addMessageCreateListener(new UtilsCommand());
         
         api.addReactionAddListener(new ReacListener());
     }

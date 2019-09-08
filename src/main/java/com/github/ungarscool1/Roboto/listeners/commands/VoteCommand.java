@@ -19,8 +19,9 @@ public class VoteCommand implements MessageCreateListener {
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
 		
-		if (message.getContent().contains("!getUnicode")) {
-			System.out.println(message.getContent());
+		// Ignore if the message is sent in PM
+		if (!message.getServer().isPresent()) {
+			return;
 		}
 		
 		if (message.getContent().contains("!vote")) {

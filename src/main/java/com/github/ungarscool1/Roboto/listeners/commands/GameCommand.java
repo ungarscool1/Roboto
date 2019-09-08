@@ -20,7 +20,11 @@ public class GameCommand implements MessageCreateListener {
 	
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
-		
+		// Ignore if the message is sent in PM
+		if (!message.getServer().isPresent()) {
+			return;
+		}
+				
 		if (message.getContent().contains("!game")) {
 			if (message.getContent().length() > 5) {
 				// !game pfc 10
@@ -70,7 +74,15 @@ public class GameCommand implements MessageCreateListener {
 						.setTitle("Aides de la commande !game")
 						.addField("pfc [nombre de manche (optionel)]", "Jouer à Pierre Feuille Ciseaux")
 						.addField("pfcbr <nombre de participant>", "Jouer au Pierre Feuille Ciseaux: Battle Royal")
-						.addField("^4", "Jouer à un Puissance 4"));
+						.addField("^4", "Jouer à un Puissance 4")
+						.addField("Prochaines fonctionnalités", "```diff\n"
+								+ "+ Jouer avec plusieurs serveurs discord\n"
+								+ "~ Inviter des personnes sans qu'elle fasse partie d'un serveur discord où Roboto existe\n"
+								+ "```\n"
+								+ "Légende:\n"
+								+ "+: plutôt sûr de l'ajout\n"
+								+ "~: si l'api nous le permet\n"
+								+ "-: tâche annulée"));
 			}
 		}
 		
