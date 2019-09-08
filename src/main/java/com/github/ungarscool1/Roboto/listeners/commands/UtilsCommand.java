@@ -127,12 +127,13 @@ public class UtilsCommand implements MessageCreateListener{
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			
 			// Get and convert join date to human readable value
-			Date joinDate = Date.from(server.getCreationTimestamp());
+			Date creationDate = Date.from(server.getCreationTimestamp());
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			
 			embedBuilder.setTitle("Information sur le serveur " + server.getName())
 				.addField("Identifiant unique", server.getIdAsString())
-				.addField(name, );
+				.addField("Date de création", formatter.format(creationDate))
+				.addField("Propriétaire", server.getOwner().getDiscriminatedName());
 			message.getChannel().sendMessage(embedBuilder);
 		}
 		
