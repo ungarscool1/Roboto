@@ -35,22 +35,30 @@
             	</configuration>
         	</plugin>
         	<plugin>
-      			<!-- Build an executable JAR -->
-      			<groupId>org.apache.maven.plugins</groupId>
-      			<artifactId>maven-jar-plugin</artifactId>
-      			<version>3.1.0</version>
-      			<configuration>
-      				<source>1.8</source> 
-                	<target>1.8</target> 
-        			<archive>
-          				<manifest>
-            				<addClasspath>true</addClasspath>
-            				<classpathPrefix>lib/</classpathPrefix>
-            				<mainClass>com.mypackage.MyClass</mainClass>
-          				</manifest>
-        			</archive>
-      			</configuration>
-    		</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                        <descriptorRef>bin</descriptorRef>
+                        <descriptorRef>src</descriptorRef>
+                        <descriptorRef>project</descriptorRef>
+                    </descriptorRefs>
+                    <descriptors>
+                        <descriptor>assembly/ourAssembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>trigger-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
     	</plugins>
 	</build>
   
