@@ -31,7 +31,6 @@ public class GameCommand implements MessageCreateListener {
 				String[] args = message.getContent().substring(6).split(" ");
 				if (args[0].equalsIgnoreCase("pfc")) {
 					int manche = 0;
-					System.out.println("Length args = " + args.length);
 					if (args.length == 1) {
 						manche = 3;
 					} else {

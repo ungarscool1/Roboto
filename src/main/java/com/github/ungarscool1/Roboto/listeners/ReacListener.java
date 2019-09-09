@@ -24,11 +24,9 @@ public class ReacListener implements ReactionAddListener{
 		if (event.getUser().isYourself()) return;
 		Message message = event.getMessage().get();
 		if (PFCs.containsKey(message)) {
-			System.out.println("JE suis l22");
 			if (event.getEmoji().asUnicodeEmoji().get().equals("✅"))  {
 				String res = PFCs.get(message).join(event.getUser());
 				if (res.equals("Joined") || res.equals("Starting")) {
-					System.out.println("JE suis l25, qquun a rejoin");
 					message.getChannel().sendMessage(event.getUser().getDisplayName(message.getServer().get()) + " a rejoint la partie");
 					PFC pfc = PFCs.get(message);
 					PFCs.remove(message);
@@ -39,10 +37,8 @@ public class ReacListener implements ReactionAddListener{
 					PFCs.put(message, pfc);
 					GameCommand.updateGames(PFCs, PFCbrs, P4);
 					if (res.equals("Joined")) {
-						System.out.println("JE suis l33, la partie ne peut pas encore commencé !");
 						message.addReactions("✅","❌");
 					} else {
-						System.out.println("La partie commence");
 						pfc.gameHandler();
 					}
 				} else if (res.equals("Already in party")) {
@@ -77,7 +73,6 @@ public class ReacListener implements ReactionAddListener{
 					PFCbrs.put(message, pfc);
 					GameCommand.updateGames(PFCs, PFCbrs, P4);
 					if (res.equals("Joined")) {
-						System.out.println("JE suis l33, la partie ne peut pas encore commencé !");
 						message.addReactions("✅", "❌");
 					} else {
 						System.out.println("La partie commence");
@@ -125,10 +120,8 @@ public class ReacListener implements ReactionAddListener{
 					P4.put(message, p4);
 					GameCommand.updateGames(PFCs, PFCbrs, P4);
 					if (res.equals("Joined")) {
-						System.out.println("JE suis l33, la partie ne peut pas encore commencé !");
 						message.addReactions("✅", "❌");
 					} else {
-						System.out.println("La partie commence");
 						p4.gameHandler();
 					}
 				} else if (res.equals("Already in party")) {
@@ -155,12 +148,10 @@ public class ReacListener implements ReactionAddListener{
 			}
 			
 		}
-		
-		System.out.println("Emoji " + event.getEmoji().getMentionTag());
 	}
 	
 	public static void updateGames() {
-		System.out.println("On a mis à jour ReacListener.Games");
+		System.out.println("[INFO] Liste des jeux mis à jour");
 		PFCs = GameCommand.PFCs;
 		PFCbrs = GameCommand.PFCbrs;
 		P4 = GameCommand.P4;
