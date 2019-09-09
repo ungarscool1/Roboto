@@ -55,6 +55,10 @@
           			</execution>
         		</executions>
         		<configuration>
+        			<manifest>
+						<!-- Jar file entry point -->
+						<mainClass>com.github.ungarscool1.Roboto.Main</mainClass>
+					</manifest>
           			<descriptorRefs>
             			<descriptorRef>jar-with-dependencies</descriptorRef>
           			</descriptorRefs>
