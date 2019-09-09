@@ -46,6 +46,7 @@
         	</plugin>
         	<plugin>
         		<artifactId>maven-assembly-plugin</artifactId>
+        		<version>3.1.1</version>
         		<executions>
           			<execution>
             			<phase>package</phase>
@@ -55,10 +56,6 @@
           			</execution>
         		</executions>
         		<configuration>
-        			<manifest>
-						<!-- Jar file entry point -->
-						<mainClass>com.github.ungarscool1.Roboto.Main</mainClass>
-					</manifest>
           			<descriptorRefs>
             			<descriptorRef>jar-with-dependencies</descriptorRef>
           			</descriptorRefs>
@@ -67,6 +64,7 @@
         	<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.2</version>
 				<configuration>
 				  <!-- DO NOT include log4j.properties file in your Jar -->
 				  <excludes>
