@@ -71,10 +71,7 @@
 					<exclude>**/log4j.properties</exclude>
 				  </excludes>
 				  <archive>
-					<manifest>
-						<!-- Jar file entry point -->
-						<mainClass>com.github.ungarscool1.Roboto.Main</mainClass>
-					</manifest>
+					<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 				  </archive>
 				</configuration>
 			</plugin>
