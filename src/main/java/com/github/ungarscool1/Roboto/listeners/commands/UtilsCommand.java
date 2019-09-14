@@ -47,7 +47,7 @@ public class UtilsCommand implements MessageCreateListener{
 				embedBuilder.setTitle("Version et information du bot")
 					.addField("Version", "3.0.0 DEV")
 					.addField("Version librairie et API", "Javacord 3.0.4 / Discord API v6")
-					.addField("Build", "140919-15.3")
+					.addField("Build", "140919-15.4")
 					.addField("Bot owner", Main.API.getOwner().get().getDiscriminatedName())
 					.addField("GitHub du bot", "https://github.com/ungarscool1/Roboto-v2")
 					.addField("Roboto est actif sur ", Main.API.getServers().size() + " serveurs")
@@ -94,12 +94,10 @@ public class UtilsCommand implements MessageCreateListener{
 							
 							// Get if user is connected on PC / Mobile / WEB
 							String connectedOn;
-							if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
+							if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 								connectedOn = "PC";
-							} else if (!u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
+							} else if (u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.ONLINE)) {
 								connectedOn = "Téléphone";
-							} else if (!u.getStatusOnClient(DiscordClient.WEB).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
-								connectedOn = "Depuis un client web";
 							} else {
 								connectedOn = "N'est pas connecté ou AFK";
 							}
@@ -133,12 +131,10 @@ public class UtilsCommand implements MessageCreateListener{
 				
 				// Get if user is connected on PC / Mobile / WEB
 				String connectedOn;
-				if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
+				if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 					connectedOn = "PC";
-				} else if (!u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
+				} else if (u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.ONLINE)) {
 					connectedOn = "Téléphone";
-				} else if (!u.getStatusOnClient(DiscordClient.WEB).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
-					connectedOn = "Depuis un client web";
 				} else {
 					connectedOn = "ça dépend...\nLe statut du joueur ne permet pas de savoir s'il est connecté depuis une plateforme spécifique.";
 				}
