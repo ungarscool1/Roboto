@@ -54,7 +54,7 @@ public class UtilsCommand implements MessageCreateListener{
 				embedBuilder.setTitle("Version et information du bot")
 					.addField("Version", "3.0.0 DEV")
 					.addField("Version librairie et API", "Javacord 3.0.4 / Discord API v6")
-					.addField("Build", "140919-15.4")
+					.addField("Build", "140919-17.3")
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField("GitHub du bot", "https://github.com/ungarscool1/Roboto-v2")
 					.addField("Roboto est actif sur ", api.getServers().size() + " serveurs")
