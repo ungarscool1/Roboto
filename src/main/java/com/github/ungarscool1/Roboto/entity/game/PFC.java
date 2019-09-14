@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
@@ -20,6 +21,7 @@ import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
 
 public class PFC {
 	
+	private DiscordApi api;
 	private Message joinMessage;
 	private Message latest;
 	private ArrayList<User> players = new ArrayList<User>();
@@ -36,7 +38,8 @@ public class PFC {
 	private PFCbr br;
 	
 	
-	public PFC(User Owner, int maxManche) {
+	public PFC(User Owner, int maxManche, DiscordApi api) {
+		this.api = api;
 		join(Owner);
 		this.inGame = false;
 		this.slots = 2;
@@ -44,13 +47,9 @@ public class PFC {
 		else this.maxManche = maxManche;
 	}
 	
-	public PFC(User Owner, int maxManche, PFCbr br) {
-		join(Owner);
-		this.inGame = false;
-		this.slots = 2;
+	public PFC(User Owner, int maxManche, PFCbr br, DiscordApi api) {
+		this(Owner, maxManche, api);
 		this.br = br;
-		if (maxManche == 0) this.maxManche = 3;
-		else this.maxManche = maxManche;
 	}
 	
 	public EmbedBuilder joinMessage() {
@@ -164,7 +163,7 @@ public class PFC {
 	public void gameHandler() {
 		th = new Thread(new Runnable() {
 		     public void run() {
-		    	 listener = Main.API.addReactionAddListener(event -> {
+		    	 listener = api.addReactionAddListener(event -> {
 		    		 if (event.getUser().isYourself()) return;
 		    		 Emoji emoji = event.getEmoji();
 		    		 boolean isDM = event.getMessage().get().isPrivateMessage();
@@ -220,6 +219,7 @@ public class PFC {
 	    								 .addInlineField("Action de " + players.get(1).getDisplayName(joinMessage.getServer().get()), getEmojiFromInt(played.get(players.get(1))))
 	    								 .addField(winner, score.get(players.get(0)) + " - " + score.get(players.get(1)))
 	    								 ).join();
+		    					 latest.delete("Anti spam");
 		    					 messagesByChannel.remove(message.getChannel());
 		    					 if ((manche < maxManche) || score.get(players.get(0)) == score.get(players.get(1))) {
 		    						 manche++;

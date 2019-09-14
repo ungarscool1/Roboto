@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.DiscordClient;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -19,6 +20,12 @@ import com.github.ungarscool1.Roboto.Main;
 
 
 public class UtilsCommand implements MessageCreateListener{
+	
+	private DiscordApi api;
+	
+	public UtilsCommand(DiscordApi api) {
+		this.api = api;
+	}
 
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
@@ -48,9 +55,9 @@ public class UtilsCommand implements MessageCreateListener{
 					.addField("Version", "3.0.0 DEV")
 					.addField("Version librairie et API", "Javacord 3.0.4 / Discord API v6")
 					.addField("Build", "140919-15.4")
-					.addField("Bot owner", Main.API.getOwner().get().getDiscriminatedName())
+					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField("GitHub du bot", "https://github.com/ungarscool1/Roboto-v2")
-					.addField("Roboto est actif sur ", Main.API.getServers().size() + " serveurs")
+					.addField("Roboto est actif sur ", api.getServers().size() + " serveurs")
 					.setColor(Color.GREEN)
 					.setFooter("Roboto v.3 by Ungarscool1");
 			} catch (Exception e) {

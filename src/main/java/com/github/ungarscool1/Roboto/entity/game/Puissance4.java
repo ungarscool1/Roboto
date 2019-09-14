@@ -11,6 +11,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -24,6 +25,7 @@ import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
 
 public class Puissance4 {
 
+	private DiscordApi api;
 	private Message joinMessage;
 	private Message lastMessage;
 	private ArrayList<User> players = new ArrayList<>();
@@ -46,9 +48,9 @@ public class Puissance4 {
 	private BufferedImage p2Img;
 	private BufferedImage gridImg = new BufferedImage(700, 600, BufferedImage.TYPE_INT_ARGB);
 	
-	public Puissance4(User Owner) {
+	public Puissance4(User Owner, DiscordApi api) {
 		player = 1 + (int)(Math.random() * 2);
-		System.out.println("Joueur n°"+player+" jouera en 1er");
+		this.api = api;
 		join(Owner);
 		this.inGame = false;
 		try {
@@ -186,7 +188,7 @@ public class Puissance4 {
 	public void gameHandler() {
 		th = new Thread(new Runnable() {
 		     public void run() {
-		    	 listener = Main.API.addReactionAddListener(event -> {
+		    	 listener = api.addReactionAddListener(event -> {
 		    		 if (event.getUser().isYourself()) return;
 		    		 Emoji emoji = event.getEmoji();
 		    		 Message message = event.getMessage().get();

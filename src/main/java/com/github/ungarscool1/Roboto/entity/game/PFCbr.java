@@ -11,6 +11,7 @@ import java.util.List;
 import static java.util.stream.Collectors.*;
 import static java.util.Map.Entry.*;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
@@ -20,6 +21,7 @@ import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
 
 public class PFCbr {
 	
+	private DiscordApi api;
 	private Message joinMessage;
 	private ArrayList<User> players = new ArrayList<>();
 	private HashMap<User, Integer> score = new HashMap<>();
@@ -30,7 +32,8 @@ public class PFCbr {
 	private Thread th;
 	
 	
-	public PFCbr(User Owner, int slots) {
+	public PFCbr(User Owner, int slots, DiscordApi api) {
+		this.api = api;
 		join(Owner);
 		this.inGame = false;
 		this.slots = slots;
@@ -131,7 +134,7 @@ public class PFCbr {
 			System.out.println("Intencing...");
 			played.put(players.get(i), false);
 			played.put(players.get((i + 1)), false);
-			PFC pfc = new PFC(players.get(i), 1, this);
+			PFC pfc = new PFC(players.get(i), 1, this, api);
 			pfc.join(players.get((i+1)));
 			pfc.setJoinMessage(joinMessage);
 			pfc.gameHandler();

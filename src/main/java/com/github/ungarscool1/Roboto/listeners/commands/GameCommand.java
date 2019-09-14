@@ -2,6 +2,7 @@ package com.github.ungarscool1.Roboto.listeners.commands;
 
 import java.util.HashMap;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -14,9 +15,14 @@ import com.github.ungarscool1.Roboto.listeners.ReacListener;
 
 public class GameCommand implements MessageCreateListener {
 
+	private DiscordApi api;
 	public static HashMap<Message, PFC> PFCs = new HashMap<Message, PFC>();
 	public static HashMap<Message, PFCbr> PFCbrs = new HashMap<Message, PFCbr>();
 	public static HashMap<Message, Puissance4> P4 = new HashMap<Message, Puissance4>();
+	
+	public GameCommand(DiscordApi api) {
+		this.api = api;
+	}
 	
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
@@ -36,7 +42,7 @@ public class GameCommand implements MessageCreateListener {
 					} else {
 						manche = Integer.parseInt(args[1]);
 					}
-					PFC pfc = new PFC(message.getAuthor().asUser().get(), manche);
+					PFC pfc = new PFC(message.getAuthor().asUser().get(), manche, api);
 					message = event.getChannel().sendMessage(pfc.joinMessage()).join();
 					message.addReactions("✅","❌");
 					pfc.setJoinMessage(message);
@@ -53,7 +59,7 @@ public class GameCommand implements MessageCreateListener {
 					if (slots % 2 != 0 || slots < 2) {
 						message.getChannel().sendMessage("Le nombre de slots doit être paire (multiple de 2)");
 					} else {
-						PFCbr pfc = new PFCbr(message.getAuthor().asUser().get(), slots);
+						PFCbr pfc = new PFCbr(message.getAuthor().asUser().get(), slots, api);
 						message = event.getChannel().sendMessage(pfc.joinMessage()).join();
 						message.addReactions("✅","❌");
 						pfc.setJoinMessage(message);
@@ -61,7 +67,7 @@ public class GameCommand implements MessageCreateListener {
 						ReacListener.updateGames();
 					}
 				} else if (args[0].equalsIgnoreCase("^4") || args[0].equalsIgnoreCase("puissance4")) {
-					Puissance4 p4 = new Puissance4(message.getAuthor().asUser().get());
+					Puissance4 p4 = new Puissance4(message.getAuthor().asUser().get(), api);
 					message = message.getChannel().sendMessage(p4.joinMessage()).join();
 					message.addReactions("✅","❌");
 					p4.setJoinMessage(message);
