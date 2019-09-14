@@ -3,6 +3,7 @@ package com.github.ungarscool1.Roboto.listeners.commands;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.javacord.api.entity.DiscordClient;
@@ -13,6 +14,8 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+
+import com.github.ungarscool1.Roboto.Main;
 
 
 public class UtilsCommand implements MessageCreateListener{
@@ -29,14 +32,32 @@ public class UtilsCommand implements MessageCreateListener{
 		if (message.getContent().equalsIgnoreCase("!help") || message.getContent().equalsIgnoreCase("!aide")) {
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			embedBuilder.setTitle("Aides")
-				.addField("!ui [args]", "Récupérer les informations d'un membre du serveur.\n Les arguments sont facultatifs")
 				.addField("!game <nom du jeu>", "Jouer à un jeu seul ou avec des amis.\n(bêta)")
+				.addField("!ui [args]", "Récupérer les informations d'un membre du serveur.\n Les arguments sont facultatifs")
+				.addField("!ver", "Obtenir la version du bot")
 				.addField("!vote", "Faire un vote")
 				.setColor(Color.GREEN)
 				.setFooter("Roboto v.3 by Ungarscool1");
 			message.getChannel().sendMessage(embedBuilder);
 		}
 		
+		if (message.getContent().equalsIgnoreCase("!ver") || message.getContent().equalsIgnoreCase("!version")) {
+			EmbedBuilder embedBuilder = new EmbedBuilder();
+			try {
+				embedBuilder.setTitle("Version et information du bot")
+					.addField("Version", "3.0.0 DEV")
+					.addField("Version librairie et API", "Javacord 3.0.4 / Discord API v6")
+					.addField("Build", "140919-15.3")
+					.addField("Bot owner", Main.API.getOwner().get().getDiscriminatedName())
+					.addField("GitHub du bot", "https://github.com/ungarscool1/Roboto-v2")
+					.addField("Roboto est actif sur ", Main.API.getServers().size() + " serveurs")
+					.setColor(Color.GREEN)
+					.setFooter("Roboto v.3 by Ungarscool1");
+			} catch (Exception e) {
+				// You can't get any error \o/
+			}
+			message.getChannel().sendMessage(embedBuilder);
+		}
 		
 		if(message.getContent().contains("!ui") && message.getContent().indexOf("!ui") == 0) {
 			String[] args = message.getContent().split(" ");
@@ -73,11 +94,11 @@ public class UtilsCommand implements MessageCreateListener{
 							
 							// Get if user is connected on PC / Mobile / WEB
 							String connectedOn;
-							if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.IDLE)) {
+							if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 								connectedOn = "PC";
-							} else if (!u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.IDLE)) {
+							} else if (!u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 								connectedOn = "Téléphone";
-							} else if (!u.getStatusOnClient(DiscordClient.WEB).equals(UserStatus.IDLE)) {
+							} else if (!u.getStatusOnClient(DiscordClient.WEB).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 								connectedOn = "Depuis un client web";
 							} else {
 								connectedOn = "N'est pas connecté ou AFK";
@@ -112,20 +133,27 @@ public class UtilsCommand implements MessageCreateListener{
 				
 				// Get if user is connected on PC / Mobile / WEB
 				String connectedOn;
-				if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.IDLE)) {
+				if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 					connectedOn = "PC";
-				} else if (!u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.IDLE)) {
+				} else if (!u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 					connectedOn = "Téléphone";
-				} else if (!u.getStatusOnClient(DiscordClient.WEB).equals(UserStatus.IDLE)) {
+				} else if (!u.getStatusOnClient(DiscordClient.WEB).equals(UserStatus.IDLE) && !u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 					connectedOn = "Depuis un client web";
 				} else {
-					connectedOn = "N'est pas connecté ou AFK";
+					connectedOn = "ça dépend...\nLe statut du joueur ne permet pas de savoir s'il est connecté depuis une plateforme spécifique.";
+				}
+				
+				String status;
+				if (u.getStatus().equals(UserStatus.OFFLINE)) {
+					status = "invisible";
+				} else {
+					status = u.getStatus().getStatusString();
 				}
 				
 				embedBuilder.setTitle("Information de " + u.getName())
 					.addField("A rejoint le serveur", formatter.format(joinDate), true)
 					.addField("S'est inscrit sur discord", formatter.format(creationDate), true)
-					.addField("Statut", u.getStatus().getStatusString(), true)
+					.addField("Statut", status, true)
 					.addField("Connecté depuis un", connectedOn, true)
 					.setThumbnail(u.getAvatar())
 					.setColor(Color.GREEN);
