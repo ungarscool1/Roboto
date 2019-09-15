@@ -61,7 +61,7 @@ public class Vote {
 			System.out.println("Option " + (curopt + 1) + "/" + nombreOption);
 			options[curopt] = option;
 			if ((curopt + 1) < nombreOption) {
-				return "option";
+				return "option" + (curopt + 1) + " / " + nombreOption;
 			} else {
 				return "fin multi";
 			}

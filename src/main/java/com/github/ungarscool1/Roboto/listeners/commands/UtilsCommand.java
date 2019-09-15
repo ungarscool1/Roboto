@@ -3,6 +3,9 @@ package com.github.ungarscool1.Roboto.listeners.commands;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
@@ -35,29 +38,47 @@ public class UtilsCommand implements MessageCreateListener{
 			return;
 		}
 		
+		ResourceBundle language = ResourceBundle.getBundle("com.github.ungarscool1.Roboto.lang.lang", Main.locByServ.get(message.getServer().get()));
 		
 		if (message.getContent().equalsIgnoreCase("!help") || message.getContent().equalsIgnoreCase("!aide")) {
 			EmbedBuilder embedBuilder = new EmbedBuilder();
-			embedBuilder.setTitle("Aides")
-				.addField("!game <nom du jeu>", "Jouer à un jeu seul ou avec des amis.\n(bêta)")
-				.addField("!ui [args]", "Récupérer les informations d'un membre du serveur.\n Les arguments sont facultatifs")
-				.addField("!ver", "Obtenir la version du bot")
-				.addField("!vote", "Faire un vote")
+			embedBuilder.setTitle(language.getString("help"))
+				.addField(language.getString("help.game.cmd"), language.getString("help.game.desc"))
+				.addField("!lang <arg>", language.getString("help.lang.desc"))
+				.addField("!ui [args]", language.getString("help.ui.desc"))
+				.addField("!ver", language.getString("help.ver.desc"))
+				.addField("!vote", language.getString("help.vote.desc"))
 				.setColor(Color.GREEN)
 				.setFooter("Roboto v.3 by Ungarscool1");
 			message.getChannel().sendMessage(embedBuilder);
 		}
 		
+		if ((message.getContent().contains("!lang") || message.getContent().contains("!language") || message.getContent().contains("!langue")) && message.getAuthor().isServerAdmin()) {
+			EmbedBuilder embed = new EmbedBuilder();
+			if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR")) {
+				String l[];
+				l = message.getContent().substring(message.getContent().indexOf(" ")).split("_");
+				Main.locByServ.replace(message.getServer().get(), new Locale(l[0], l[1]));
+				language = ResourceBundle.getBundle("com.github.ungarscool1.Roboto.lang.lang", Main.locByServ.get(message.getServer().get()));
+				embed.setTitle(language.getString("lang.changed.name"))
+					.setDescription(language.getString("lang.changed.desc"));
+			} else {
+				embed.setTitle(language.getString("lang.help.name"))
+				.addField(language.getString("lang.help.languages"), String.format("- fr_FR (%s)\n- en_US (%s)", language.getString("lang.help.french.name"), language.getString("lang.help.english.name")));
+			}
+			message.getChannel().sendMessage(embed);
+		}
+		
 		if (message.getContent().equalsIgnoreCase("!ver") || message.getContent().equalsIgnoreCase("!version")) {
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			try {
-				embedBuilder.setTitle("Version et information du bot")
+				embedBuilder.setTitle(language.getString("version.name"))
 					.addField("Version", "3.0.0 DEV")
-					.addField("Version librairie et API", "Javacord 3.0.4 / Discord API v6")
-					.addField("Build", "140919-17.3")
+					.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
+					.addField("Build", "150919-18.3")
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
-					.addField("GitHub du bot", "https://github.com/ungarscool1/Roboto-v2")
-					.addField("Roboto est actif sur ", api.getServers().size() + " serveurs")
+					.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
+					.addField(language.getString("version.listen"), api.getServers().size() + language.getString("version.servers"))
 					.setColor(Color.GREEN)
 					.setFooter("Roboto v.3 by Ungarscool1");
 			} catch (Exception e) {
@@ -66,7 +87,7 @@ public class UtilsCommand implements MessageCreateListener{
 			message.getChannel().sendMessage(embedBuilder);
 		}
 		
-		if(message.getContent().contains("!ui") && message.getContent().indexOf("!ui") == 0) {
+		if (message.getContent().contains("!ui") && message.getContent().indexOf("!ui") == 0) {
 			String[] args = message.getContent().split(" ");
 			
 			if (args.length > 1) {
@@ -97,32 +118,38 @@ public class UtilsCommand implements MessageCreateListener{
 							// Get and convert join date to human readable value
 							Date joinDate = Date.from(u.getJoinedAtTimestamp(message.getServer().get()).get());
 							Date creationDate = Date.from(u.getCreationTimestamp());
-							SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+							SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 							
 							// Get if user is connected on PC / Mobile / WEB
 							String connectedOn;
 							if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 								connectedOn = "PC";
 							} else if (u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.ONLINE)) {
-								connectedOn = "Téléphone";
+								connectedOn = language.getString("ui.connectedOn.phone");
 							} else {
-								connectedOn = "N'est pas connecté ou AFK";
+								connectedOn = language.getString("ui.connectedOn.not");
 							}
+							
 							
 							String comp = "";
 							if (u.isBot())
 								comp = " (🤖)";
-							embedBuilder.setTitle("Information de " + u.getName() + comp)
-								.addField("A rejoint le serveur", formatter.format(joinDate), true)
-								.addField("S'est inscrit sur discord", formatter.format(creationDate), true)
-								.addField("Statut", u.getStatus().getStatusString(), true)
-								.addField("Connecté depuis un", connectedOn, true)
+							Color color = Color.GREEN;
+							if (u.getRoleColor(message.getServer().get()).isPresent()) {
+								color = u.getRoleColor(message.getServer().get()).get();
+							}
+							embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()) + comp)
+								.addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
+								.addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
+								.addField(language.getString("ui.status"), u.getStatus().getStatusString(), true)
+								.addField(language.getString("ui.connectedOn"), connectedOn, true)
 								.setThumbnail(u.getAvatar())
-								.setColor(Color.GREEN);
+								.setColor(color);
+							
 						} else {
-							embedBuilder.setTitle("Utilisateur introuvable")
-								.addField("Personne recherché", user)
-								.setDescription("L'utilisateur " + user + " n'a pas été trouvé ou une erreur s'est produite")
+							embedBuilder.setTitle(language.getString("ui.notFound"))
+								.addField(language.getString("ui.searchedUser"), user)
+								.setDescription(String.format(language.getString("ui.notFound.desc"), user))
 								.setColor(Color.ORANGE);
 						}
 					message.getChannel().sendMessage(embedBuilder);
@@ -134,16 +161,16 @@ public class UtilsCommand implements MessageCreateListener{
 				// Get and convert join date to human readable value
 				Date joinDate = Date.from(u.getJoinedAtTimestamp(message.getServer().get()).get());
 				Date creationDate = Date.from(u.getCreationTimestamp());
-				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 				
 				// Get if user is connected on PC / Mobile / WEB
 				String connectedOn;
 				if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
 					connectedOn = "PC";
 				} else if (u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.ONLINE)) {
-					connectedOn = "Téléphone";
+					connectedOn = language.getString("ui.connectedOn.phone");
 				} else {
-					connectedOn = "ça dépend...\nLe statut du joueur ne permet pas de savoir s'il est connecté depuis une plateforme spécifique.";
+					connectedOn = language.getString("ui.connectedOn.notSure");
 				}
 				
 				String status;
@@ -153,13 +180,18 @@ public class UtilsCommand implements MessageCreateListener{
 					status = u.getStatus().getStatusString();
 				}
 				
-				embedBuilder.setTitle("Information de " + u.getName())
-					.addField("A rejoint le serveur", formatter.format(joinDate), true)
-					.addField("S'est inscrit sur discord", formatter.format(creationDate), true)
-					.addField("Statut", status, true)
-					.addField("Connecté depuis un", connectedOn, true)
+				Color color = Color.GREEN;
+				if (u.getRoleColor(message.getServer().get()).isPresent()) {
+					color = u.getRoleColor(message.getServer().get()).get();
+				}
+				
+				embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()))
+					.addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
+					.addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
+					.addField(language.getString("ui.status"), status, true)
+					.addField(language.getString("ui.connectedOn"), connectedOn, true)
 					.setThumbnail(u.getAvatar())
-					.setColor(Color.GREEN);
+					.setColor(color);
 				message.getChannel().sendMessage(embedBuilder);
 			}
 		}
@@ -170,7 +202,7 @@ public class UtilsCommand implements MessageCreateListener{
 			
 			// Get and convert join date to human readable value
 			Date creationDate = Date.from(server.getCreationTimestamp());
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 			
 			embedBuilder.setTitle("Information sur le serveur " + server.getName())
 				.addField("Identifiant unique", server.getIdAsString(), true)

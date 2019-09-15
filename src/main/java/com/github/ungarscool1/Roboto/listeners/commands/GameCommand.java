@@ -1,6 +1,8 @@
 package com.github.ungarscool1.Roboto.listeners.commands;
 
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
@@ -8,6 +10,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import com.github.ungarscool1.Roboto.Main;
 import com.github.ungarscool1.Roboto.entity.game.PFC;
 import com.github.ungarscool1.Roboto.entity.game.PFCbr;
 import com.github.ungarscool1.Roboto.entity.game.Puissance4;
@@ -30,12 +33,14 @@ public class GameCommand implements MessageCreateListener {
 		if (!message.getServer().isPresent()) {
 			return;
 		}
+		
+		ResourceBundle language = ResourceBundle.getBundle("com.github.ungarscool1.Roboto.lang.lang", Main.locByServ.get(message.getServer().get()));
 				
 		if (message.getContent().contains("!game")) {
 			if (message.getContent().length() > 5) {
 				// !game pfc 10
 				String[] args = message.getContent().substring(6).split(" ");
-				if (args[0].equalsIgnoreCase("pfc")) {
+				if (args[0].equalsIgnoreCase("pfc") || args[0].equalsIgnoreCase("rps")) {
 					int manche = 0;
 					if (args.length == 1) {
 						manche = 3;
@@ -48,7 +53,7 @@ public class GameCommand implements MessageCreateListener {
 					pfc.setJoinMessage(message);
 					PFCs.put(message, pfc);
 					ReacListener.updateGames();
-				} else if (args[0].equalsIgnoreCase("pfcBR")) {
+				} else if (args[0].equalsIgnoreCase("pfcBR") || args[0].equalsIgnoreCase("rpsBR")) {
 					int slots = 0;
 					System.out.println("Length args = " + args.length);
 					if (args.length == 1) {
@@ -59,15 +64,15 @@ public class GameCommand implements MessageCreateListener {
 					if (slots % 2 != 0 || slots < 2) {
 						message.getChannel().sendMessage("Le nombre de slots doit être paire (multiple de 2)");
 					} else {
-						PFCbr pfc = new PFCbr(message.getAuthor().asUser().get(), slots, api);
+						PFCbr pfc = new PFCbr(message.getAuthor().asUser().get(), slots, api, Main.locByServ.get(message.getServer().get()));
 						message = event.getChannel().sendMessage(pfc.joinMessage()).join();
 						message.addReactions("✅","❌");
 						pfc.setJoinMessage(message);
 						PFCbrs.put(message, pfc);
 						ReacListener.updateGames();
 					}
-				} else if (args[0].equalsIgnoreCase("^4") || args[0].equalsIgnoreCase("puissance4")) {
-					Puissance4 p4 = new Puissance4(message.getAuthor().asUser().get(), api);
+				} else if (args[0].equalsIgnoreCase("^4") || args[0].equalsIgnoreCase("puissance4") || args[0].equalsIgnoreCase("connect4")) {
+					Puissance4 p4 = new Puissance4(message.getAuthor().asUser().get(), api, Main.locByServ.get(message.getServer().get()));
 					message = message.getChannel().sendMessage(p4.joinMessage()).join();
 					message.addReactions("✅","❌");
 					p4.setJoinMessage(message);
@@ -76,18 +81,10 @@ public class GameCommand implements MessageCreateListener {
 				}
 			} else {
 				message.getChannel().sendMessage(new EmbedBuilder()
-						.setTitle("Aides de la commande !game")
-						.addField("pfc [nombre de manche (optionel)]", "Jouer à Pierre Feuille Ciseaux")
-						.addField("pfcbr <nombre de participant>", "Jouer au Pierre Feuille Ciseaux: Battle Royal")
-						.addField("^4", "Jouer à un Puissance 4")
-						.addField("Prochaines fonctionnalités", "```diff\n"
-								+ "+ Jouer avec plusieurs serveurs discord\n"
-								+ "~ Inviter des personnes sans qu'elle fasse partie d'un serveur discord où Roboto existe\n"
-								+ "```\n"
-								+ "Légende:\n"
-								+ "+: plutôt sûr de l'ajout\n"
-								+ "~: si l'api nous le permet\n"
-								+ "-: tâche annulée"));
+						.setTitle(language.getString("game.help.name"))
+						.addField(language.getString("game.help.pfc.name"), language.getString("game.help.pfc.desc"))
+						.addField(language.getString("game.help.pfcbr.name"), language.getString("game.help.pfcbr.desc"))
+						.addField("^4", language.getString("game.help.p4.desc")));
 			}
 		}
 		

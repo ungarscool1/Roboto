@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static java.util.stream.Collectors.*;
 import static java.util.Map.Entry.*;
@@ -30,10 +32,12 @@ public class PFCbr {
 	private int slots;
 	private boolean inGame;
 	private Thread th;
+	private ResourceBundle language;
 	
 	
-	public PFCbr(User Owner, int slots, DiscordApi api) {
+	public PFCbr(User Owner, int slots, DiscordApi api, Locale locals) {
 		this.api = api;
+		language = ResourceBundle.getBundle("com.github.ungarscool1.Roboto.lang.lang", locals);
 		join(Owner);
 		this.inGame = false;
 		this.slots = slots;
@@ -45,12 +49,12 @@ public class PFCbr {
 			playersToString += "- " + players.get(i).getMentionTag() + "\n";
 		}
 		Color color = Color.RED;
-		String desc = players.get(0).getName() + " vous a invité à jouer à Pierre Feuille Ciseaux: Battle Royal.";
+		String desc = String.format(language.getString("game.pfc.invitation.inviteYou"), players.get(0).getName());
 		if (inGame) {
 			color = Color.GREEN;
-			desc = "La partie en mode Battle Royal a commencé !";
+			desc = String.format(language.getString("game.pfc.invitation.inGame"), players.get(0).getName());
 		}
-		return new EmbedBuilder().setTitle("Pierre Feuille Ciseaux").setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField("Joueurs dans la partie", playersToString).setColor(color);
+		return new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.players"), playersToString).setColor(color);
 	}
 	
 	public void setJoinMessage(Message message) {
@@ -129,9 +133,8 @@ public class PFCbr {
 	 * That make battle between 2 players
 	 */
 	private void createGame() {
-		System.out.println("Creating games...");
+		System.out.println("[INFO] Creating games...");
 		for (int i = 0; i < players.size(); i+=2) {
-			System.out.println("Intencing...");
 			played.put(players.get(i), false);
 			played.put(players.get((i + 1)), false);
 			PFC pfc = new PFC(players.get(i), 1, this, api);

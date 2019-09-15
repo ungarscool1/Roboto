@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -43,14 +45,16 @@ public class Puissance4 {
 			{0,0,0,0,0,0},
 			{0,0,0,0,0,0}
 	};
+	private ResourceBundle language;
 	
 	private BufferedImage p1Img;
 	private BufferedImage p2Img;
 	private BufferedImage gridImg = new BufferedImage(700, 600, BufferedImage.TYPE_INT_ARGB);
 	
-	public Puissance4(User Owner, DiscordApi api) {
+	public Puissance4(User Owner, DiscordApi api, Locale locals) {
 		player = 1 + (int)(Math.random() * 2);
 		this.api = api;
+		language = ResourceBundle.getBundle("com.github.ungarscool1.Roboto.lang.lang", locals);
 		join(Owner);
 		this.inGame = false;
 		try {
@@ -72,12 +76,12 @@ public class Puissance4 {
 			playersToString += "- " + players.get(i).getMentionTag() + "\n";
 		}
 		Color color = Color.RED;
-		String desc = players.get(0).getName() + " vous a invité à jouer à Puissance 4.";
+		String desc = String.format(language.getString("game.p4.invitation.inviteYou"), players.get(0).getName());
 		if (inGame) {
 			color = Color.GREEN;
-			desc = "La partie de " + players.get(0).getName() + " a commencée !";
+			desc = String.format(language.getString("game.p4.invitation.inGame"), players.get(0).getName());
 		}
-		return new EmbedBuilder().setTitle("Puissance 4").setDescription(desc).addField("Slots", players.size() + " / " + 2, true).addField("Joueurs dans la partie", playersToString).setImage(gridImg).setColor(color);
+		return new EmbedBuilder().setTitle(language.getString("game.p4.invitation.name")).setDescription(desc).addField("Slots", players.size() + " / " + 2, true).addField(language.getString("game.p4.invitation.players"), playersToString).setImage(gridImg).setColor(color);
 	}
 	
 	public void setJoinMessage(Message message) {
@@ -110,7 +114,7 @@ public class Puissance4 {
 	}
 	
 	private void finish() {
-		joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle("Puissance 4").setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get())));
+		joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter(String.format(language.getString("game.p4.inGame."), players.get(0).getDisplayName(joinMessage.getServer().get()), players.get(1).getDisplayName(joinMessage.getServer().get()))));
 		joinMessage.delete("^4 party is finished");
 		GameCommand.P4.remove(joinMessage);
 		ReacListener.updateGames();
@@ -122,10 +126,10 @@ public class Puissance4 {
 		coups++;
 		if (coups <= maxCoups) {
 			EmbedBuilder embed = new EmbedBuilder();
-			embed.setTitle("Puissance 4: C'est le tour de " + players.get(player - 1).getDisplayName(joinMessage.getServer().get()));
+			embed.setTitle(String.format(language.getString("game.p4.inGame.name"), players.get(player - 1).getDisplayName(joinMessage.getServer().get())) );
 			embed.setDescription("Coups " + coups + "/" + maxCoups);
 			embed.setImage(gridImg);
-			embed.setFooter("Partie de " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " contre " + players.get(1).getDisplayName(joinMessage.getServer().get()));
+			embed.setFooter(String.format(language.getString("game.p4.inGame.party"), players.get(0).getDisplayName(joinMessage.getServer().get()), players.get(1).getDisplayName(joinMessage.getServer().get())));
 			lastMessage = joinMessage.getChannel().sendMessage(embed).join();
 			lastMessage.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣");
 		} else 
