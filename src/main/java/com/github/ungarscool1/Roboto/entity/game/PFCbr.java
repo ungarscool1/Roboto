@@ -37,7 +37,7 @@ public class PFCbr {
 	
 	public PFCbr(User Owner, int slots, DiscordApi api, Locale locals) {
 		this.api = api;
-		language = ResourceBundle.getBundle("com.github.ungarscool1.Roboto.lang.lang", locals);
+		language = ResourceBundle.getBundle("resources.lang.lang", locals);
 		join(Owner);
 		this.inGame = false;
 		this.slots = slots;
