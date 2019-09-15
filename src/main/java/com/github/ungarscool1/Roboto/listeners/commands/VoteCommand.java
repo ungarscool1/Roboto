@@ -27,7 +27,7 @@ public class VoteCommand implements MessageCreateListener {
 			return;
 		}
 		
-		ResourceBundle language = ResourceBundle.getBundle("resources.lang.lang", Main.locByServ.get(message.getServer().get()));
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 		
 		if (message.getContent().contains("!vote")) {
 			User user = message.getAuthor().asUser().get();

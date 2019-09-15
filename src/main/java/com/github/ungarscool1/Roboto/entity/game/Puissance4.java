@@ -54,7 +54,7 @@ public class Puissance4 {
 	public Puissance4(User Owner, DiscordApi api, Locale locals) {
 		player = 1 + (int)(Math.random() * 2);
 		this.api = api;
-		language = ResourceBundle.getBundle("resources.lang.lang", locals);
+		language = ResourceBundle.getBundle("lang.lang", locals);
 		join(Owner);
 		this.inGame = false;
 		try {

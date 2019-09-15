@@ -38,7 +38,7 @@ public class UtilsCommand implements MessageCreateListener{
 			return;
 		}
 		
-		ResourceBundle language = ResourceBundle.getBundle("resources.lang.lang", Main.locByServ.get(message.getServer().get()));
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 		
 		if (message.getContent().equalsIgnoreCase("!help") || message.getContent().equalsIgnoreCase("!aide")) {
 			EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -59,7 +59,7 @@ public class UtilsCommand implements MessageCreateListener{
 				String l[];
 				l = message.getContent().substring(message.getContent().indexOf(" ")).split("_");
 				Main.locByServ.replace(message.getServer().get(), new Locale(l[0], l[1]));
-				language = ResourceBundle.getBundle("resources.lang.lang", Main.locByServ.get(message.getServer().get()));
+				language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 				embed.setTitle(language.getString("lang.changed.name"))
 					.setDescription(language.getString("lang.changed.desc"));
 			} else {
