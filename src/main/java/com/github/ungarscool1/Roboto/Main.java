@@ -35,6 +35,10 @@ public class Main {
         	locByServ.put(server, new Locale("en", "US"));
         });
         
+        api.addServerJoinListener(event -> {
+        	locByServ.put(event.getServer(), new Locale("en", "US"));
+        });
+        
         api.addMessageCreateListener(new VoteCommand());
         api.addMessageCreateListener(new GameCommand(api));
         api.addMessageCreateListener(new UtilsCommand(api));
