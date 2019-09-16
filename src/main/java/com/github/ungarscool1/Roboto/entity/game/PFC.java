@@ -3,6 +3,8 @@ package com.github.ungarscool1.Roboto.entity.game;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
@@ -34,12 +36,14 @@ public class PFC {
 	private int maxManche;
 	private ListenerManager<ReactionAddListener> listener;
 	private Thread th;
+	private ResourceBundle language;
 	// if in BR mode
 	private PFCbr br;
 	
 	
-	public PFC(User Owner, int maxManche, DiscordApi api) {
+	public PFC(User Owner, int maxManche, DiscordApi api, Locale locals) {
 		this.api = api;
+		this.language = ResourceBundle.getBundle("lang.lang", locals);
 		join(Owner);
 		this.inGame = false;
 		this.slots = 2;
@@ -47,8 +51,8 @@ public class PFC {
 		else this.maxManche = maxManche;
 	}
 	
-	public PFC(User Owner, int maxManche, PFCbr br, DiscordApi api) {
-		this(Owner, maxManche, api);
+	public PFC(User Owner, int maxManche, PFCbr br, DiscordApi api, Locale locals) {
+		this(Owner, maxManche, api, locals);
 		this.br = br;
 	}
 	
@@ -58,12 +62,12 @@ public class PFC {
 			playersToString += "- " + players.get(i).getMentionTag() + "\n";
 		}
 		Color color = Color.RED;
-		String desc = players.get(0).getName() + " vous a invité à jouer à Pierre Feuille Ciseaux.";
+		String desc = String.format(language.getString("game.pfc.invitation.inviteYou"), players.get(0).getName());
 		if (inGame) {
 			color = Color.GREEN;
-			desc = "La partie de " + players.get(0).getName() + " a commencée !";
+			desc = String.format(language.getString("game.pfc.invitation.inGame"), players.get(0).getName());
 		}
-		return new EmbedBuilder().setTitle("Pierre Feuille Ciseaux").setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField("Manches", "Il y a " + maxManche, true).addField("Joueurs dans la partie", playersToString).setColor(color);
+		return new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.round"), String.format(language.getString("game.pfc.invitation.round.desc"), maxManche), true).addField(language.getString("game.pfc.invitation.players"), playersToString).setColor(color);
 	}
 	
 	public void setJoinMessage(Message message) {
@@ -114,10 +118,10 @@ public class PFC {
 	}
 	
 	private void mpPlayers() {
-		EmbedBuilder embed = new EmbedBuilder().setTitle("1... 2... 3... Pierre... Feuille... Ciseaux").setDescription("👊, 🍂 ou ✂").setColor(Color.GREEN).addField("Manches", manche + " / " + maxManche).addField("Scores", "Hôte: " + score.get(players.get(0)) + " Invité: " + score.get(players.get(1))).setFooter("Partie de " + players.get(0).getName());
+		EmbedBuilder embed = new EmbedBuilder().setTitle(language.getString("game.pfc.inGame.name")).setDescription(language.getString("game.pfc.inGame.desc")).setColor(Color.GREEN).addField(language.getString("game.pfc.inGame.round"), manche + " / " + maxManche).addField("Scores", language.getString("game.pfc.inGame.score.host") + score.get(players.get(0)) + language.getString("game.pfc.inGame.score.guest") + score.get(players.get(1))).setFooter(String.format(language.getString("game.pfc.inGame.party"), players.get(0).getName()));
 		if (this.br != null) {
 			embed.setTitle("Duel " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get()));
-			embed.setFooter("Partie en mode Battle Royal");
+			embed.setFooter(language.getString("game.pfc.br.footer"));
 		}
 		for(int i = 0; i < players.size(); i++) {
         	if (played.containsKey(players.get(i))) {
@@ -134,12 +138,12 @@ public class PFC {
 		inGame = false;
 		String winner = "";
 		if (score.get(players.get(0)) > score.get(players.get(1))) {
-			winner = players.get(0).getMentionTag() + " a gagner la partie contre " + players.get(1).getMentionTag();
+			winner = String.format(language.getString("game.pfc.br.won"), players.get(0).getMentionTag(), players.get(1).getMentionTag());
 			if (this.br != null) {
 				this.br.win(players.get(0), players.get(1));
 			}
 		} else if (score.get(players.get(0)) < score.get(players.get(1))) {
-			winner = players.get(1).getMentionTag() + " a gagner la partie contre " + players.get(0).getMentionTag();
+			winner = String.format(language.getString("game.pfc.br.won"), players.get(1).getMentionTag(), players.get(0).getMentionTag());
 			if (this.br != null) {
 				this.br.win(players.get(1), players.get(0));
 			}
@@ -179,7 +183,7 @@ public class PFC {
 		    				 } else if (emoji.asUnicodeEmoji().get().equals("❌")) {
 		    					 for (int i = 0; i < players.size(); i++) {
 		    						 if (!players.get(i).equals(event.getUser())) {
-		    							 players.get(i).sendMessage(event.getUser().getDisplayName(joinMessage.getServer().get()) + " abandonne la partie");
+		    							 players.get(i).sendMessage(String.format(language.getString("game.pfc.inGame.abandonment"), event.getUser().getDisplayName(joinMessage.getServer().get())));
 		    							 if (br != null) {
 		    								 br.win(players.get(i), event.getUser());
 		    							 }
