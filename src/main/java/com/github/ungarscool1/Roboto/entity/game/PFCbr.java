@@ -137,7 +137,7 @@ public class PFCbr {
 		for (int i = 0; i < players.size(); i+=2) {
 			played.put(players.get(i), false);
 			played.put(players.get((i + 1)), false);
-			PFC pfc = new PFC(players.get(i), 1, this, api);
+			PFC pfc = new PFC(players.get(i), 1, this, api, language.getLocale());
 			pfc.join(players.get((i+1)));
 			pfc.setJoinMessage(joinMessage);
 			pfc.gameHandler();

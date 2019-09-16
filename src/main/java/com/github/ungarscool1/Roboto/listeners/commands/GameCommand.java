@@ -47,7 +47,7 @@ public class GameCommand implements MessageCreateListener {
 					} else {
 						manche = Integer.parseInt(args[1]);
 					}
-					PFC pfc = new PFC(message.getAuthor().asUser().get(), manche, api);
+					PFC pfc = new PFC(message.getAuthor().asUser().get(), manche, api, language.getLocale());
 					message = event.getChannel().sendMessage(pfc.joinMessage()).join();
 					message.addReactions("✅","❌");
 					pfc.setJoinMessage(message);
