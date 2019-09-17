@@ -38,10 +38,10 @@ public class Vote {
 			setDescription(option);
 			return "multi";
 		} else if (where-1 == 2) {
-			if (option.equalsIgnoreCase("oui")) {
+			if (option.equalsIgnoreCase("oui") || option.equalsIgnoreCase("ui") || option.equalsIgnoreCase("yes") || option.equalsIgnoreCase("yep") || option.equalsIgnoreCase("yop")) {
 				multi = true;
 				return "nbrOption";
-			} else if (option.equalsIgnoreCase("non")){
+			} else if (option.equalsIgnoreCase("non") || option.equalsIgnoreCase("nan") || option.equalsIgnoreCase("nah") || option.equalsIgnoreCase("no") || option.equalsIgnoreCase("nope")){
 				return "fini";
 			} else {
 				where--;

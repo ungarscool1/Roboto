@@ -155,15 +155,15 @@ public class PFCbr {
 		score.replace(winner, (score.get(winner) + 1));
 		played.replace(winner, true);
 		played.remove(looser);
-		winner.sendMessage("Vous avez gagné le duel contre " + looser.getDisplayName(joinMessage.getServer().get()));
-		looser.sendMessage("Vous avez perdu le duel contre " + winner.getDisplayName(joinMessage.getServer().get()));
+		winner.sendMessage(String.format(language.getString("game.pfc.br.winduel"), looser.getDisplayName(joinMessage.getServer().get())));
+		looser.sendMessage(String.format(language.getString("game.pfc.br.looseduel"), winner.getDisplayName(joinMessage.getServer().get())));
 		if (!playersDoPlayed()) {
 			EmbedBuilder embed = new EmbedBuilder();
-			embed.setTitle("Pierre Feuille Ciseaux");
+			embed.setTitle(language.getString("game.pfc.invitation.name"));
 			embed.setColor(new Color(107, 135, 232));
-			embed.setDescription("En attente des joueurs... Tous les joueurs doivent avoir terminé leurs duels pour lancer d'autre duel");
-			embed.addField("Joueurs restant", players.size() + " / " + slots);
-			embed.setFooter("Partie en mode Battle Royal");
+			embed.setDescription(language.getString("game.pfc.br.waiting"));
+			embed.addField(language.getString("game.pfc.br.playersleft"), players.size() + " / " + slots);
+			embed.setFooter(language.getString("game.pfc.br.footer"));
 			winner.sendMessage(embed);
 		} else {
 			checkPlayers();

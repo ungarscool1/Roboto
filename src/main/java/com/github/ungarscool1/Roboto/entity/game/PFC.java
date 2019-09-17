@@ -199,7 +199,7 @@ public class PFC {
 		    					 if ((played.get(players.get(0)) == 1 && played.get(players.get(1)) == 1) || (played.get(players.get(0)) == 2 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 3)) {
 		    						 winner = "Il n'y a pas de gagnant";
 		    					 } else if ((played.get(players.get(0)) == 1 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 2 && played.get(players.get(1)) == 3) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 1)) {
-		    						 winner = "Le gagnant de cette manche est " + players.get(1).getDisplayName(joinMessage.getServer().get());
+		    						 winner = String.format(language.getString("game.pfc.inGame.winner"), players.get(1).getDisplayName(joinMessage.getServer().get()));
 		    						 if (score.containsKey(players.get(1))) {
 										int sc = score.get(players.get(1)) + 1;
 										score.replace(players.get(1), sc);
@@ -207,7 +207,7 @@ public class PFC {
 										score.put(players.get(1), 1);
 									}
 		    					 } else if ((played.get(players.get(0)) == 2 && played.get(players.get(1)) == 1) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 1 && played.get(players.get(1)) == 3)) {
-		    						 winner = "Le gagnant de cette manche est " + players.get(0).getDisplayName(joinMessage.getServer().get());
+		    						 winner = String.format(language.getString("game.pfc.inGame.winner"), players.get(0).getDisplayName(joinMessage.getServer().get()));
 		    						 if (score.containsKey(players.get(0))) {
 											int sc = score.get(players.get(0)) + 1;
 											score.replace(players.get(0), sc);
@@ -219,8 +219,8 @@ public class PFC {
 		    					 }
 		    					 latest = joinMessage.getChannel().sendMessage(new EmbedBuilder().
 	    								 setTitle(players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get())).setColor(Color.green).
-	    								 addInlineField("Action de " + players.get(0).getDisplayName(joinMessage.getServer().get()), getEmojiFromInt(played.get(players.get(0))))
-	    								 .addInlineField("Action de " + players.get(1).getDisplayName(joinMessage.getServer().get()), getEmojiFromInt(played.get(players.get(1))))
+	    								 addInlineField(String.format(language.getString("game.pfc.inGame.play"), players.get(0).getDisplayName(joinMessage.getServer().get())), getEmojiFromInt(played.get(players.get(0))))
+	    								 .addInlineField(String.format(language.getString("game.pfc.inGame.play"), players.get(1).getDisplayName(joinMessage.getServer().get())), getEmojiFromInt(played.get(players.get(1))))
 	    								 .addField(winner, score.get(players.get(0)) + " - " + score.get(players.get(1)))
 	    								 ).join();
 		    					 latest.delete("Anti spam");

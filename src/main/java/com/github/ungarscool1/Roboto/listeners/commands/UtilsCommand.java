@@ -58,7 +58,6 @@ public class UtilsCommand implements MessageCreateListener{
 			if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR")) {
 				String l[] = {"", ""};
 				l = message.getContent().substring(message.getContent().indexOf(" ") + 1).split("_");
-				System.out.println("Langue " + l[0] + " Country: " + l[1]);
 				Main.locByServ.replace(message.getServer().get(), new Locale(l[0], l[1]));
 				language = ResourceBundle.getBundle("lang.lang", new Locale(l[0], l[1]));
 				embed.setTitle(language.getString("lang.changed.name"))
@@ -76,7 +75,7 @@ public class UtilsCommand implements MessageCreateListener{
 				embedBuilder.setTitle(language.getString("version.name"))
 					.addField("Version", "3.0.0 DEV")
 					.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-					.addField("Build", "150919-18.3")
+					.addField("Build", "170919-12.1")
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
 					.addField(language.getString("version.listen"), api.getServers().size() + language.getString("version.servers"))
@@ -205,10 +204,21 @@ public class UtilsCommand implements MessageCreateListener{
 			Date creationDate = Date.from(server.getCreationTimestamp());
 			SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 			
-			embedBuilder.setTitle("Information sur le serveur " + server.getName())
-				.addField("Identifiant unique", server.getIdAsString(), true)
-				.addField("Date de création", formatter.format(creationDate), true)
-				.addField("Propriétaire", server.getOwner().getDiscriminatedName())
+			// Get member and bot count
+			int members[] = {0, 0};
+			server.getMembers().forEach(member -> {
+				if (member.isBot()) 
+					members[0]++;
+				else
+					members[1]++;
+			});
+			
+			embedBuilder.setTitle(String.format(language.getString("si.title"), server.getName()))
+				.addField(language.getString("si.id"), server.getIdAsString(), true)
+				.addField(language.getString("si.creation.date"), formatter.format(creationDate), true)
+				.addField(language.getString("si.owner"), server.getOwner().getDiscriminatedName())
+				.addField(language.getString("si.memberscount"), members[1] + language.getString("si.members"))
+				.addField(language.getString("si.botscount"), members[0] + " bots")
 				.setColor(Color.GREEN);
 			message.getChannel().sendMessage(embedBuilder);
 		}
