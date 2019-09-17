@@ -33,10 +33,16 @@ public class Main {
         
         api.getServers().forEach(server -> {
         	locByServ.put(server, new Locale("en", "US"));
+        	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         });
         
         api.addServerJoinListener(event -> {
         	locByServ.put(event.getServer(), new Locale("en", "US"));
+        	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+        });
+        
+        api.addServerLeaveListener(event -> {
+        	locByServ.remove(event.getServer());
         });
         
         api.addMessageCreateListener(new VoteCommand());
