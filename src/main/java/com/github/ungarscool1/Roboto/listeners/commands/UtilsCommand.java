@@ -217,7 +217,7 @@ public class UtilsCommand implements MessageCreateListener{
 				.addField(language.getString("si.id"), server.getIdAsString(), true)
 				.addField(language.getString("si.creation.date"), formatter.format(creationDate), true)
 				.addField(language.getString("si.owner"), server.getOwner().getDiscriminatedName())
-				.addField(language.getString("si.memberscount"), members[1] + language.getString("si.members"))
+				.addField(language.getString("si.memberscount"), members[1] + " " + language.getString("si.members"))
 				.addField(language.getString("si.botscount"), members[0] + " bots")
 				.setColor(Color.GREEN);
 			message.getChannel().sendMessage(embedBuilder);
