@@ -49,12 +49,12 @@ public class PFCbr {
 			playersToString += "- " + players.get(i).getMentionTag() + "\n";
 		}
 		Color color = Color.RED;
-		String desc = String.format(language.getString("game.pfc.invitation.inviteYou"), players.get(0).getName());
+		String desc = String.format(language.getString("game.pfc.br.inviteYou"), players.get(0).getName());
 		if (inGame) {
 			color = Color.GREEN;
 			desc = String.format(language.getString("game.pfc.invitation.inGame"), players.get(0).getName());
 		}
-		return new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.players"), playersToString).setColor(color);
+		return new EmbedBuilder().setTitle(language.getString("game.pfc.br.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.players"), playersToString).setColor(color);
 	}
 	
 	public void setJoinMessage(Message message) {
