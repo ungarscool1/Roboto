@@ -115,11 +115,11 @@ public class PFCbr {
 		}
 		
 		joinMessage.getChannel().sendMessage(new EmbedBuilder()
-				 .setTitle("La partie Pierre Feuille Ciseaux BR terminée")
+				 .setTitle(language.getString("game.pfc.br.name"))
 				 .setColor(Color.green)
-				 .setDescription("Le gagnant est " + players.get(0).getDisplayName(joinMessage.getServer().get()))
+				 .setDescription(String.format(language.getString("game.pfc.br.end.desc"), players.get(0).getDisplayName(joinMessage.getServer().get())))
 				 .setThumbnail(players.get(0).getAvatar())
-				 .addField("Classement", leaderboard)
+				 .addField(language.getString("game.pfc.br.leaderboard"), leaderboard)
 				 ).join();
 		
 		

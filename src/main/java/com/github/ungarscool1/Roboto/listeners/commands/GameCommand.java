@@ -55,7 +55,6 @@ public class GameCommand implements MessageCreateListener {
 					ReacListener.updateGames();
 				} else if (args[0].equalsIgnoreCase("pfcBR") || args[0].equalsIgnoreCase("rpsBR")) {
 					int slots = 0;
-					System.out.println("Length args = " + args.length);
 					if (args.length == 1) {
 						slots = 100;
 					} else {

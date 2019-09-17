@@ -118,7 +118,7 @@ public class PFC {
 	}
 	
 	private void mpPlayers() {
-		EmbedBuilder embed = new EmbedBuilder().setTitle(language.getString("game.pfc.inGame.name")).setDescription(language.getString("game.pfc.inGame.desc")).setColor(Color.GREEN).addField(language.getString("game.pfc.inGame.round"), manche + " / " + maxManche).addField("Scores", language.getString("game.pfc.inGame.score.host") + score.get(players.get(0)) + language.getString("game.pfc.inGame.score.guest") + score.get(players.get(1))).setFooter(String.format(language.getString("game.pfc.inGame.party"), players.get(0).getName()));
+		EmbedBuilder embed = new EmbedBuilder().setTitle(language.getString("game.pfc.inGame.name")).setDescription(language.getString("game.pfc.inGame.desc")).setColor(Color.GREEN).addField(language.getString("game.pfc.inGame.round"), manche + " / " + maxManche).addField("Scores", language.getString("game.pfc.inGame.score.host") + ": " + score.get(players.get(0)) + " " + language.getString("game.pfc.inGame.score.guest") + ": " + score.get(players.get(1))).setFooter(String.format(language.getString("game.pfc.inGame.party"), players.get(0).getName()));
 		if (this.br != null) {
 			embed.setTitle("Duel " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get()));
 			embed.setFooter(language.getString("game.pfc.br.footer"));

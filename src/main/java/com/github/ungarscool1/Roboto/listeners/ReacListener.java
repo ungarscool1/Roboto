@@ -1,14 +1,14 @@
 package com.github.ungarscool1.Roboto.listeners;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 
+import com.github.ungarscool1.Roboto.Main;
 import com.github.ungarscool1.Roboto.entity.game.PFC;
 import com.github.ungarscool1.Roboto.entity.game.PFCbr;
 import com.github.ungarscool1.Roboto.entity.game.Puissance4;
@@ -21,13 +21,15 @@ public class ReacListener implements ReactionAddListener{
 	private static HashMap<Message, Puissance4> P4 = new HashMap<Message, Puissance4>();
 	
 	public void onReactionAdd(ReactionAddEvent event) {
+		
 		if (event.getUser().isYourself()) return;
 		Message message = event.getMessage().get();
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 		if (PFCs.containsKey(message)) {
 			if (event.getEmoji().asUnicodeEmoji().get().equals("✅"))  {
 				String res = PFCs.get(message).join(event.getUser());
 				if (res.equals("Joined") || res.equals("Starting")) {
-					message.getChannel().sendMessage(event.getUser().getDisplayName(message.getServer().get()) + " a rejoint la partie");
+					message.getChannel().sendMessage(String.format(language.getString("game.join"), event.getUser().getMentionTag()));
 					PFC pfc = PFCs.get(message);
 					PFCs.remove(message);
 					TextChannel channel = message.getChannel();
@@ -42,9 +44,9 @@ public class ReacListener implements ReactionAddListener{
 						pfc.gameHandler();
 					}
 				} else if (res.equals("Already in party")) {
-					message.getChannel().sendMessage(event.getUser().getMentionTag() + " vous êtes déjà dans la partie");
+					message.getChannel().sendMessage(String.format(language.getString("game.alreadyInParty"), event.getUser().getMentionTag()));
 				} else {
-					message.getChannel().sendMessage(event.getUser().getMentionTag() + " la partie a déjà commencée");
+					message.getChannel().sendMessage(language.getString("game.inGame"));
 				}
 			} else if (event.getEmoji().asUnicodeEmoji().get().equals("❌")) {
 				String res = PFCs.get(message).leave(event.getUser());
@@ -58,12 +60,10 @@ public class ReacListener implements ReactionAddListener{
 		}
 		
 		if (PFCbrs.containsKey(message)) {
-			System.out.println("JE suis l22");
 			if (event.getEmoji().asUnicodeEmoji().get().equals("✅")) {
 				String res = PFCbrs.get(message).join(event.getUser());
 				if (res.equals("Joined") || res.equals("Starting")) {
-					System.out.println("JE suis l25, qquun a rejoin");
-					message.getChannel().sendMessage(event.getUser().getDisplayName(message.getServer().get()) + " a rejoint la partie");
+					message.getChannel().sendMessage(String.format(language.getString("game.join"), event.getUser().getMentionTag()));
 					PFCbr pfc = PFCbrs.get(message);
 					PFCs.remove(message);
 					TextChannel channel = message.getChannel();
@@ -75,13 +75,12 @@ public class ReacListener implements ReactionAddListener{
 					if (res.equals("Joined")) {
 						message.addReactions("✅", "❌");
 					} else {
-						System.out.println("La partie commence");
 						pfc.gameHandler();
 					}
 				} else if (res.equals("Already in party")) {
-					message.getChannel().sendMessage(event.getUser().getMentionTag() + " vous êtes déjà dans la partie");
+					message.getChannel().sendMessage(String.format(language.getString("game.alreadyInParty"), event.getUser().getMentionTag()));
 				} else {
-					message.getChannel().sendMessage(event.getUser().getMentionTag() + " la partie a déjà commencer");
+					message.getChannel().sendMessage(language.getString("game.inGame"));
 				}
 			} else if (event.getEmoji().asUnicodeEmoji().get().equals("❌")) {
 				String res = PFCbrs.get(message).leave(event.getUser());
@@ -105,12 +104,10 @@ public class ReacListener implements ReactionAddListener{
 		
 		
 		if (P4.containsKey(message)) {
-			System.out.println("JE suis l113");
 			if (event.getEmoji().asUnicodeEmoji().get().equals("✅")) {
 				String res = P4.get(message).join(event.getUser());
 				if (res.equals("Joined") || res.equals("Starting")) {
-					System.out.println("JE suis l117, qquun a rejoin");
-					message.getChannel().sendMessage(event.getUser().getDisplayName(message.getServer().get()) + " a rejoint la partie");
+					message.getChannel().sendMessage(String.format(language.getString("game.join"), event.getUser().getMentionTag()));
 					Puissance4 p4 = P4.get(message);
 					P4.remove(message);
 					TextChannel channel = message.getChannel();
@@ -125,9 +122,9 @@ public class ReacListener implements ReactionAddListener{
 						p4.gameHandler();
 					}
 				} else if (res.equals("Already in party")) {
-					message.getChannel().sendMessage(event.getUser().getMentionTag() + " vous êtes déjà dans la partie");
+					message.getChannel().sendMessage(String.format(language.getString("game.alreadyInParty"), event.getUser().getMentionTag()));
 				} else {
-					message.getChannel().sendMessage(event.getUser().getMentionTag() + " la partie a déjà commencer");
+					message.getChannel().sendMessage(language.getString("game.inGame"));
 				}
 			} else if (event.getEmoji().asUnicodeEmoji().get().equals("❌")) {
 				String res = P4.get(message).leave(event.getUser());

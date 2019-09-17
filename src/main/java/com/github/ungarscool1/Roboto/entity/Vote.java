@@ -53,12 +53,10 @@ public class Vote {
 				where--;
 				return "nbrOption";
 			}
-			System.out.println("Il y a " + Integer.parseInt(option) + " options");
 			options = new String[nombreOption];
 			return "option";
 		} else {
 			int curopt = where - 5; 
-			System.out.println("Option " + (curopt + 1) + "/" + nombreOption);
 			options[curopt] = option;
 			if ((curopt + 1) < nombreOption) {
 				return "option" + (curopt + 1) + " / " + nombreOption;
