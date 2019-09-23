@@ -35,7 +35,7 @@ public class ServerLanguage {
     
     public String getServerLanguage(Server server) {
     	JsonObject object = gson.fromJson(reader,JsonObject.class);
-    	if (object.get(server.getIdAsString()).isJsonNull()) {
+    	if (object.get(server.getIdAsString()).isJsonNull() || object.get(server.getIdAsString()).equals(null)) {
     		setServerLanguage(server, "en_US");
     		return "en_US";
     	} else
