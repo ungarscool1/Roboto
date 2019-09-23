@@ -28,7 +28,7 @@ public class Main {
         	.loginAllShards()
         	.forEach(shardFuture -> shardFuture.thenAcceptAsync(Main::onShardLogin).exceptionally(ExceptionLogger.get()));
         dbl = new DiscordBotListAPI.Builder()
-        	.token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM3MzE5OTE4MDE2MTYxMzgyNCIsImJvdCI6dHJ1ZSwiaWF0IjoxNTY5MjU1OTA4fQ.L5bzpBE3G16a5f6mD0cDmmEznexB0u1qpONsZsT7knk")
+        	.token(args[1])
         	.botId("373199180161613824")
         	.build();
     }
@@ -41,22 +41,24 @@ public class Main {
         api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         
         api.getServers().forEach(server -> {
-        	/*ServerLanguage serverLanguage = new ServerLanguage();
+        	ServerLanguage serverLanguage = new ServerLanguage();
         	String l[] = {"", ""};
 			l = serverLanguage.getServerLanguage(server).split("_");
-        	locByServ.put(server, new Locale(l[0], l[1]));*/
-        	locByServ.put(server, new Locale("en", "US"));
+        	locByServ.put(server, new Locale(l[0], l[1]));
+        	//locByServ.put(server, new Locale("en", "US"));
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         });
         
         api.addServerJoinListener(event -> {
         	locByServ.put(event.getServer(), new Locale("en", "US"));
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+        	dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
         });
         
         api.addServerLeaveListener(event -> {
         	locByServ.remove(event.getServer());
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+        	dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
         });
         
         api.addMessageCreateListener(new VoteCommand());
