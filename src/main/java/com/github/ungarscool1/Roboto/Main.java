@@ -3,6 +3,7 @@ package com.github.ungarscool1.Roboto;
 import java.util.HashMap;
 import java.util.Locale;
 
+import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
@@ -17,6 +18,7 @@ import com.github.ungarscool1.Roboto.listeners.commands.VoteCommand;
 public class Main {
 	
 	public static HashMap<Server, Locale> locByServ = new HashMap<Server, Locale>();
+	private static DiscordBotListAPI dbl;
 	
     public static void main(String[] args) {
         new DiscordApiBuilder()
@@ -25,14 +27,24 @@ public class Main {
         	.join()
         	.loginAllShards()
         	.forEach(shardFuture -> shardFuture.thenAcceptAsync(Main::onShardLogin).exceptionally(ExceptionLogger.get()));
+        dbl = new DiscordBotListAPI.Builder()
+        	.token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM3MzE5OTE4MDE2MTYxMzgyNCIsImJvdCI6dHJ1ZSwiaWF0IjoxNTY5MjU1OTA4fQ.L5bzpBE3G16a5f6mD0cDmmEznexB0u1qpONsZsT7knk")
+        	.botId("373199180161613824")
+        	.build();
     }
     
     private static void onShardLogin(DiscordApi api) {
         System.out.println("Shard " + api.getCurrentShard() + " logged in!");
+        
+        dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
+        
         api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         
         api.getServers().forEach(server -> {
-        	locByServ.put(server, new Locale("en", "US"));
+        	ServerLanguage serverLanguage = new ServerLanguage();
+        	String l[] = {"", ""};
+			l = serverLanguage.getServerLanguage(server).split("_");
+        	locByServ.put(server, new Locale(l[0], l[1]));
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         });
         
@@ -43,6 +55,7 @@ public class Main {
         
         api.addServerLeaveListener(event -> {
         	locByServ.remove(event.getServer());
+        	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         });
         
         api.addMessageCreateListener(new VoteCommand());

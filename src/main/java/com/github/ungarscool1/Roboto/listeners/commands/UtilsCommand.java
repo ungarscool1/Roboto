@@ -20,6 +20,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import com.github.ungarscool1.Roboto.Main;
+import com.github.ungarscool1.Roboto.ServerLanguage;
 
 
 public class UtilsCommand implements MessageCreateListener{
@@ -58,6 +59,7 @@ public class UtilsCommand implements MessageCreateListener{
 			if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR")) {
 				String l[] = {"", ""};
 				l = message.getContent().substring(message.getContent().indexOf(" ") + 1).split("_");
+				new ServerLanguage().setServerLanguage(message.getServer().get(), message.getContent());
 				Main.locByServ.replace(message.getServer().get(), new Locale(l[0], l[1]));
 				language = ResourceBundle.getBundle("lang.lang", new Locale(l[0], l[1]));
 				embed.setTitle(language.getString("lang.changed.name"))
