@@ -114,7 +114,7 @@ public class Puissance4 {
 	}
 	
 	private void finish() {
-		joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(players.get(player - 1).getDisplayName(joinMessage.getServer().get()) + " a gagné la partie").setImage(gridImg).setFooter(String.format(language.getString("game.p4.inGame."), players.get(0).getDisplayName(joinMessage.getServer().get()), players.get(1).getDisplayName(joinMessage.getServer().get()))));
+		joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(String.format(language.getString("game.p4.inGame.winner"), players.get(player - 1).getDisplayName(joinMessage.getServer().get()))).setImage(gridImg).setFooter(String.format(language.getString("game.p4.inGame.party"), players.get(0).getDisplayName(joinMessage.getServer().get()), players.get(1).getDisplayName(joinMessage.getServer().get()))));
 		joinMessage.delete("^4 party is finished");
 		GameCommand.P4.remove(joinMessage);
 		ReacListener.updateGames();
@@ -195,9 +195,8 @@ public class Puissance4 {
 		    	 listener = api.addReactionAddListener(event -> {
 		    		 if (event.getUser().isYourself()) return;
 		    		 Emoji emoji = event.getEmoji();
-		    		 Message message = event.getMessage().get();
-		    		 if (event.getUser().equals(players.get(player - 1))) {
-		    			 if (emoji.asUnicodeEmoji().isPresent()) {
+		    		 if (event.getUser().equals(players.get(player - 1)) && event.getMessage().isPresent()) {
+		    			 if (emoji.asUnicodeEmoji().isPresent() && event.getMessage().get().equals(lastMessage)) {
 		    				 String finalEmoji = emoji.asUnicodeEmoji().get();
 		    				 if (finalEmoji.equals("1⃣")) {
 		    					 if (grid[5][0] == 0) {
