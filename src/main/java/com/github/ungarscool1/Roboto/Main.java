@@ -41,11 +41,11 @@ public class Main {
         api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         
         api.getServers().forEach(server -> {
-        	ServerLanguage serverLanguage = new ServerLanguage();
+        	/*ServerLanguage serverLanguage = new ServerLanguage();
         	String l[] = {"", ""};
 			l = serverLanguage.getServerLanguage(server).split("_");
-        	locByServ.put(server, new Locale(l[0], l[1]));
-        	//locByServ.put(server, new Locale("en", "US"));
+        	locByServ.put(server, new Locale(l[0], l[1]));*/
+        	locByServ.put(server, new Locale("en", "US"));
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         });
         
