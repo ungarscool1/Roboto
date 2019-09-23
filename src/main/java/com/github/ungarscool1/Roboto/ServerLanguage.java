@@ -35,11 +35,15 @@ public class ServerLanguage {
     
     public String getServerLanguage(Server server) {
     	JsonObject object = gson.fromJson(reader,JsonObject.class);
-    	if (object.get(server.getIdAsString()).isJsonNull() || object.get(server.getIdAsString()) == null) {
+    	String lang;
+    	try {
+    		lang = object.get(server.getIdAsString()).getAsString();
+    	} catch (NullPointerException e) {
     		setServerLanguage(server, "en_US");
+    		e.printStackTrace();
     		return "en_US";
-    	} else
-    		return object.get(server.getIdAsString()).getAsString();
+    	}
+    	return lang;
     }
 	
 }
