@@ -29,12 +29,15 @@ public class ServerLanguage {
 
 	public void setServerLanguage(Server server, String lang) {
 		JsonObject object = gson.fromJson(reader,JsonObject.class);
-		try {
+		if (!object.get(server.getIdAsString()).isJsonNull()) {
 			object.remove(server.getIdAsString());
-		} catch (Exception e) {
-			System.err.println("Le serveur " + server.getName() + " n'est pas répertorié... Ajout");
 		}
-        object.addProperty(server.getIdAsString(), lang);
+		object.addProperty(server.getIdAsString(), lang);
+		try (Writer writer = new FileWriter("serversLanguage.json")) {
+			gson.toJson(object, writer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
     
     public String getServerLanguage(Server server) {

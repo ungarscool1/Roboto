@@ -41,11 +41,16 @@ public class Main {
         api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         
         api.getServers().forEach(server -> {
-        	/*ServerLanguage serverLanguage = new ServerLanguage();
-        	String l[] = {"", ""};
-			l = serverLanguage.getServerLanguage(server).split("_");
-        	locByServ.put(server, new Locale(l[0], l[1]));*/
-        	locByServ.put(server, new Locale("en", "US"));
+			try {
+				ServerLanguage serverLanguage = new ServerLanguage();
+        		String l[] = {"", ""};
+				l = serverLanguage.getServerLanguage(server).split("_");
+        		locByServ.put(server, new Locale(l[0], l[1]));
+			} catch (Exception e) {
+				// Set by default english
+				locByServ.put(server, new Locale("en", "US"));
+			}
+        	
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         });
         
