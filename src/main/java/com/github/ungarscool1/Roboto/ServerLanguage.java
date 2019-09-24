@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Writer;
+import java.lang.Exception;
 
 import org.javacord.api.entity.server.Server;
 
