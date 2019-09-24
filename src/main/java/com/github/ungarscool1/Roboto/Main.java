@@ -48,7 +48,7 @@ public class Main {
         		locByServ.put(server, new Locale(l[0], l[1]));
 			} catch (Exception e) {
 				// Set by default english if not found
-				System.err.println("Le serveur " + server.getName() + " ( " + server.getIdAsString() + " )" + " n'a pas été trouvé")
+				System.err.println("Le serveur " + server.getName() + " ( " + server.getIdAsString() + " )" + " n'a pas été trouvé");
 				locByServ.put(server, new Locale("en", "US"));
 			}
         	
