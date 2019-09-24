@@ -59,7 +59,7 @@ public class UtilsCommand implements MessageCreateListener{
 			if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR")) {
 				String l[] = {"", ""};
 				l = message.getContent().substring(message.getContent().indexOf(" ") + 1).split("_");
-				new ServerLanguage().setServerLanguage(message.getServer().get(), message.getContent());
+				new ServerLanguage().setServerLanguage(message.getServer().get(), l[0] + "_" + l[1]);
 				Main.locByServ.replace(message.getServer().get(), new Locale(l[0], l[1]));
 				language = ResourceBundle.getBundle("lang.lang", new Locale(l[0], l[1]));
 				embed.setTitle(language.getString("lang.changed.name"))
