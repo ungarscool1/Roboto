@@ -54,6 +54,26 @@ public class ServerLanguage {
     		return "en_US";
     	}
     	return lang;
-    }
+	}
+	
+	public void addServer(Server server) {
+		JsonObject object = gson.fromJson(reader,JsonObject.class);
+		object.addProperty(server.getIdAsString(), "en_US");
+		try (Writer writer = new FileWriter("serversLanguage.json")) {
+			gson.toJson(object, writer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void removeServer(Server server) {
+		JsonObject object = gson.fromJson(reader,JsonObject.class);
+		object.remove(server.getIdAsString());
+		try (Writer writer = new FileWriter("serversLanguage.json")) {
+			gson.toJson(object, writer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

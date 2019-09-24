@@ -47,7 +47,8 @@ public class Main {
 				l = serverLanguage.getServerLanguage(server).split("_");
         		locByServ.put(server, new Locale(l[0], l[1]));
 			} catch (Exception e) {
-				// Set by default english
+				// Set by default english if not found
+				System.err.println("Le serveur " + server.getName() + " ( " + server.getIdAsString() + " )" + " n'a pas été trouvé")
 				locByServ.put(server, new Locale("en", "US"));
 			}
         	
@@ -55,13 +56,17 @@ public class Main {
         });
         
         api.addServerJoinListener(event -> {
-        	locByServ.put(event.getServer(), new Locale("en", "US"));
+			ServerLanguage serverLanguage = new ServerLanguage();
+			locByServ.put(event.getServer(), new Locale("en", "US"));
+			serverLanguage.addServer(event.getServer());
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         	dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
         });
         
         api.addServerLeaveListener(event -> {
-        	locByServ.remove(event.getServer());
+			ServerLanguage serverLanguage = new ServerLanguage();
+			locByServ.remove(event.getServer());
+			serverLanguage.removeServer(event.getServer());
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         	dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
         });
