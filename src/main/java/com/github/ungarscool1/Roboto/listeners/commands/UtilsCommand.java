@@ -4,9 +4,7 @@ import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.javacord.api.DiscordApi;
@@ -73,7 +71,7 @@ public class UtilsCommand implements MessageCreateListener{
 			if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR") || message.getContent().contains("es_ES")) {
 				String lang = message.getContent().substring(message.getContent().indexOf(" ") + 1);
 				lang = lang.substring(0, message.getContent().indexOf(" "));
-				String l[] = {"", ""};
+				String[] l;
 				l = lang.split("_");
 				new ServerLanguage().setServerLanguage(message.getServer().get(), l[0] + "_" + l[1]);
 				Main.locByServ.replace(message.getServer().get(), new Locale(l[0], l[1]));
@@ -93,7 +91,7 @@ public class UtilsCommand implements MessageCreateListener{
 				embedBuilder.setTitle(language.getString("version.name"))
 					.addField("Version", "3.0.0 DEV")
 					.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-					.addField("Build", "250919-17.1")
+					.addField("Build", "250919-18.1")
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
 					.addField(language.getString("version.listen"), api.getServers().size() + language.getString("version.servers"))
@@ -223,7 +221,7 @@ public class UtilsCommand implements MessageCreateListener{
 			SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 			
 			// Get member and bot count
-			int members[] = {0, 0};
+			int[] members = {0, 0};
 			server.getMembers().forEach(member -> {
 				if (member.isBot()) 
 					members[0]++;

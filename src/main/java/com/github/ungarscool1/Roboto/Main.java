@@ -17,7 +17,7 @@ import com.github.ungarscool1.Roboto.listeners.commands.VoteCommand;
 
 public class Main {
 	
-	public static HashMap<Server, Locale> locByServ = new HashMap<Server, Locale>();
+	public static HashMap<Server, Locale> locByServ = new HashMap<>();
 	private static DiscordBotListAPI dbl;
 	
     public static void main(String[] args) {
@@ -43,7 +43,7 @@ public class Main {
         api.getServers().forEach(server -> {
 			try {
 				ServerLanguage serverLanguage = new ServerLanguage();
-        		String l[] = {"", ""};
+        		String[] l;
 				l = serverLanguage.getServerLanguage(server).split("_");
         		locByServ.put(server, new Locale(l[0], l[1]));
 			} catch (Exception e) {

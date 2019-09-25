@@ -16,8 +16,8 @@ import com.github.ungarscool1.Roboto.entity.Vote;
 public class VoteCommand implements MessageCreateListener {
 
 	// Vote sytem
-	private HashMap<User, Vote> votes = new HashMap<User, Vote>();
-	private HashMap<User, Message> voteMsg = new HashMap<User, Message>();
+	private HashMap<User, Vote> votes = new HashMap<>();
+	private HashMap<User, Message> voteMsg = new HashMap<>();
 	
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();

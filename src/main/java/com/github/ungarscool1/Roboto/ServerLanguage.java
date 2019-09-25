@@ -16,7 +16,6 @@ import com.google.gson.JsonObject;
 public class ServerLanguage {
 	
 	private BufferedReader reader = null;
-	private boolean init = false;
 	private Gson gson = new Gson();
 	
 	public ServerLanguage() {
@@ -42,7 +41,7 @@ public class ServerLanguage {
 		}
     }
     
-    public String getServerLanguage(Server server) {
+    String getServerLanguage(Server server) {
     	JsonObject object = gson.fromJson(reader,JsonObject.class);
     	String lang;
     	try {
@@ -55,7 +54,7 @@ public class ServerLanguage {
     	return lang;
 	}
 	
-	public void addServer(Server server) {
+	void addServer(Server server) {
 		JsonObject object = gson.fromJson(reader,JsonObject.class);
 		object.addProperty(server.getIdAsString(), "en_US");
 		try (Writer writer = new FileWriter("serversLanguage.json")) {
@@ -65,7 +64,7 @@ public class ServerLanguage {
 		}
 	}
 
-	public void removeServer(Server server) {
+	void removeServer(Server server) {
 		JsonObject object = gson.fromJson(reader,JsonObject.class);
 		object.remove(server.getIdAsString());
 		try (Writer writer = new FileWriter("serversLanguage.json")) {

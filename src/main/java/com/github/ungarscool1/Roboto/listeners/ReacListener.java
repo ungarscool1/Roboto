@@ -18,12 +18,12 @@ public class ReacListener implements ReactionAddListener{
 
 	private static HashMap<Message, PFC> PFCs = GameCommand.PFCs;
 	private static HashMap<Message, PFCbr> PFCbrs = GameCommand.PFCbrs;
-	private static HashMap<Message, Puissance4> P4 = new HashMap<Message, Puissance4>();
+	private static HashMap<Message, Puissance4> P4 = new HashMap<>();
 	
 	public void onReactionAdd(ReactionAddEvent event) {
 		
 		if (event.getUser().isYourself()) return;
-		Message message = null;
+		Message message;
 		if (event.getMessage().isPresent() && event.getMessageAuthor().get().equals(event.getUser().isYourself())) {
 			message = event.getMessage().get();
 		} else {
