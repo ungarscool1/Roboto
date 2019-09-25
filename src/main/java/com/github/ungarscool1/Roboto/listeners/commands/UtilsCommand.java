@@ -87,13 +87,15 @@ public class UtilsCommand implements MessageCreateListener{
 		
 		if (message.getContent().equalsIgnoreCase("!ver") || message.getContent().equalsIgnoreCase("!version")) {
 			EmbedBuilder embedBuilder = new EmbedBuilder();
+			int users = api.getServers().stream().mapToInt(Server::getMemberCount).sum();
 			try {
 				embedBuilder.setTitle(language.getString("version.name"))
 					.addField("Version", "3.0.0 DEV")
 					.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-					.addField("Build", "250919-18.1")
+					.addField("Build", "250919-18.2")
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
+					.addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
 					.addField(language.getString("version.listen"), api.getServers().size() + language.getString("version.servers"))
 					.setColor(Color.GREEN)
 					.setFooter("Roboto v.3 by Ungarscool1");
