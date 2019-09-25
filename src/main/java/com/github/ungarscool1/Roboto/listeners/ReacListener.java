@@ -24,10 +24,9 @@ public class ReacListener implements ReactionAddListener{
 		
 		if (event.getUser().isYourself()) return;
 		Message message = null;
-		if (event.getMessage().isPresent() && event.getMessageAuthor​().get().equals(event.getUser().isYourself())) {
+		if (event.getMessage().isPresent() && event.getMessageAuthor().get().equals(event.getUser().isYourself())) {
 			message = event.getMessage().get();
 		} else {
-			event.getChannel().sendMessage(event.getUser().getMentionTag() + " Sorry this message is too old");
 			return;
 		}
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
