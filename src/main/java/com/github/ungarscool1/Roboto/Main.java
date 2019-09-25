@@ -50,6 +50,7 @@ public class Main {
 				// Set by default english if not found
 				System.err.println("Le serveur " + server.getName() + " ( " + server.getIdAsString() + " )" + " n'a pas été trouvé");
 				locByServ.put(server, new Locale("en", "US"));
+				new ServerLanguage().addServer(server);
 			}
         	
         	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
@@ -77,5 +78,7 @@ public class Main {
         
         api.addReactionAddListener(new ReacListener());
     }
+
+
 
 }
