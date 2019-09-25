@@ -23,7 +23,13 @@ public class ReacListener implements ReactionAddListener{
 	public void onReactionAdd(ReactionAddEvent event) {
 		
 		if (event.getUser().isYourself()) return;
-		Message message = event.getMessage().get();
+		Message message = null;
+		if (event.getMessage().isPresent()) {
+			message = event.getMessage().get();
+		} else {
+			event.getChannel().sendMessage(event.getUser().getMentionTag() + " Sorry this message is too old");
+			return;
+		}
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 		if (PFCs.containsKey(message)) {
 			if (event.getEmoji().asUnicodeEmoji().get().equals("✅"))  {
