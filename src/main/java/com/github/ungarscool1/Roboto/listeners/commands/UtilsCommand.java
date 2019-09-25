@@ -49,9 +49,23 @@ public class UtilsCommand implements MessageCreateListener{
 				.addField("!ui [args]", language.getString("help.ui.desc"))
 				.addField("!ver", language.getString("help.ver.desc"))
 				.addField("!vote", language.getString("help.vote.desc"))
+				.addField("!report", language.getString("help.report.desc"))
 				.setColor(Color.GREEN)
 				.setFooter("Roboto v.3 by Ungarscool1");
 			message.getChannel().sendMessage(embedBuilder);
+		}
+
+		if (message.getContent().equalsIgnoreCase("!report")) {
+			EmbedBuilder embed = new EmbedBuilder();
+			embed.setTitle("Report")
+					.setDescription("Create issue on GitHub")
+					.setUrl("https://github.com/ungarscool1/Roboto-v2/issues")
+					.addField("Link", "https://github.com/ungarscool1/Roboto-v2/issues")
+					.addField("Template", "https://github.com/ungarscool1/Roboto-v2/issues/new?assignees=&labels=bug&template=bug_report.md&title=")
+					.addField("Feature in progress", "This feature is not finished ! However, you can create an issue on GitHub")
+					.setColor(Color.GREEN)
+					.setFooter("Roboto v.3 by Ungarscool1");
+			message.getChannel().sendMessage(embed);
 		}
 		
 		if ((message.getContent().contains("!lang") || message.getContent().contains("!language") || message.getContent().contains("!langue")) && message.getAuthor().isServerAdmin()) {
@@ -79,7 +93,7 @@ public class UtilsCommand implements MessageCreateListener{
 				embedBuilder.setTitle(language.getString("version.name"))
 					.addField("Version", "3.0.0 DEV")
 					.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-					.addField("Build", "250919-01.10")
+					.addField("Build", "250919-17.1")
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
 					.addField(language.getString("version.listen"), api.getServers().size() + language.getString("version.servers"))
