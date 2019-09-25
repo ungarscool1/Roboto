@@ -24,7 +24,7 @@ public class ReacListener implements ReactionAddListener{
 		
 		if (event.getUser().isYourself()) return;
 		Message message;
-		if (event.getMessage().isPresent() && event.getMessageAuthor().get().equals(event.getUser().isYourself())) {
+		if (event.getMessage().isPresent()) {
 			message = event.getMessage().get();
 		} else {
 			return;
