@@ -81,14 +81,10 @@ public class Vote {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	private void setDescription(String description) {
 		this.description = description;
 	}
-	
-	public User getAuthor() {
-		return author;
-	}
-	
+
 	public String[] getOptions() {
 		return this.options;
 	}

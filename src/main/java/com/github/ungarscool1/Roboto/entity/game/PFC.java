@@ -12,12 +12,9 @@ import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
-import org.javacord.api.event.Event;
-import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.util.event.ListenerManager;
 
-import com.github.ungarscool1.Roboto.Main;
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
 import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
 
@@ -26,10 +23,10 @@ public class PFC {
 	private DiscordApi api;
 	private Message joinMessage;
 	private Message latest;
-	private ArrayList<User> players = new ArrayList<User>();
-	private HashMap<User, Integer> score = new HashMap<User, Integer>();
-	private HashMap<User, Integer> played = new HashMap<User, Integer>();
-	private HashMap<TextChannel, Message> messagesByChannel = new HashMap<TextChannel, Message>();
+	private ArrayList<User> players = new ArrayList<>();
+	private HashMap<User, Integer> score = new HashMap<>();
+	private HashMap<User, Integer> played = new HashMap<>();
+	private HashMap<TextChannel, Message> messagesByChannel = new HashMap<>();
 	private int slots;
 	private boolean inGame;
 	private int manche;
@@ -57,9 +54,9 @@ public class PFC {
 	}
 	
 	public EmbedBuilder joinMessage() {
-		String playersToString = "";
-		for (int i = 0; i < players.size(); i++) {
-			playersToString += "- " + players.get(i).getMentionTag() + "\n";
+		StringBuilder playersToString = new StringBuilder();
+		for (User player : players) {
+			playersToString.append("- ").append(player.getMentionTag()).append("\n");
 		}
 		Color color = Color.RED;
 		String desc = String.format(language.getString("game.pfc.invitation.inviteYou"), players.get(0).getName());
@@ -67,15 +64,11 @@ public class PFC {
 			color = Color.GREEN;
 			desc = String.format(language.getString("game.pfc.invitation.inGame"), players.get(0).getName());
 		}
-		return new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.round"), String.format(language.getString("game.pfc.invitation.round.desc"), maxManche), true).addField(language.getString("game.pfc.invitation.players"), playersToString).setColor(color);
+		return new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.round"), String.format(language.getString("game.pfc.invitation.round.desc"), maxManche), true).addField(language.getString("game.pfc.invitation.players"), playersToString.toString()).setColor(color);
 	}
 	
 	public void setJoinMessage(Message message) {
 		this.joinMessage = message;
-	}
-	
-	public Message getJoinMessage() {
-		return this.joinMessage;
 	}
 	
 	public String join (User player) {
@@ -123,18 +116,16 @@ public class PFC {
 			embed.setTitle("Duel " + players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get()));
 			embed.setFooter(language.getString("game.pfc.br.footer"));
 		}
-		for(int i = 0; i < players.size(); i++) {
-        	if (played.containsKey(players.get(i))) {
-        		played.remove(players.get(i));
-            }
-      	  Message message = players.get(i).sendMessage(embed).join();
-      	  messagesByChannel.put(message.getChannel(), message);
-      	  message.addReactions("👊", "🍂", "✂", "❌");
-        }
+		for (User player : players) {
+			played.remove(player);
+			Message message = player.sendMessage(embed).join();
+			messagesByChannel.put(message.getChannel(), message);
+			message.addReactions("👊", "🍂", "✂", "❌");
+		}
 	}
 	
 	private void finishGame() {
-		if (inGame == false) return;
+		if (!inGame) return;
 		inGame = false;
 		String winner = "";
 		if (score.get(players.get(0)) > score.get(players.get(1))) {
@@ -181,14 +172,14 @@ public class PFC {
 		    				 } else if (emoji.asUnicodeEmoji().get().equals("✂")) {
 		    					 played.put(event.getUser(), 3);
 		    				 } else if (emoji.asUnicodeEmoji().get().equals("❌")) {
-		    					 for (int i = 0; i < players.size(); i++) {
-		    						 if (!players.get(i).equals(event.getUser())) {
-		    							 players.get(i).sendMessage(String.format(language.getString("game.pfc.inGame.abandonment"), event.getUser().getDisplayName(joinMessage.getServer().get())));
-		    							 if (br != null) {
-		    								 br.win(players.get(i), event.getUser());
-		    							 }
-		    						 }
-		    					 }
+								 for (User player : players) {
+									 if (!player.equals(event.getUser())) {
+										 player.sendMessage(String.format(language.getString("game.pfc.inGame.abandonment"), event.getUser().getDisplayName(joinMessage.getServer().get())));
+										 if (br != null) {
+											 br.win(player, event.getUser());
+										 }
+									 }
+								 }
 		    					 finishGame();
 		    				 } else {
 		    					 message.getChannel().sendMessage(emoji.asUnicodeEmoji().get() + " n'existe pas dans pfc :confused:");
@@ -225,7 +216,7 @@ public class PFC {
 	    								 ).join();
 		    					 latest.delete("Anti spam");
 		    					 messagesByChannel.remove(message.getChannel());
-		    					 if ((manche < maxManche) || score.get(players.get(0)) == score.get(players.get(1))) {
+		    					 if ((manche < maxManche) || score.get(players.get(0)).equals(score.get(players.get(1)))) {
 		    						 manche++;
 		    						 mpPlayers();
 								} else {

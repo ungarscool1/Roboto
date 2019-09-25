@@ -44,9 +44,9 @@ public class PFCbr {
 	}
 	
 	public EmbedBuilder joinMessage() {
-		String playersToString = "";
-		for (int i = 0; i < players.size(); i++) {
-			playersToString += "- " + players.get(i).getMentionTag() + "\n";
+		StringBuilder playersToString = new StringBuilder();
+		for (User player : players) {
+			playersToString.append("- ").append(player.getMentionTag()).append("\n");
 		}
 		Color color = Color.RED;
 		String desc = String.format(language.getString("game.pfc.br.inviteYou"), players.get(0).getName());
@@ -54,17 +54,13 @@ public class PFCbr {
 			color = Color.GREEN;
 			desc = String.format(language.getString("game.pfc.invitation.inGame"), players.get(0).getName());
 		}
-		return new EmbedBuilder().setTitle(language.getString("game.pfc.br.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.players"), playersToString).setColor(color);
+		return new EmbedBuilder().setTitle(language.getString("game.pfc.br.name")).setDescription(desc).addField("Slots", players.size() + " / " + slots, true).addField(language.getString("game.pfc.invitation.players"), playersToString.toString()).setColor(color);
 	}
 	
 	public void setJoinMessage(Message message) {
 		this.joinMessage = message;
 	}
-	
-	public Message getJoinMessage() {
-		return this.joinMessage;
-	}
-	
+
 	public String join (User player) {
 		if (!players.contains(player)) {
 			if (players.size() <= slots) {
@@ -92,26 +88,26 @@ public class PFCbr {
 	}
 	
 	private boolean playersDoPlayed() {
-		for (int i = 0; i < players.size(); i++) {
-			if (!played.get(players.get(i))) return false;
+		for (User player : players) {
+			if (!played.get(player)) return false;
 		}
 		return true;
 	}
 	
 	
 	private void finishGame() {
-		if (inGame == false) return;
+		if (!inGame) return;
 		inGame = false;
 		score = score.entrySet().stream().sorted(Collections.reverseOrder(HashMap.Entry.comparingByValue())).collect(
 				toMap(HashMap.Entry::getKey, HashMap.Entry::getValue, (e1, e2) -> e2,
 		                LinkedHashMap::new)
 				);
-		String leaderboard = "";
+		StringBuilder leaderboard = new StringBuilder();
 		
 		for(HashMap.Entry<User, Integer> entry : score.entrySet()) {
 		    User user = entry.getKey();
 		    Integer sc = entry.getValue();
-		    leaderboard += "- " + user.getDisplayName(joinMessage.getServer().get()) + " (" + sc + " points)\n";
+		    leaderboard.append("- ").append(user.getDisplayName(joinMessage.getServer().get())).append(" (").append(sc).append(" points)\n");
 		}
 		
 		joinMessage.getChannel().sendMessage(new EmbedBuilder()
@@ -119,7 +115,7 @@ public class PFCbr {
 				 .setColor(Color.green)
 				 .setDescription(String.format(language.getString("game.pfc.br.end.desc"), players.get(0).getDisplayName(joinMessage.getServer().get())))
 				 .setThumbnail(players.get(0).getAvatar())
-				 .addField(language.getString("game.pfc.br.leaderboard"), leaderboard)
+				 .addField(language.getString("game.pfc.br.leaderboard"), leaderboard.toString())
 				 ).join();
 		
 		
@@ -150,7 +146,7 @@ public class PFCbr {
 	 * @param winner
 	 * @param looser
 	 */
-	public void win(User winner, User looser) {
+	void win(User winner, User looser) {
 		players.remove(looser);
 		score.replace(winner, (score.get(winner) + 1));
 		played.replace(winner, true);
