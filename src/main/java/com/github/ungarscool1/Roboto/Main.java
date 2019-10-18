@@ -3,6 +3,7 @@ package com.github.ungarscool1.Roboto;
 import java.util.HashMap;
 import java.util.Locale;
 
+import com.github.ungarscool1.Roboto.listeners.commands.AdminCommand;
 import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -75,6 +76,7 @@ public class Main {
         api.addMessageCreateListener(new VoteCommand());
         api.addMessageCreateListener(new GameCommand(api));
         api.addMessageCreateListener(new UtilsCommand(api));
+        api.addMessageCreateListener(new AdminCommand());
         
         api.addReactionAddListener(new ReacListener());
     }

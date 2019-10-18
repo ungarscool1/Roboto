@@ -92,7 +92,7 @@ public class UtilsCommand implements MessageCreateListener{
 				embedBuilder.setTitle(language.getString("version.name"))
 					.addField("Version", "3.0.0 DEV")
 					.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-					.addField("Build", "250919-18.2")
+					.addField("Build", "191019-01.1")
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
 					.addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
