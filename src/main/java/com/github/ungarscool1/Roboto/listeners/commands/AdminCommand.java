@@ -41,7 +41,7 @@ public class AdminCommand implements MessageCreateListener {
                     description = language.getString("admin.ban.toBan.desc.default");
                 else
                     description = String.format(language.getString("admin.ban.toBan.desc"), args[2]);
-                toBan.getPrivateChannel().get().sendMessage(new EmbedBuilder().setTitle(language.getString("admin.ban.toBan.name"))
+                toBan.sendMessage(new EmbedBuilder().setTitle(language.getString("admin.ban.toBan.name"))
                         .setDescription(description)
                         .setAuthor(message.getAuthor())
                         .setColor(Color.RED));
