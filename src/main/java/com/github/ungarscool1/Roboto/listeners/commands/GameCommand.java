@@ -30,7 +30,7 @@ public class GameCommand implements MessageCreateListener {
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
 		// Ignore if the message is sent in PM
-		if (!message.getServer().isPresent()) {
+		if (!message.getServer().isPresent() || message.getAuthor().isBotUser()) {
 			return;
 		}
 		
