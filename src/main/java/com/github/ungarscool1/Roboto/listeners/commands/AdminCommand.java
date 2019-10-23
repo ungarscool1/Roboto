@@ -14,12 +14,7 @@ public class AdminCommand implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent event) {
         Message message = event.getMessage();
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
-
-<<<<<<< Updated upstream
-        if (!message.getServer().isPresent())
-=======
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
->>>>>>> Stashed changes
             return;
         if (message.getAuthor().canBanUsersFromServer() && message.getContent().contains("@ban")) {
             String[] args = message.getContent().split(" ");
@@ -57,13 +52,5 @@ public class AdminCommand implements MessageCreateListener {
                 message.getServer().get().banUser(toBan, 0, reason.toString());
             }
         }
-<<<<<<< Updated upstream
-=======
-
-        if (message.getAuthor().canBanUsersFromServer() && message.getContent().contains("@help")) {
-            EmbedBuilder emebd = new EmbedBuilder();
-
-        }
->>>>>>> Stashed changes
     }
 }
