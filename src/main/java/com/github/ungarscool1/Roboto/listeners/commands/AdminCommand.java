@@ -52,5 +52,13 @@ public class AdminCommand implements MessageCreateListener {
                 message.getServer().get().banUser(toBan, 0, reason.toString());
             }
         }
+
+        if (message.getAuthor().canBanUsersFromServer() && message.getContent().equalsIgnoreCase("@help")) {
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle(language.getString("admin.help.name"))
+                    .addField(language.getString("admin.help.ban.cmd"), language.getString("admin.help.ban.desc"))
+                    .setFooter("Roboto admin mode");
+            message.getChannel().sendMessage(embed);
+        }
     }
 }
