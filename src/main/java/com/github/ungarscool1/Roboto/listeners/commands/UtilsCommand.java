@@ -43,7 +43,7 @@ public class UtilsCommand implements MessageCreateListener{
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			embedBuilder.setTitle(language.getString("help"))
 				.addField(language.getString("help.game.cmd"), language.getString("help.game.desc"))
-				.addField("!lang <arg>", language.getString("help.lang.desc"))
+				.addField("@help", language.getString("help.admin.desc"))
 				.addField("!ui [args]", language.getString("help.ui.desc"))
 				.addField("!ver", language.getString("help.ver.desc"))
 				.addField("!vote", language.getString("help.vote.desc"))
@@ -66,7 +66,7 @@ public class UtilsCommand implements MessageCreateListener{
 			message.getChannel().sendMessage(embed);
 		}
 		
-		if ((message.getContent().contains("!lang") || message.getContent().contains("!language") || message.getContent().contains("!langue")) && message.getAuthor().isServerAdmin()) {
+		if ((message.getContent().contains("@lang") || message.getContent().contains("@language") || message.getContent().contains("@langue")) && message.getAuthor().isServerAdmin()) {
 			EmbedBuilder embed = new EmbedBuilder();
 			if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR") || message.getContent().contains("es_ES")) {
 				String lang = message.getContent().substring(message.getContent().indexOf(" ") + 1);
