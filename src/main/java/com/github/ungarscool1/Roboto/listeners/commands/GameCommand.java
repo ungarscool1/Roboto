@@ -1,7 +1,6 @@
 package com.github.ungarscool1.Roboto.listeners.commands;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.javacord.api.DiscordApi;
