@@ -110,7 +110,7 @@ public class Puissance4 {
 	}
 	
 	private void finish() {
-		joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("game.pfc.invitation.name")).setDescription(String.format(language.getString("game.p4.inGame.winner"), players.get(player - 1).getDisplayName(joinMessage.getServer().get()))).setImage(gridImg).setFooter(String.format(language.getString("game.p4.inGame.party"), players.get(0).getDisplayName(joinMessage.getServer().get()), players.get(1).getDisplayName(joinMessage.getServer().get()))));
+		joinMessage.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("game.p4.invitation.name")).setDescription(String.format(language.getString("game.p4.inGame.winner"), players.get(player - 1).getDisplayName(joinMessage.getServer().get()))).setImage(gridImg).setFooter(String.format(language.getString("game.p4.inGame.party"), players.get(0).getDisplayName(joinMessage.getServer().get()), players.get(1).getDisplayName(joinMessage.getServer().get()))));
 		joinMessage.delete("^4 party is finished");
 		GameCommand.P4.remove(joinMessage);
 		ReacListener.updateGames();

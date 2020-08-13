@@ -53,6 +53,17 @@ public class AdminCommand implements MessageCreateListener {
             }
         }
 
+        if (message.getContent().equalsIgnoreCase("@@info") && message.getAuthor().isBotOwner()) {
+            System.out.println("Getting servers info...");
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle("Informations de tout les serveurs").setDescription("Toutes les informations des serveurs sont affichés ici");
+            event.getApi().getServers().forEach(server -> {
+                embed.addField(server.getName(), "Owner: " + server.getOwner().getDiscriminatedName() + "\nIl y a " + server.getMemberCount() + " utilisateurs sur le serveur.\nRégion: " + server.getRegion().getName() + "\nEst admin ? " + server.isAdmin(event.getApi().getYourself()));
+            });
+            embed.setAuthor(event.getApi().getYourself()).setColor(Color.GREEN);
+            message.getChannel().sendMessage(embed);
+        }
+
         if (message.getAuthor().canBanUsersFromServer() && message.getContent().equalsIgnoreCase("@help")) {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle(language.getString("admin.help.name"))

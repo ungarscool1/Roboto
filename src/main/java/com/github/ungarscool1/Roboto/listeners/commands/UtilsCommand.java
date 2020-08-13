@@ -96,7 +96,7 @@ public class UtilsCommand implements MessageCreateListener{
 					.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
 					.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
 					.addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
-					.addField(language.getString("version.listen"), api.getServers().size() + language.getString("version.servers"))
+					.addField(language.getString("version.listen"), api.getServers().size() + " " + language.getString("version.servers"))
 					.setColor(Color.GREEN)
 					.setFooter("Roboto v.3 by Ungarscool1");
 			} catch (Exception e) {
