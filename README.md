@@ -3,6 +3,7 @@
 ## Supported Languges
  - French
  - English
+ - Spanish
 
 ## Commands
  - games

@@ -80,7 +80,7 @@ public class UtilsCommand implements MessageCreateListener{
 					.setDescription(language.getString("lang.changed.desc"));
 			} else {
 				embed.setTitle(language.getString("lang.help.name"))
-				.addField(language.getString("lang.help.languages"), String.format("- fr_FR (%s)\n- en_US (%s)", language.getString("lang.help.french.name"), language.getString("lang.help.english.name")));
+				.addField(language.getString("lang.help.languages"), String.format("- fr_FR (%s)\n- en_US (%s)\n- es_ES (%s)", language.getString("lang.help.french.name"), language.getString("lang.help.english.name"), language.getString("lang.help.spanish.name")));
 			}
 			message.getChannel().sendMessage(embed);
 		}
