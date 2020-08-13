@@ -1,9 +1,12 @@
 package com.github.ungarscool1.Roboto.listeners.commands;
 
 import com.github.ungarscool1.Roboto.Main;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
@@ -62,6 +65,19 @@ public class AdminCommand implements MessageCreateListener {
             });
             embed.setAuthor(event.getApi().getYourself()).setColor(Color.GREEN);
             message.getChannel().sendMessage(embed);
+        }
+
+        if (message.getContent().equalsIgnoreCase("@@maintenance") && message.getAuthor().isBotOwner()) {
+            DiscordApi api = event.getApi();
+            if (api.getStatus().equals(UserStatus.DO_NOT_DISTURB)) {
+                message.getChannel().sendMessage("Mode maintenance désactivé !");
+                api.updateStatus(UserStatus.ONLINE);
+                api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+            } else {
+                message.getChannel().sendMessage("Mode maintenance activé !");
+                api.updateStatus(UserStatus.DO_NOT_DISTURB);
+                api.updateActivity("Maintenance mode...");
+            }
         }
 
         if (message.getAuthor().canBanUsersFromServer() && message.getContent().equalsIgnoreCase("@help")) {
