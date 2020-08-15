@@ -56,6 +56,7 @@
                 	<source>1.8</source> 
                 	<target>1.8</target> 
                 	<fork>true</fork>
+					<encoding>UTF-8</encoding>
                 	<compilerArgs>
                     	<arg>-XDignore.symbol.file</arg>
                 	</compilerArgs>
