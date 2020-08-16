@@ -68,6 +68,15 @@ public class AdminCommand implements MessageCreateListener {
             message.getChannel().sendMessage(embed);
         }
 
+        if (message.getContent().contains("@@changeGame") && message.getAuthor().isBotOwner()) {
+            DiscordApi api = event.getApi();
+            String arg = message.getContent().substring(13);
+            if (arg.length() == 0)
+                api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+            else
+                api.updateActivity(arg);
+        }
+
         if (message.getContent().equalsIgnoreCase("@@maintenance") && message.getAuthor().isBotOwner()) {
             DiscordApi api = event.getApi();
             if (api.getStatus().equals(UserStatus.DO_NOT_DISTURB)) {
