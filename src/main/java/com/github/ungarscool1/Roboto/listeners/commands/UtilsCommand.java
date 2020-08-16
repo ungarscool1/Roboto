@@ -100,7 +100,10 @@ public class UtilsCommand implements MessageCreateListener{
 					.setColor(Color.GREEN)
 					.setFooter("Roboto v.3 by Ungarscool1");
 			} catch (Exception e) {
-				// You can't get any error \o/
+				embedBuilder.setTitle(language.getString("errors.title"))
+						.setDescription(language.getString("errors.unkown_error"))
+						.addField("Report bugs in English", "https://github.com/ungarscool1/Roboto-v2/issues/new?assignees=&labels=bug&template=bug_report.md&title=!ver%20Command%20fail")
+						.setColor(Color.RED);
 			}
 			message.getChannel().sendMessage(embedBuilder);
 		}

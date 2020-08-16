@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionException;
 
+import org.graalvm.compiler.api.replacements.Snippet;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -21,7 +23,15 @@ public class VoteCommand implements MessageCreateListener {
 	// Vote sytem
 	private HashMap<User, Vote> votes = new HashMap<>();
 	private HashMap<User, Message> voteMsg = new HashMap<>();
-	
+
+	private void onError(@Snippet.NonNullParameter User user, TextChannel channel, ResourceBundle language) {
+		channel.sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title"))
+				.setDescription(language.getString("errors.unkown_error"))
+				.addField("Report bugs in English", "https://github.com/ungarscool1/Roboto-v2/issues/new?assignees=&labels=bug&template=bug_report.md&title=!ver%20Command%20fail")
+				.setColor(Color.RED));
+		votes.remove(user);
+	}
+
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
 		
@@ -41,7 +51,8 @@ public class VoteCommand implements MessageCreateListener {
 				try {
 					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.name"))).get();
 				} catch (Exception e) {
-					e.printStackTrace();
+					onError(user, event.getChannel(), language);
+					return;
 				}
 				voteMsg.put(user, msg);
 			} else {
@@ -53,33 +64,38 @@ public class VoteCommand implements MessageCreateListener {
 					try {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.desc"))).get();
 					} catch (Exception e) {
-						e.printStackTrace();
+						onError(user, event.getChannel(), language);
+						return;
 					}
 				} else if (res.equals("multi")) {
 					try {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.plus2"))).get();
 					} catch (Exception e) {
-						e.printStackTrace();
+						onError(user, event.getChannel(), language);
+						return;
 					}
 				} else if(res.equals("fini")) {
 					Vote vote = votes.get(user);
 					try {
 						event.getChannel().sendMessage(new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())))).get().addReactions("👍","👎");
 					} catch (Exception e) {
-						e.printStackTrace();
+						onError(user, event.getChannel(), language);
+						return;
 					}
 					votes.remove(user);
 				} else if(res.equals("nbrOption")) {
 					try {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.howManyAnwser"))).get();
 					} catch (Exception e) {
-						e.printStackTrace();
+						onError(user, event.getChannel(), language);
+						return;
 					}
 				} else if(res.contains("option")) {
 					try {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + res.substring(6) + ")")).get();
 					} catch (Exception e) {
-						e.printStackTrace();
+						onError(user, event.getChannel(), language);
+						return;
 					}
 				} else if(res.equals("fin multi")) {
 					Vote vote = votes.get(user);
