@@ -62,9 +62,9 @@ public class Vote {
 			return "option1 / " + nombreOption;
 		} else {
 			int curopt = where - 4;
-			options[curopt] = option;
-			if ((curopt) < nombreOption) {
-				return "option" + (curopt) + " / " + nombreOption;
+			options[curopt-1] = option;
+			if (curopt < nombreOption) {
+				return "option" + (curopt + 1) + " / " + nombreOption;
 			} else {
 				return "fin multi";
 			}
