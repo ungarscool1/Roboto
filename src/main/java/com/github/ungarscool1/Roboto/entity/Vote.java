@@ -48,7 +48,12 @@ public class Vote {
 				return "multi";
 			}
 		} else if (where-1 == 3) {
-			nombreOption = Integer.parseInt(option);
+			try {
+				nombreOption = Integer.parseInt(option);
+			} catch (Exception e) {
+				where--;
+				return "nbrOption";
+			}
 			if (nombreOption < 3 || nombreOption > 10) {
 				where--;
 				return "nbrOption";
