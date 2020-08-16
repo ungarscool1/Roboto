@@ -25,7 +25,7 @@ public class Vote {
 			} else if (where-1 == 2) {
 				return "nbrOption";
 			} else if (where-1 == 3) {
-				return "option";
+				return "option1 / " + nombreOption;
 			} else {
 				return "option";
 			}
@@ -49,17 +49,17 @@ public class Vote {
 			}
 		} else if (where-1 == 3) {
 			nombreOption = Integer.parseInt(option);
-			if (nombreOption < 1 || nombreOption > 10) {
+			if (nombreOption < 3 || nombreOption > 10) {
 				where--;
 				return "nbrOption";
 			}
 			options = new String[nombreOption];
-			return "option";
+			return "option1 / " + nombreOption;
 		} else {
-			int curopt = where - 5; 
+			int curopt = where - 4;
 			options[curopt] = option;
-			if ((curopt + 1) < nombreOption) {
-				return "option" + (curopt + 1) + " / " + nombreOption;
+			if ((curopt) < nombreOption) {
+				return "option" + (curopt) + " / " + nombreOption;
 			} else {
 				return "fin multi";
 			}
