@@ -9,6 +9,8 @@
  - games
  - ui
  - si
+ - \@lang
+ - \@ban
 
 ## Games
 
@@ -45,6 +47,7 @@ The bot include 3 games:
 
 ### User info (!ui)
 Usage: !ui [optional arg]
+
 Get user info, the user must be in the server where the command is executed. This command will get some basic info: 
 - join date on the server
 - register date on discord
@@ -53,8 +56,33 @@ Get user info, the user must be in the server where the command is executed. Thi
 
 ### Server info (!si)
 Usage: !si
+
 The command will get basic server information.
 
+## Admin commands
+
+### Change the bot language (\@lang)
+Usage: \@lang <lang code>
+
+Exemple to enable french on your server: \@lang fr_FR
+
+Available language:
+- English (en_US)
+- French  (fr_FR)
+- Spanish (es_ES)
+
+I working on:
+- German
+- Portuguese
+- Portuguese (BR)
+- Italian
+
+### Ban user (\@ban)
+Usage: \@ban <user mention tag> <reason>
+
+The command will ban the mentionned user.
+
+The reason is displayed to the banned user in DM and the reason will be displayed in ban reason in your discord server settings.
+
 ### Command in development
- - !ban <user> <reason> (need administrator role or be the server owner)
  - !kick <user> <reason>(need administrator role or be the server owner)

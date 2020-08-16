@@ -74,7 +74,7 @@ public class VoteCommand implements MessageCreateListener {
 					}
 				} else if(res.contains("option")) {
 					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.anwser") + " (" + res.substring(6) + ")")).get();
+						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + res.substring(6) + ")")).get();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -82,7 +82,7 @@ public class VoteCommand implements MessageCreateListener {
 					Vote vote = votes.get(user);
 					EmbedBuilder embed = new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())));
 					for(int i = 0; i < vote.getOptions().length; i++) {
-						embed.addField(language.getString("vote.anwser") + " n°" + (i + 1), vote.getOptions()[i]);
+						embed.addField(language.getString("vote.answser") + " n°" + (i + 1), vote.getOptions()[i]);
 					}
 					try {
 						msg = event.getChannel().sendMessage(embed).join();
