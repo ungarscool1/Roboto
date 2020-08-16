@@ -2,7 +2,10 @@ package com.github.ungarscool1.Roboto.listeners.commands;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletionException;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -81,10 +84,10 @@ public class VoteCommand implements MessageCreateListener {
 				} else if(res.equals("fin multi")) {
 					Vote vote = votes.get(user);
 					EmbedBuilder embed = new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())));
-					for(int i = 0; i < vote.getOptions().length; i++) {
-						embed.addField(language.getString("vote.answser") + " n°" + (i + 1), vote.getOptions()[i]);
-					}
 					try {
+						for(int i = 0; i < vote.getOptions().length; i++) {
+							embed.addField(language.getString("vote.answser") + " n°" + (i + 1), vote.getOptions()[i]);
+						}
 						msg = event.getChannel().sendMessage(embed).join();
 						if (vote.getOptions().length == 1) {
 							msg.addReaction("1⃣").join();
@@ -118,8 +121,12 @@ public class VoteCommand implements MessageCreateListener {
 						}
 						votes.remove(user);
 						return;
-					} catch (Exception e) {
-						e.printStackTrace();
+					} catch (MissingResourceException e) {
+						votes.remove(user);
+						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.ressources")).setColor(Color.RED));
+					} catch (CancellationException | CompletionException e) {
+						votes.remove(user);
+						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.unkown_error")).setColor(Color.RED));
 					}
 				}
 				voteMsg.put(user, msg);
