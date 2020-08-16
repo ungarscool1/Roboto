@@ -24,7 +24,7 @@ public class VoteCommand implements MessageCreateListener {
 	private HashMap<User, Vote> votes = new HashMap<>();
 	private HashMap<User, Message> voteMsg = new HashMap<>();
 
-	private void onError(@Snippet.NonNullParameter User user, TextChannel channel, ResourceBundle language) {
+	private void onError(User user, TextChannel channel, ResourceBundle language) {
 		channel.sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title"))
 				.setDescription(language.getString("errors.unkown_error"))
 				.addField("Report bugs in English", "https://github.com/ungarscool1/Roboto-v2/issues/new?assignees=&labels=bug&template=bug_report.md&title=!ver%20Command%20fail")
