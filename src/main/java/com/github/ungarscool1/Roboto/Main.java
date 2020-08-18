@@ -3,7 +3,14 @@ package com.github.ungarscool1.Roboto;
 import java.util.HashMap;
 import java.util.Locale;
 
-import com.github.ungarscool1.Roboto.listeners.commands.AdminCommand;
+import com.github.ungarscool1.Roboto.listeners.commands.admin.AdminHelpCommand;
+import com.github.ungarscool1.Roboto.listeners.commands.admin.BanCommand;
+import com.github.ungarscool1.Roboto.listeners.commands.admin.LangCommand;
+import com.github.ungarscool1.Roboto.listeners.commands.owner.ChangeGameCommand;
+import com.github.ungarscool1.Roboto.listeners.commands.owner.MaintenanceCommand;
+import com.github.ungarscool1.Roboto.listeners.commands.owner.OwnerInfoCommand;
+import com.github.ungarscool1.Roboto.listeners.servers.JoinListener;
+import com.github.ungarscool1.Roboto.listeners.servers.LeaveListener;
 import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -19,7 +26,7 @@ import com.github.ungarscool1.Roboto.listeners.commands.VoteCommand;
 public class Main {
 	
 	public static HashMap<Server, Locale> locByServ = new HashMap<>();
-	private static DiscordBotListAPI dbl;
+	public static DiscordBotListAPI dbl;
 	
     public static void main(String[] args) {
         new DiscordApiBuilder()
@@ -48,37 +55,31 @@ public class Main {
 				l = serverLanguage.getServerLanguage(server).split("_");
         		locByServ.put(server, new Locale(l[0], l[1]));
 			} catch (Exception e) {
-				// Set by default english if not found
-				System.err.println("Le serveur " + server.getName() + " ( " + server.getIdAsString() + " )" + " n'a pas été trouvé");
 				locByServ.put(server, new Locale("en", "US"));
 				new ServerLanguage().addServer(server);
 			}
-        	
-        	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
         });
         
-        api.addServerJoinListener(event -> {
-			ServerLanguage serverLanguage = new ServerLanguage();
-			locByServ.put(event.getServer(), new Locale("en", "US"));
-			serverLanguage.addServer(event.getServer());
-        	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
-        	dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
-        });
-        
-        api.addServerLeaveListener(event -> {
-			ServerLanguage serverLanguage = new ServerLanguage();
-			locByServ.remove(event.getServer());
-			serverLanguage.removeServer(event.getServer());
-        	api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
-        	dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
-        });
+        api.addServerJoinListener(new JoinListener());
+        api.addServerLeaveListener(new LeaveListener());
         
         api.addMessageCreateListener(new VoteCommand());
         api.addMessageCreateListener(new GameCommand(api));
         api.addMessageCreateListener(new UtilsCommand(api));
-        api.addMessageCreateListener(new AdminCommand());
-        
-        api.addReactionAddListener(new ReacListener());
+		/**
+		 * Admin commands
+		 */
+		api.addMessageCreateListener(new AdminHelpCommand());
+		api.addMessageCreateListener(new BanCommand());
+		api.addMessageCreateListener(new LangCommand());
+		/**
+		 * Owner commands
+		 */
+		api.addMessageCreateListener(new ChangeGameCommand());
+		api.addMessageCreateListener(new MaintenanceCommand());
+		api.addMessageCreateListener(new OwnerInfoCommand());
+
+		api.addReactionAddListener(new ReacListener());
     }
 
 

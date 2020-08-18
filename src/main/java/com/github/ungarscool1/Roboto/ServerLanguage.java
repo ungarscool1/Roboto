@@ -41,7 +41,7 @@ public class ServerLanguage {
 		}
     }
     
-    String getServerLanguage(Server server) {
+    public String getServerLanguage(Server server) {
     	JsonObject object = gson.fromJson(reader, JsonObject.class);
     	String lang;
     	try {
@@ -54,7 +54,7 @@ public class ServerLanguage {
     	return lang;
 	}
 	
-	void addServer(Server server) {
+	public void addServer(Server server) {
 		JsonObject object = gson.fromJson(reader, JsonObject.class);
 		object.addProperty(server.getIdAsString(), "en_US");
 		try (Writer writer = new FileWriter("serversLanguage.json")) {
@@ -64,7 +64,7 @@ public class ServerLanguage {
 		}
 	}
 
-	void removeServer(Server server) {
+	public void removeServer(Server server) {
 		JsonObject object = gson.fromJson(reader,JsonObject.class);
 		object.remove(server.getIdAsString());
 		try (Writer writer = new FileWriter("serversLanguage.json")) {

@@ -28,7 +28,6 @@ public class GameCommand implements MessageCreateListener {
 	
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
-		// Ignore if the message is sent in PM
 		if (!message.getServer().isPresent() || message.getAuthor().isBotUser()) {
 			return;
 		}
@@ -37,7 +36,6 @@ public class GameCommand implements MessageCreateListener {
 				
 		if (message.getContent().contains("!game")) {
 			if (message.getContent().length() > 5) {
-				// !game pfc 10
 				String[] args = message.getContent().substring(6).split(" ");
 				if (args[0].equalsIgnoreCase("pfc") || args[0].equalsIgnoreCase("rps")) {
 					int manche = 0;
