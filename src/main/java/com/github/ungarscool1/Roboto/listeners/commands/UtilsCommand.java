@@ -34,6 +34,9 @@ public class UtilsCommand implements MessageCreateListener{
 		if (message.getContent().contains("<3") || message.getContent().contains("❤")) {
 			message.addReaction("❤");
 		}
+		if (message.getContent().equalsIgnoreCase("beep boop")) {
+			message.addReaction("<:bot:745718850041020446>");
+		}
 		if (message.getContent().contains("<@!373199180161613824>") || message.getContent().contains("<@373199180161613824>")) {
 			if (message.getContent().contains("Je t'aime")) {
 				message.getChannel().sendMessage("Moi aussi je t'aime bb ❤");

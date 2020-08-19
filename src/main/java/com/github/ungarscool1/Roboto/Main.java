@@ -58,8 +58,7 @@ public class Main {
         
         api.addServerJoinListener(new JoinListener());
         api.addServerLeaveListener(new LeaveListener());
-        
-        api.addMessageCreateListener(new VoteCommand());
+
         api.addMessageCreateListener(new GameCommand(api));
         api.addMessageCreateListener(new UtilsCommand());
 		/**
@@ -70,6 +69,7 @@ public class Main {
 		api.addMessageCreateListener(new ServerInfoCommand());
 		api.addMessageCreateListener(new UserInfoCommand());
 		api.addMessageCreateListener(new VersionCommand());
+		api.addMessageCreateListener(new VoteCommand());
 		/**
 		 * Admin commands
 		 */

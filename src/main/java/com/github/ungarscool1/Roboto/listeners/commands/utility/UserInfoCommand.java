@@ -66,7 +66,7 @@ public class UserInfoCommand implements MessageCreateListener {
 
                         String comp = "";
                         if (u.isBot())
-                            comp = " (🤖)";
+                            comp = " <:bot:745718850041020446>";
                         Color color = Color.GREEN;
                         if (u.getRoleColor(message.getServer().get()).isPresent()) {
                             color = u.getRoleColor(message.getServer().get()).get();
