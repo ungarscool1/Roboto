@@ -23,6 +23,7 @@ public class HelpCommand implements MessageCreateListener {
                     .addField(language.getString("help.game.cmd"), language.getString("help.game.desc"))
                     .addField("@help", language.getString("help.admin.desc"))
                     .addField("!ui [args]", language.getString("help.ui.desc"))
+                    .addField("!si", language.getString("help.si.desc"))
                     .addField("!ver", language.getString("help.ver.desc"))
                     .addField("!vote", language.getString("help.vote.desc"))
                     .addField("!report", language.getString("help.report.desc"))
