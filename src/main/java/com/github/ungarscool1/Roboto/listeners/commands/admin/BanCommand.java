@@ -25,7 +25,7 @@ public class BanCommand implements MessageCreateListener {
                 embed.setTitle(language.getString("admin.ban.name"))
                         .setDescription(language.getString("admin.ban.missingargs"))
                         .setColor(Color.RED)
-                        .setFooter("Roboto v.3 by Ungarscool1");
+                        .setFooter(language.getString("admin.help.footer"));
                 message.getChannel().sendMessage(embed);
                 return;
             }
@@ -43,7 +43,7 @@ public class BanCommand implements MessageCreateListener {
                 embed.setTitle(language.getString("admin.ban.name"))
                         .setDescription(description)
                         .setAuthor(message.getAuthor())
-                        .setFooter("Roboto v.3 by Ungarscool1")
+                        .setFooter(language.getString("admin.help.footer"))
                         .setColor(Color.GREEN);
                 if (args.length == 2)
                     description = language.getString("admin.ban.toBan.desc.default");

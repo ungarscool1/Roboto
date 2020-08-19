@@ -20,8 +20,9 @@ public class AdminHelpCommand implements MessageCreateListener {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle(language.getString("admin.help.name"))
                     .addField(language.getString("admin.help.ban.name"), language.getString("admin.help.ban.desc"))
+                    .addField(language.getString("admin.help.kick.name"), language.getString("admin.help.kick.desc"))
                     .addField("@lang <lang>", language.getString("help.lang.desc"))
-                    .setFooter("Roboto admin mode");
+                    .setFooter(language.getString("admin.help.footer"));
             message.getChannel().sendMessage(embed);
         }
     }

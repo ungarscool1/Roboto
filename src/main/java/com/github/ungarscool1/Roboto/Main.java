@@ -3,14 +3,10 @@ package com.github.ungarscool1.Roboto;
 import java.util.HashMap;
 import java.util.Locale;
 
-import com.github.ungarscool1.Roboto.listeners.commands.admin.AdminHelpCommand;
-import com.github.ungarscool1.Roboto.listeners.commands.admin.BanCommand;
-import com.github.ungarscool1.Roboto.listeners.commands.admin.LangCommand;
-import com.github.ungarscool1.Roboto.listeners.commands.owner.ChangeGameCommand;
-import com.github.ungarscool1.Roboto.listeners.commands.owner.MaintenanceCommand;
-import com.github.ungarscool1.Roboto.listeners.commands.owner.OwnerInfoCommand;
-import com.github.ungarscool1.Roboto.listeners.servers.JoinListener;
-import com.github.ungarscool1.Roboto.listeners.servers.LeaveListener;
+import com.github.ungarscool1.Roboto.listeners.commands.admin.*;
+import com.github.ungarscool1.Roboto.listeners.commands.owner.*;
+import com.github.ungarscool1.Roboto.listeners.commands.utility.*;
+import com.github.ungarscool1.Roboto.listeners.servers.*;
 import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -65,12 +61,21 @@ public class Main {
         
         api.addMessageCreateListener(new VoteCommand());
         api.addMessageCreateListener(new GameCommand(api));
-        api.addMessageCreateListener(new UtilsCommand(api));
+        api.addMessageCreateListener(new UtilsCommand());
+		/**
+		 * Utilities Commands
+		 */
+		api.addMessageCreateListener(new HelpCommand());
+		api.addMessageCreateListener(new ReportCommand());
+		api.addMessageCreateListener(new ServerInfoCommand());
+		api.addMessageCreateListener(new UserInfoCommand());
+		api.addMessageCreateListener(new VersionCommand());
 		/**
 		 * Admin commands
 		 */
 		api.addMessageCreateListener(new AdminHelpCommand());
 		api.addMessageCreateListener(new BanCommand());
+		api.addMessageCreateListener(new KickCommand());
 		api.addMessageCreateListener(new LangCommand());
 		/**
 		 * Owner commands

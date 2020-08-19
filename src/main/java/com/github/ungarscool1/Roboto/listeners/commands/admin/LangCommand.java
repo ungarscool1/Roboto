@@ -29,10 +29,12 @@ public class LangCommand implements MessageCreateListener {
                 Main.locByServ.replace(message.getServer().get(), new Locale(l[0], l[1]));
                 language = ResourceBundle.getBundle("lang.lang", new Locale(l[0], l[1]));
                 embed.setTitle(language.getString("lang.changed.name"))
-                        .setDescription(language.getString("lang.changed.desc"));
+                        .setDescription(language.getString("lang.changed.desc"))
+                        .setFooter(language.getString("admin.help.footer"));
             } else {
                 embed.setTitle(language.getString("lang.help.name"))
-                        .addField(language.getString("lang.help.languages"), String.format("- fr_FR (%s)\n- en_US (%s)\n- es_ES (%s)", language.getString("lang.help.french.name"), language.getString("lang.help.english.name"), language.getString("lang.help.spanish.name")));
+                        .addField(language.getString("lang.help.languages"), String.format("- fr_FR (%s)\n- en_US (%s)\n- es_ES (%s)", language.getString("lang.help.french.name"), language.getString("lang.help.english.name"), language.getString("lang.help.spanish.name")))
+                        .setFooter(language.getString("admin.help.footer"));
             }
             message.getChannel().sendMessage(embed);
         }
