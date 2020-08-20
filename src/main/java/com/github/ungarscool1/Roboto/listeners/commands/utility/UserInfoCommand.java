@@ -107,6 +107,12 @@ public class UserInfoCommand implements MessageCreateListener {
                     connectedOn = language.getString("ui.connectedOn.notSure");
                 }
 
+                String status;
+                if (u.getStatus().equals(UserStatus.OFFLINE))
+                    status = language.getString("ui.connect.invisible");
+                else
+                    status = language.getString("ui.connect."+u.getStatus().getStatusString());
+
                 Color color = Color.GREEN;
                 if (u.getRoleColor(message.getServer().get()).isPresent()) {
                     color = u.getRoleColor(message.getServer().get()).get();
@@ -115,7 +121,7 @@ public class UserInfoCommand implements MessageCreateListener {
                 embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()))
                         .addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
                         .addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
-                        .addField(language.getString("ui.status"), language.getString("ui.connect."+u.getStatus().getStatusString()), true)
+                        .addField(language.getString("ui.status"), status, true)
                         .addField(language.getString("ui.connectedOn"), connectedOn, true)
                         .setThumbnail(u.getAvatar())
                         .setColor(color);

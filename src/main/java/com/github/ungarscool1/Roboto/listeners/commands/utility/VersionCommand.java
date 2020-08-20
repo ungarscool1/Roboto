@@ -27,7 +27,7 @@ public class VersionCommand implements MessageCreateListener {
                 embedBuilder.setTitle(language.getString("version.name"))
                         .addField("Version", "3.0.0 DEV")
                         .addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-                        .addField("Build", "200820-13.1")
+                        .addField("Build", "200820-13.2")
                         .addField("Bot owner", api.getOwner().get().getDiscriminatedName())
                         .addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
                         .addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
