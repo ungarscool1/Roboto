@@ -15,11 +15,11 @@ public class VersionCommand implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         Message message = event.getMessage();
-        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
         DiscordApi api = event.getApi();
-
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
+        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
+
         if (message.getContent().equalsIgnoreCase("!ver") || message.getContent().equalsIgnoreCase("!version")) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             int users = api.getServers().stream().mapToInt(Server::getMemberCount).sum();
@@ -27,7 +27,7 @@ public class VersionCommand implements MessageCreateListener {
                 embedBuilder.setTitle(language.getString("version.name"))
                         .addField("Version", "3.0.0 DEV")
                         .addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-                        .addField("Build", "200820-13.2")
+                        .addField("Build", "200820-14.2")
                         .addField("Bot owner", api.getOwner().get().getDiscriminatedName())
                         .addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
                         .addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))

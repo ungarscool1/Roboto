@@ -14,10 +14,10 @@ public class KickCommand implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         Message message = event.getMessage();
-        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
-
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
+        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
+
         if (message.getAuthor().canKickUsersFromServer() && message.getContent().contains("@kick")) {
             String[] args = message.getContent().split(" ");
             EmbedBuilder embed = new EmbedBuilder();

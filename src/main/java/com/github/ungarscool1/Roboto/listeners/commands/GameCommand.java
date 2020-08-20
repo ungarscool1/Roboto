@@ -31,7 +31,6 @@ public class GameCommand implements MessageCreateListener {
 		if (!message.getServer().isPresent() || message.getAuthor().isBotUser()) {
 			return;
 		}
-		
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 				
 		if (message.getContent().contains("!game")) {

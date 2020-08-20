@@ -16,10 +16,10 @@ public class ServerInfoCommand implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         Message message = event.getMessage();
-        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
-
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
+        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
+
         if (message.getContent().equals("!si")) {
             Server server = message.getServer().get();
             EmbedBuilder embedBuilder = new EmbedBuilder();

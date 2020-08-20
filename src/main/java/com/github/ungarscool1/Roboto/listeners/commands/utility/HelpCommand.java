@@ -13,10 +13,10 @@ public class HelpCommand implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         Message message = event.getMessage();
-        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
-
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
+        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
+
         if (message.getContent().equalsIgnoreCase("!help") || message.getContent().equalsIgnoreCase("!aide")) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(language.getString("help"))

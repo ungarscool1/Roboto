@@ -14,10 +14,10 @@ public class LangCommand implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         Message message = event.getMessage();
-        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
-
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
+        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
+
         if ((message.getContent().contains("@lang") || message.getContent().contains("@language") || message.getContent().contains("@langue")) && message.getAuthor().isServerAdmin()) {
             EmbedBuilder embed = new EmbedBuilder();
             if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR") || message.getContent().contains("es_ES")) {

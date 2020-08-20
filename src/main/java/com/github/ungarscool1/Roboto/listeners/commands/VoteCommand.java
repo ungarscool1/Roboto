@@ -33,14 +33,11 @@ public class VoteCommand implements MessageCreateListener {
 
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
-		
-		// Ignore if the message is sent in PM
-		if (!message.getServer().isPresent()) {
+		if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
 			return;
-		}
-		
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
-		
+
+
 		if (message.getContent().contains("!vote")) {
 			User user = message.getAuthor().asUser().get();
 			if (!votes.containsKey(message.getAuthor().asUser().get())) {
