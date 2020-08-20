@@ -59,10 +59,11 @@ public class UserInfoCommand implements MessageCreateListener {
                             connectedOn = "PC";
                         } else if (u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.ONLINE)) {
                             connectedOn = language.getString("ui.connectedOn.phone");
+                        } else if (u.isBot()) {
+                            connectedOn = language.getString("ui.connectedOn.notApplicable");
                         } else {
-                            connectedOn = language.getString("ui.connectedOn.not");
+                            connectedOn = language.getString("ui.connectedOn.notSure");
                         }
-
 
                         String comp = "";
                         if (u.isBot())
@@ -74,7 +75,7 @@ public class UserInfoCommand implements MessageCreateListener {
                         embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()) + comp)
                                 .addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
                                 .addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
-                                .addField(language.getString("ui.status"), u.getStatus().getStatusString(), true)
+                                .addField(language.getString("ui.status"), language.getString("ui.connect."+u.getStatus().getStatusString()), true)
                                 .addField(language.getString("ui.connectedOn"), connectedOn, true)
                                 .setThumbnail(u.getAvatar())
                                 .setColor(color);
@@ -106,13 +107,6 @@ public class UserInfoCommand implements MessageCreateListener {
                     connectedOn = language.getString("ui.connectedOn.notSure");
                 }
 
-                String status;
-                if (u.getStatus().equals(UserStatus.OFFLINE)) {
-                    status = "invisible";
-                } else {
-                    status = u.getStatus().getStatusString();
-                }
-
                 Color color = Color.GREEN;
                 if (u.getRoleColor(message.getServer().get()).isPresent()) {
                     color = u.getRoleColor(message.getServer().get()).get();
@@ -121,7 +115,7 @@ public class UserInfoCommand implements MessageCreateListener {
                 embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()))
                         .addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
                         .addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
-                        .addField(language.getString("ui.status"), status, true)
+                        .addField(language.getString("ui.status"), language.getString("ui.connect."+u.getStatus().getStatusString()), true)
                         .addField(language.getString("ui.connectedOn"), connectedOn, true)
                         .setThumbnail(u.getAvatar())
                         .setColor(color);
