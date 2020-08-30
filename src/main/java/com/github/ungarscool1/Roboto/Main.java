@@ -61,6 +61,7 @@ public class Main {
 
         api.addMessageCreateListener(new GameCommand(api));
         api.addMessageCreateListener(new UtilsCommand());
+        api.addMessageCreateListener(new FunMessage());
 		/**
 		 * Utilities Commands
 		 */
