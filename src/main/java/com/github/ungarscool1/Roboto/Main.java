@@ -7,8 +7,6 @@ import java.util.Locale;
 
 import io.sentry.ITransaction;
 import io.sentry.Sentry;
-import io.sentry.SentryEnvelope;
-import io.sentry.SentryEvent;
 import io.sentry.SpanStatus;
 
 import com.github.ungarscool1.Roboto.listeners.commands.admin.*;
@@ -43,11 +41,13 @@ public class Main {
             System.err.println("The configuration file is missing.");
             System.exit(1);
         }
+        System.out.println("Running on " + config.env + " mode");
     	Sentry.init(options -> {
     		  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
     		  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
     		  options.setDebug(config.sentry_io_debug);
-    		  options.setRelease("060621-21.3");
+    		  options.setRelease("060621-21.4");
+    		  options.setEnvironment(config.env);
     		  options.setEnableAutoSessionTracking(true);
     		});
 		Sentry.startSession();

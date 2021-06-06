@@ -6,4 +6,5 @@ public class Configuration {
 	public String sentry_io_dsn;
 	public boolean sentry_io_debug;
 	public double sentry_io_trace_sample_rate;
+	public String env = "production";
 }
