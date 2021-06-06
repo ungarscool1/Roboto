@@ -1,6 +1,11 @@
 package com.github.ungarscool1.Roboto.listeners.commands.owner;
 
 import com.github.ungarscool1.Roboto.Main;
+
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.message.Message;
@@ -17,12 +22,14 @@ public class ChangeGameCommand implements MessageCreateListener {
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
         if (message.getContent().contains("@@changeGame") && message.getAuthor().isBotOwner()) {
+			ITransaction transaction = Sentry.startTransaction("@@changeGame", "command");
             DiscordApi api = event.getApi();
             String arg = message.getContent().substring(13);
             if (arg.length() == 0)
                 api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
             else
                 api.updateActivity(arg);
+            transaction.finish(SpanStatus.OK);
         }
     }
 }

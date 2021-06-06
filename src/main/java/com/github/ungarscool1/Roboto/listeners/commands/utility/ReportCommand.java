@@ -1,6 +1,11 @@
 package com.github.ungarscool1.Roboto.listeners.commands.utility;
 
 import com.github.ungarscool1.Roboto.Main;
+
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -18,6 +23,7 @@ public class ReportCommand implements MessageCreateListener {
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
         if (message.getContent().equalsIgnoreCase("!report")) {
+			ITransaction transaction = Sentry.startTransaction("!report", "command");
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Report")
                     .setDescription("Create issue on GitHub")
@@ -28,6 +34,7 @@ public class ReportCommand implements MessageCreateListener {
                     .setColor(Color.GREEN)
                     .setFooter("Roboto v.3 by Ungarscool1");
             message.getChannel().sendMessage(embed);
+            transaction.finish(SpanStatus.OK);
         }
     }
 }

@@ -17,6 +17,10 @@ import org.javacord.api.entity.user.User;
 import com.github.ungarscool1.Roboto.Main;
 import com.github.ungarscool1.Roboto.entity.Vote;
 
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 public class VoteCommand implements MessageCreateListener {
 
 	// Vote sytem
@@ -39,6 +43,7 @@ public class VoteCommand implements MessageCreateListener {
 
 
 		if (message.getContent().contains("!vote")) {
+			ITransaction transaction = Sentry.startTransaction("!vote", "command");
 			User user = message.getAuthor().asUser().get();
 			if (!votes.containsKey(message.getAuthor().asUser().get())) {
 				message.delete("Remove vote creation message");
@@ -47,7 +52,9 @@ public class VoteCommand implements MessageCreateListener {
 				try {
 					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.name"))).get();
 				} catch (Exception e) {
+					Sentry.captureException(e);
 					onError(user, event.getChannel(), language);
+					transaction.setStatus(SpanStatus.DATA_LOSS);
 					return;
 				}
 				voteMsg.put(user, msg);
@@ -61,6 +68,7 @@ public class VoteCommand implements MessageCreateListener {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.desc"))).get();
 					} catch (Exception e) {
 						onError(user, event.getChannel(), language);
+						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
 				} else if (res.equals("multi")) {
@@ -68,6 +76,7 @@ public class VoteCommand implements MessageCreateListener {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.plus2"))).get();
 					} catch (Exception e) {
 						onError(user, event.getChannel(), language);
+						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
 				} else if(res.equals("fini")) {
@@ -76,6 +85,7 @@ public class VoteCommand implements MessageCreateListener {
 						event.getChannel().sendMessage(new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())))).get().addReactions("👍","👎");
 					} catch (Exception e) {
 						onError(user, event.getChannel(), language);
+						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
 					votes.remove(user);
@@ -84,6 +94,7 @@ public class VoteCommand implements MessageCreateListener {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.howManyAnwser"))).get();
 					} catch (Exception e) {
 						onError(user, event.getChannel(), language);
+						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
 				} else if(res.contains("option")) {
@@ -91,6 +102,7 @@ public class VoteCommand implements MessageCreateListener {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + res.substring(6) + ")")).get();
 					} catch (Exception e) {
 						onError(user, event.getChannel(), language);
+						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
 				} else if(res.equals("fin multi")) {
@@ -135,14 +147,19 @@ public class VoteCommand implements MessageCreateListener {
 						return;
 					} catch (MissingResourceException e) {
 						votes.remove(user);
+						Sentry.captureException(e);
+						transaction.setStatus(SpanStatus.UNKNOWN_ERROR);
 						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.ressources")).setColor(Color.RED));
 					} catch (CancellationException | CompletionException e) {
 						votes.remove(user);
+						Sentry.captureException(e);
+						transaction.setStatus(SpanStatus.UNKNOWN_ERROR);
 						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.unkown_error")).setColor(Color.RED));
 					}
 				}
 				voteMsg.put(user, msg);
 			}
+			transaction.finish();
 		}
 	}
 

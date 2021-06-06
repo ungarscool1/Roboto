@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
@@ -17,6 +18,8 @@ import org.javacord.api.util.event.ListenerManager;
 
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
 import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
+
+import io.sentry.Sentry;
 
 public class PFC {
 	
@@ -143,9 +146,9 @@ public class PFC {
 		
 		
 		joinMessage.getChannel().sendMessage(new EmbedBuilder().
-				 setTitle(players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get())).setColor(Color.green).
-				 setDescription(winner)
-				 ).join();
+			setTitle(players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get())).setColor(Color.green).
+			setDescription(winner)
+		).join();
 		
 		
 		GameCommand.PFCs.remove(joinMessage);
@@ -157,79 +160,83 @@ public class PFC {
 
 	public void gameHandler() {
 		th = new Thread(new Runnable() {
-		     public void run() {
-		    	 listener = api.addReactionAddListener(event -> {
-		    		 if (event.getUser().isYourself()) return;
-		    		 Emoji emoji = event.getEmoji();
-		    		 boolean isDM = event.getMessage().get().isPrivateMessage();
-		    		 Message message = event.getMessage().get();
-		    		 if (isDM) {
-		    			 if (messagesByChannel.containsValue(message)) {
-		    				 if (emoji.asUnicodeEmoji().get().equals("👊")) {
-		    					 played.put(event.getUser(), 1);
-		    				 } else if (emoji.asUnicodeEmoji().get().equals("🍂")) {
-		    					 played.put(event.getUser(), 2);
-		    				 } else if (emoji.asUnicodeEmoji().get().equals("✂")) {
-		    					 played.put(event.getUser(), 3);
-		    				 } else if (emoji.asUnicodeEmoji().get().equals("❌")) {
-								 for (User player : players) {
-									 if (!player.equals(event.getUser())) {
-										 player.sendMessage(String.format(language.getString("game.pfc.inGame.abandonment"), event.getUser().getDisplayName(joinMessage.getServer().get())));
-										 if (br != null) {
-											 br.win(player, event.getUser());
-										 }
-									 }
-								 }
-		    					 finishGame();
-		    				 } else {
-		    					 message.getChannel().sendMessage(emoji.asUnicodeEmoji().get() + " n'existe pas dans pfc :confused:");
-		    				 }
-		    				 
-		    				 if (played.size() == slots) {
-		    					 String winner;
-		    					 if ((played.get(players.get(0)) == 1 && played.get(players.get(1)) == 1) || (played.get(players.get(0)) == 2 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 3)) {
-		    						 winner = "Il n'y a pas de gagnant";
-		    					 } else if ((played.get(players.get(0)) == 1 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 2 && played.get(players.get(1)) == 3) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 1)) {
-		    						 winner = String.format(language.getString("game.pfc.inGame.winner"), players.get(1).getDisplayName(joinMessage.getServer().get()));
-		    						 if (score.containsKey(players.get(1))) {
+		public void run() {
+			listener = api.addReactionAddListener(event -> {
+			try {
+				if (event.requestUser().get().isYourself()) return;
+			} catch (Exception e) {
+				Sentry.captureException(e);
+			}
+			Emoji emoji = event.getEmoji();
+			boolean isDM = event.getMessage().get().isPrivateMessage();
+			Message message = event.getMessage().get();
+			if (isDM) {
+				if (messagesByChannel.containsValue(message)) {
+					try {
+						if (emoji.asUnicodeEmoji().get().equals("👊")) {
+							played.put(event.requestUser().get(), 1);
+						} else if (emoji.asUnicodeEmoji().get().equals("🍂")) {
+							played.put(event.requestUser().get(), 2);
+						} else if (emoji.asUnicodeEmoji().get().equals("✂")) {
+							played.put(event.requestUser().get(), 3);
+						} else if (emoji.asUnicodeEmoji().get().equals("❌")) {
+							for (User player : players) {
+								if (!player.equals(event.requestUser().get())) {
+									player.sendMessage(String.format(language.getString("game.pfc.inGame.abandonment"), event.requestUser().get().getDisplayName(joinMessage.getServer().get())));
+									if (br != null)
+										br.win(player, event.requestUser().get());
+								}
+							}
+							finishGame();
+						} else {
+							message.getChannel().sendMessage(emoji.asUnicodeEmoji().get() + " n'existe pas dans pfc :confused:");
+						}
+					} catch (Exception e) {
+						Sentry.captureException(e);
+					}
+					if (played.size() == slots) {
+						String winner;
+						if ((played.get(players.get(0)) == 1 && played.get(players.get(1)) == 1) || (played.get(players.get(0)) == 2 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 3)) {
+							winner = "Il n'y a pas de gagnant";
+						} else if ((played.get(players.get(0)) == 1 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 2 && played.get(players.get(1)) == 3) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 1)) {
+							winner = String.format(language.getString("game.pfc.inGame.winner"), players.get(1).getDisplayName(joinMessage.getServer().get()));
+							if (score.containsKey(players.get(1))) {
 										int sc = score.get(players.get(1)) + 1;
 										score.replace(players.get(1), sc);
 									} else {
 										score.put(players.get(1), 1);
 									}
-		    					 } else if ((played.get(players.get(0)) == 2 && played.get(players.get(1)) == 1) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 1 && played.get(players.get(1)) == 3)) {
-		    						 winner = String.format(language.getString("game.pfc.inGame.winner"), players.get(0).getDisplayName(joinMessage.getServer().get()));
-		    						 if (score.containsKey(players.get(0))) {
-											int sc = score.get(players.get(0)) + 1;
-											score.replace(players.get(0), sc);
-										} else {
-											score.put(players.get(0), 1);
-										}
-		    					 } else {
-		    						 winner = "Non géré :/";
-		    					 }
-		    					 latest = joinMessage.getChannel().sendMessage(new EmbedBuilder().
-	    								 setTitle(players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get())).setColor(Color.green).
-	    								 addInlineField(String.format(language.getString("game.pfc.inGame.play"), players.get(0).getDisplayName(joinMessage.getServer().get())), getEmojiFromInt(played.get(players.get(0))))
-	    								 .addInlineField(String.format(language.getString("game.pfc.inGame.play"), players.get(1).getDisplayName(joinMessage.getServer().get())), getEmojiFromInt(played.get(players.get(1))))
-	    								 .addField(winner, score.get(players.get(0)) + " - " + score.get(players.get(1)))
-	    								 ).join();
-		    					 latest.delete("Anti spam");
-		    					 messagesByChannel.remove(message.getChannel());
-		    					 if ((manche < maxManche) || score.get(players.get(0)).equals(score.get(players.get(1)))) {
-		    						 manche++;
-		    						 mpPlayers();
+							} else if ((played.get(players.get(0)) == 2 && played.get(players.get(1)) == 1) || (played.get(players.get(0)) == 3 && played.get(players.get(1)) == 2) || (played.get(players.get(0)) == 1 && played.get(players.get(1)) == 3)) {
+								winner = String.format(language.getString("game.pfc.inGame.winner"), players.get(0).getDisplayName(joinMessage.getServer().get()));
+								if (score.containsKey(players.get(0))) {
+									int sc = score.get(players.get(0)) + 1;
+									score.replace(players.get(0), sc);
+								} else {
+									score.put(players.get(0), 1);
+								}
+							} else {
+								winner = "Non géré :/";
+							}
+							latest = joinMessage.getChannel().sendMessage(new EmbedBuilder().
+									setTitle(players.get(0).getDisplayName(joinMessage.getServer().get()) + " vs " + players.get(1).getDisplayName(joinMessage.getServer().get())).setColor(Color.green).
+									addInlineField(String.format(language.getString("game.pfc.inGame.play"), players.get(0).getDisplayName(joinMessage.getServer().get())), getEmojiFromInt(played.get(players.get(0))))
+									.addInlineField(String.format(language.getString("game.pfc.inGame.play"), players.get(1).getDisplayName(joinMessage.getServer().get())), getEmojiFromInt(played.get(players.get(1))))
+									.addField(winner, score.get(players.get(0)) + " - " + score.get(players.get(1)))
+								).join();
+								latest.delete("Anti spam");
+								messagesByChannel.remove(message.getChannel());
+								if ((manche < maxManche) || score.get(players.get(0)).equals(score.get(players.get(1)))) {
+									manche++;
+									mpPlayers();
 								} else {
 									finishGame();
 								}
-		    				 }
-		    				 
-		    				 
-		    			 }
-		    		 }
-		    	 });
-		    	 mpPlayers();
-		     }
+							}
+						}
+					}
+				});
+				mpPlayers();
+			}
 		});
 		th.start();
 	}

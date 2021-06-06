@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +23,8 @@ import org.javacord.api.util.event.ListenerManager;
 
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
 import com.github.ungarscool1.Roboto.listeners.commands.GameCommand;
+
+import io.sentry.Sentry;
 
 public class Puissance4 {
 
@@ -189,7 +192,11 @@ public class Puissance4 {
 		th = new Thread(new Runnable() {
 		     public void run() {
 		    	 listener = api.addReactionAddListener(event -> {
-		    		 if (event.getUser().isYourself()) return;
+		    		 try {
+						if (event.requestUser().get().isYourself()) return;
+					} catch (Exception e) {
+						Sentry.captureException(e);
+					}
 		    		 Emoji emoji = event.getEmoji();
 		    		 if (event.getUser().equals(players.get(player - 1)) && event.getMessage().isPresent()) {
 		    			 if (emoji.asUnicodeEmoji().isPresent() && event.getMessage().get().equals(lastMessage)) {

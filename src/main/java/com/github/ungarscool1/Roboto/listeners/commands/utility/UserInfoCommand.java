@@ -1,6 +1,11 @@
 package com.github.ungarscool1.Roboto.listeners.commands.utility;
 
 import com.github.ungarscool1.Roboto.Main;
+
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 import org.javacord.api.entity.DiscordClient;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -24,8 +29,10 @@ public class UserInfoCommand implements MessageCreateListener {
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
         if (message.getContent().contains("!ui") && message.getContent().indexOf("!ui") == 0) {
+			ITransaction transaction = Sentry.startTransaction("!ui", "command");
             String[] args = message.getContent().split(" ");
-
+            
+            transaction.setStatus(SpanStatus.OK);
             if (args.length > 1) {
                 for (int i = 1; i < args.length; i++) {
                     String user = args[i];
@@ -85,6 +92,7 @@ public class UserInfoCommand implements MessageCreateListener {
                                 .addField(language.getString("ui.searchedUser"), user)
                                 .setDescription(String.format(language.getString("ui.notFound.desc"), user))
                                 .setColor(Color.ORANGE);
+                        transaction.setStatus(SpanStatus.NOT_FOUND);
                     }
                     message.getChannel().sendMessage(embedBuilder);
                 }
@@ -126,6 +134,7 @@ public class UserInfoCommand implements MessageCreateListener {
                         .setThumbnail(u.getAvatar())
                         .setColor(color);
                 message.getChannel().sendMessage(embedBuilder);
+                transaction.finish();
             }
         }
     }

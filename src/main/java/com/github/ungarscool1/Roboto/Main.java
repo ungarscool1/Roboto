@@ -5,8 +5,11 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Locale;
 
+import io.sentry.ITransaction;
 import io.sentry.Sentry;
 import io.sentry.SentryEnvelope;
+import io.sentry.SentryEvent;
+import io.sentry.SpanStatus;
 
 import com.github.ungarscool1.Roboto.listeners.commands.admin.*;
 import com.github.ungarscool1.Roboto.listeners.commands.owner.*;
@@ -42,9 +45,9 @@ public class Main {
         }
     	Sentry.init(options -> {
     		  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
-    		  options.setTracesSampleRate(1.0);
-    		  options.setDebug(true);
-    		  options.setRelease("060621-19.7");
+    		  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
+    		  options.setDebug(config.sentry_io_debug);
+    		  options.setRelease("060621-21.3");
     		  options.setEnableAutoSessionTracking(true);
     		});
 		Sentry.startSession();
@@ -61,6 +64,7 @@ public class Main {
     }
     
     private static void onShardLogin(DiscordApi api) {
+		ITransaction transaction = Sentry.startTransaction("onShardLogin()", "Instance initialization");
         System.out.println("Shard " + api.getCurrentShard() + " logged in!");
         
         dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
@@ -109,6 +113,8 @@ public class Main {
 		api.addMessageCreateListener(new OwnerInfoCommand());
 
 		api.addReactionAddListener(new ReacListener());
+		transaction.setStatus(SpanStatus.OK);
+        transaction.finish();
     }
 
 

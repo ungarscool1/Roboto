@@ -1,6 +1,11 @@
 package com.github.ungarscool1.Roboto.listeners.commands.admin;
 
 import com.github.ungarscool1.Roboto.Main;
+
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -17,6 +22,7 @@ public class AdminHelpCommand implements MessageCreateListener {
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
         if (message.getAuthor().canBanUsersFromServer() && message.getContent().equalsIgnoreCase("@help")) {
+			ITransaction transaction = Sentry.startTransaction("@help", "command");
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle(language.getString("admin.help.name"))
                     .addField(language.getString("admin.help.ban.name"), language.getString("admin.help.ban.desc"))
@@ -24,6 +30,7 @@ public class AdminHelpCommand implements MessageCreateListener {
                     .addField("@lang <lang>", language.getString("help.lang.desc"))
                     .setFooter(language.getString("admin.help.footer"));
             message.getChannel().sendMessage(embed);
+            transaction.finish(SpanStatus.OK);
         }
     }
 }

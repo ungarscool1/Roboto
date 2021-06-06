@@ -1,6 +1,11 @@
 package com.github.ungarscool1.Roboto.listeners.commands.utility;
 
 import com.github.ungarscool1.Roboto.Main;
+
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -21,13 +26,14 @@ public class VersionCommand implements MessageCreateListener {
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
         if (message.getContent().equalsIgnoreCase("!ver") || message.getContent().equalsIgnoreCase("!version")) {
+			ITransaction transaction = Sentry.startTransaction("!version", "command");
             EmbedBuilder embedBuilder = new EmbedBuilder();
             int users = api.getServers().stream().mapToInt(Server::getMemberCount).sum();
             try {
                 embedBuilder.setTitle(language.getString("version.name"))
                         .addField("Version", "3.0.0 DEV")
                         .addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-                        .addField("Build", "060621-19.7")
+                        .addField("Build", "060621-21.3")
                         .addField("Bot owner", api.getOwner().get().getDiscriminatedName())
                         .addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
                         .addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
@@ -41,6 +47,7 @@ public class VersionCommand implements MessageCreateListener {
                         .setColor(Color.RED);
             }
             message.getChannel().sendMessage(embedBuilder);
+            transaction.finish(SpanStatus.OK);
         }
     }
 }

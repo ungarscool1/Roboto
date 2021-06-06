@@ -15,6 +15,10 @@ import com.github.ungarscool1.Roboto.entity.game.PFCbr;
 import com.github.ungarscool1.Roboto.entity.game.Puissance4;
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
 
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 public class GameCommand implements MessageCreateListener {
 
 	private DiscordApi api;
@@ -34,6 +38,7 @@ public class GameCommand implements MessageCreateListener {
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 				
 		if (message.getContent().contains("!game")) {
+			ITransaction transaction = Sentry.startTransaction("!game", "command");
 			if (message.getContent().length() > 5) {
 				String[] args = message.getContent().substring(6).split(" ");
 				if (args[0].equalsIgnoreCase("pfc") || args[0].equalsIgnoreCase("rps")) {
@@ -81,6 +86,7 @@ public class GameCommand implements MessageCreateListener {
 						.addField(language.getString("game.help.pfcbr.name"), language.getString("game.help.pfcbr.desc"))
 						.addField("^4", language.getString("game.help.p4.desc")));
 			}
+			transaction.finish(SpanStatus.OK);
 		}
 		
 	}

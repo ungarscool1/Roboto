@@ -1,6 +1,11 @@
 package com.github.ungarscool1.Roboto.listeners.commands.utility;
 
 import com.github.ungarscool1.Roboto.Main;
+
+import io.sentry.ITransaction;
+import io.sentry.Sentry;
+import io.sentry.SpanStatus;
+
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -18,6 +23,7 @@ public class HelpCommand implements MessageCreateListener {
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
         if (message.getContent().equalsIgnoreCase("!help") || message.getContent().equalsIgnoreCase("!aide")) {
+			ITransaction transaction = Sentry.startTransaction("!help", "command");
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(language.getString("help"))
                     .addField(language.getString("help.game.cmd"), language.getString("help.game.desc"))
@@ -30,6 +36,7 @@ public class HelpCommand implements MessageCreateListener {
                     .setColor(Color.GREEN)
                     .setFooter("Roboto v.3 by Ungarscool1");
             message.getChannel().sendMessage(embedBuilder);
+            transaction.finish(SpanStatus.OK);
         }
     }
 }
