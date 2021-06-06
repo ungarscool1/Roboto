@@ -23,8 +23,8 @@ public class ServerLanguage {
             reader = new BufferedReader(new FileReader("serversLanguage.json"));
     		gson = new GsonBuilder().setPrettyPrinting().create();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.err.println("The file can't be readable / writable / do not exist");
+            System.err.println("serversLanguage.json can't be readable / writable / do not exist");
+            System.exit(1);
         }
 	}
 

@@ -1,12 +1,19 @@
 package com.github.ungarscool1.Roboto;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Locale;
+
+import io.sentry.Sentry;
+import io.sentry.SentryEnvelope;
 
 import com.github.ungarscool1.Roboto.listeners.commands.admin.*;
 import com.github.ungarscool1.Roboto.listeners.commands.owner.*;
 import com.github.ungarscool1.Roboto.listeners.commands.utility.*;
 import com.github.ungarscool1.Roboto.listeners.servers.*;
+import com.google.gson.Gson;
+
 import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -23,16 +30,32 @@ public class Main {
 	
 	public static HashMap<Server, Locale> locByServ = new HashMap<>();
 	public static DiscordBotListAPI dbl;
+	public static Configuration config;
 	
     public static void main(String[] args) {
+    	Gson gson = new Gson();
+        try {
+            config = gson.fromJson(new FileReader(new File("config.json")), Configuration.class);
+        } catch (Exception e) {
+            System.err.println("The configuration file is missing.");
+            System.exit(1);
+        }
+    	Sentry.init(options -> {
+    		  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
+    		  options.setTracesSampleRate(1.0);
+    		  options.setDebug(true);
+    		  options.setRelease("060621-19.7");
+    		  options.setEnableAutoSessionTracking(true);
+    		});
+		Sentry.startSession();
         new DiscordApiBuilder()
-        	.setToken(args[0])
+        	.setToken(config.bot_token)
         	.setRecommendedTotalShards()
         	.join()
         	.loginAllShards()
         	.forEach(shardFuture -> shardFuture.thenAcceptAsync(Main::onShardLogin).exceptionally(ExceptionLogger.get()));
         dbl = new DiscordBotListAPI.Builder()
-        	.token(args[1])
+        	.token(config.discord_bot_list_key)
         	.botId("373199180161613824")
         	.build();
     }
