@@ -14,7 +14,6 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import java.awt.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 
 public class OwnerInfoCommand implements MessageCreateListener {
     @Override
@@ -29,11 +28,7 @@ public class OwnerInfoCommand implements MessageCreateListener {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Informations de tout les serveurs").setDescription("Toutes les informations des serveurs sont affichés ici");
             event.getApi().getServers().forEach(server -> {
-                try {
-					embed.addField(server.getName(), "Owner: " + server.requestOwner().get().getDiscriminatedName() + "\nIl y a " + server.getMemberCount() + " utilisateurs sur le serveur.\nRégion: " + server.getRegion().getName() + "\nEst admin ? " + server.isAdmin(event.getApi().getYourself()) + "\nLangue du bot: " + Main.locByServ.get(server).getDisplayLanguage(Locale.FRANCE) + " - " + Main.locByServ.get(server).getDisplayCountry(Locale.FRANCE));
-				} catch (InterruptedException | ExecutionException e) {
-					Sentry.captureException(e);
-				}
+                embed.addField(server.getName(), "Owner: " + server.getOwner().get().getDiscriminatedName() + "\nIl y a " + server.getMemberCount() + " utilisateurs sur le serveur.\nRégion: " + server.getRegion().getName() + "\nEst admin ? " + server.isAdmin(event.getApi().getYourself()) + "\nLangue du bot: " + Main.locByServ.get(server).getDisplayLanguage(Locale.FRANCE) + " - " + Main.locByServ.get(server).getDisplayCountry(Locale.FRANCE));
             });
             embed.setAuthor(event.getApi().getYourself()).setColor(Color.GREEN);
             message.getChannel().sendMessage(embed);
