@@ -23,7 +23,7 @@ public class BanCommand implements MessageCreateListener {
             return;
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
-        if (message.getAuthor().canBanUsersFromServer() && message.getContent().contains("@ban")) {
+        if (message.getAuthor().canBanUsersFromServer() && message.getContent().startsWith("@ban")) {
 			ITransaction transaction = Sentry.startTransaction("@ban", "command");
             String[] args = message.getContent().split(" ");
             EmbedBuilder embed = new EmbedBuilder();

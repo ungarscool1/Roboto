@@ -5,14 +5,12 @@ import org.javacord.api.entity.user.User;
 public class Vote {
 	private String name;
 	private String description;
-	private boolean multi;
 	private int nombreOption;
 	private String[] options;
-	private User author;
+	private boolean multi;
 	private int where;
 	
 	public Vote(User user) {
-		author = user;
 		where = 0;
 	}
 	

@@ -23,7 +23,7 @@ public class LangCommand implements MessageCreateListener {
             return;
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
-        if ((message.getContent().contains("@lang") || message.getContent().contains("@language") || message.getContent().contains("@langue")) && message.getAuthor().isServerAdmin()) {
+        if ((message.getContent().startsWith("@lang") || message.getContent().startsWith("@language") || message.getContent().startsWith("@langue")) && message.getAuthor().isServerAdmin()) {
             EmbedBuilder embed = new EmbedBuilder();
 			ITransaction transaction = Sentry.startTransaction("@lang", "command");
             if (message.getContent().contains("en_US") || message.getContent().contains("fr_FR") || message.getContent().contains("es_ES")) {

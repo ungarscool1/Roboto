@@ -25,7 +25,7 @@ public class VersionCommand implements MessageCreateListener {
             return;
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
-        if (message.getContent().equalsIgnoreCase("!ver") || message.getContent().equalsIgnoreCase("!version")) {
+        if (message.getContent().startsWith("!ver") || message.getContent().startsWith("!version")) {
 			ITransaction transaction = Sentry.startTransaction("!version", "command");
             EmbedBuilder embedBuilder = new EmbedBuilder();
             int users = api.getServers().stream().mapToInt(Server::getMemberCount).sum();
@@ -33,7 +33,7 @@ public class VersionCommand implements MessageCreateListener {
                 embedBuilder.setTitle(language.getString("version.name"))
                         .addField("Version", "3.0.0")
                         .addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-                        .addField("Build", "120621-22.1")
+                        .addField("Build", "120621-22.2")
                         .addField("Bot owner", api.getOwner().get().getDiscriminatedName())
                         .addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
                         .addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))

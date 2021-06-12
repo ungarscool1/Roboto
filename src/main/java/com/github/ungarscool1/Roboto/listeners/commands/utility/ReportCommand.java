@@ -1,7 +1,5 @@
 package com.github.ungarscool1.Roboto.listeners.commands.utility;
 
-import com.github.ungarscool1.Roboto.Main;
-
 import io.sentry.ITransaction;
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
@@ -12,7 +10,6 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import java.awt.*;
-import java.util.ResourceBundle;
 
 public class ReportCommand implements MessageCreateListener {
     @Override
@@ -20,9 +17,7 @@ public class ReportCommand implements MessageCreateListener {
         Message message = event.getMessage();
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
-        ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
-
-        if (message.getContent().equalsIgnoreCase("!report")) {
+        if (message.getContent().startsWith("!report")) {
 			ITransaction transaction = Sentry.startTransaction("!report", "command");
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Report")

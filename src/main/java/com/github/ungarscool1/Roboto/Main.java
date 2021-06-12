@@ -47,7 +47,7 @@ public class Main {
     		  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
     		  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
     		  options.setDebug(config.sentry_io_debug);
-    		  options.setRelease("120621-22.1");
+    		  options.setRelease("120621-22.2");
     		  options.setEnvironment(config.env);
     		  options.setEnableAutoSessionTracking(true);
     		});
@@ -113,7 +113,6 @@ public class Main {
 		api.addMessageCreateListener(new ChangeGameCommand());
 		api.addMessageCreateListener(new MaintenanceCommand());
 		api.addMessageCreateListener(new OwnerInfoCommand());
-		api.addMessageCreateListener(new ChangeStatusCommand());
 
 		api.addReactionAddListener(new ReacListener());
 		transaction.setStatus(SpanStatus.OK);

@@ -16,7 +16,6 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 
 public class ServerInfoCommand implements MessageCreateListener {
     @Override
@@ -26,7 +25,7 @@ public class ServerInfoCommand implements MessageCreateListener {
             return;
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
-        if (message.getContent().equals("!si")) {
+        if (message.getContent().startsWith("!si")) {
 			ITransaction transaction = Sentry.startTransaction("!si", "command");
             Server server = message.getServer().get();
             EmbedBuilder embedBuilder = new EmbedBuilder();

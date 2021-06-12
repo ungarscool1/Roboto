@@ -37,7 +37,7 @@ public class GameCommand implements MessageCreateListener {
 		}
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 				
-		if (message.getContent().contains("!game")) {
+		if (message.getContent().startsWith("!game")) {
 			ITransaction transaction = Sentry.startTransaction("!game", "command");
 			if (message.getContent().length() > 5) {
 				String[] args = message.getContent().substring(6).split(" ");

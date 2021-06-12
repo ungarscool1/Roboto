@@ -22,7 +22,7 @@ public class OwnerInfoCommand implements MessageCreateListener {
 
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
-        if (message.getContent().equalsIgnoreCase("@@info") && message.getAuthor().isBotOwner()) {
+        if (message.getContent().startsWith("@@info") && message.getAuthor().isBotOwner()) {
 			ITransaction transaction = Sentry.startTransaction("@@info", "command");
             System.out.println("Getting servers info...");
             EmbedBuilder embed = new EmbedBuilder();

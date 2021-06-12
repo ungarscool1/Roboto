@@ -42,7 +42,7 @@ public class VoteCommand implements MessageCreateListener {
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
 
-		if (message.getContent().contains("!vote")) {
+		if (message.getContent().startsWith("!vote")) {
 			ITransaction transaction = Sentry.startTransaction("!vote", "command");
 			User user = message.getAuthor().asUser().get();
 			if (!votes.containsKey(message.getAuthor().asUser().get())) {

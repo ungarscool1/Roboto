@@ -22,7 +22,7 @@ public class HelpCommand implements MessageCreateListener {
             return;
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
-        if (message.getContent().equalsIgnoreCase("!help") || message.getContent().equalsIgnoreCase("!aide")) {
+        if (message.getContent().startsWith("!help") || message.getContent().startsWith("!aide")) {
 			ITransaction transaction = Sentry.startTransaction("!help", "command");
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(language.getString("help"))
@@ -33,6 +33,7 @@ public class HelpCommand implements MessageCreateListener {
                     .addField("!ver", language.getString("help.ver.desc"))
                     .addField("!vote", language.getString("help.vote.desc"))
                     .addField("!report", language.getString("help.report.desc"))
+                    .addField("!discoboom", language.getString("help.discoboom.desc"))
                     .setColor(Color.GREEN)
                     .setFooter("Roboto v.3 by Ungarscool1");
             message.getChannel().sendMessage(embedBuilder);

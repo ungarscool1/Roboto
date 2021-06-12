@@ -6,11 +6,9 @@ import io.sentry.ITransaction;
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
 
-import org.javacord.api.entity.DiscordClient;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
-import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
@@ -28,7 +26,7 @@ public class UserInfoCommand implements MessageCreateListener {
             return;
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
-        if (message.getContent().contains("!ui") && message.getContent().indexOf("!ui") == 0) {
+        if (message.getContent().startsWith("!ui")) {
 			ITransaction transaction = Sentry.startTransaction("!ui", "command");
             String[] args = message.getContent().split(" ");
             
@@ -60,18 +58,6 @@ public class UserInfoCommand implements MessageCreateListener {
                         Date creationDate = Date.from(u.getCreationTimestamp());
                         SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 
-                        // Get if user is connected on PC / Mobile / WEB
-                        String connectedOn;
-                        if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
-                            connectedOn = "PC";
-                        } else if (u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.ONLINE)) {
-                            connectedOn = language.getString("ui.connectedOn.phone");
-                        } else if (u.isBot()) {
-                            connectedOn = language.getString("ui.connectedOn.notApplicable");
-                        } else {
-                            connectedOn = language.getString("ui.connectedOn.notSure");
-                        }
-
                         String comp = "";
                         if (u.isBot())
                             comp = " <:bot:745718850041020446>";
@@ -82,8 +68,6 @@ public class UserInfoCommand implements MessageCreateListener {
                         embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()) + comp)
                                 .addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
                                 .addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
-                                .addField(language.getString("ui.status"), language.getString("ui.connect."+u.getStatus().getStatusString()), true)
-                                .addField(language.getString("ui.connectedOn"), connectedOn, true)
                                 .setThumbnail(u.getAvatar())
                                 .setColor(color);
 
@@ -105,22 +89,6 @@ public class UserInfoCommand implements MessageCreateListener {
                 Date creationDate = Date.from(u.getCreationTimestamp());
                 SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 
-                // Get if user is connected on PC / Mobile / WEB
-                String connectedOn;
-                if (!u.getStatusOnClient(DiscordClient.DESKTOP).equals(UserStatus.OFFLINE)) {
-                    connectedOn = "PC";
-                } else if (u.getStatusOnClient(DiscordClient.MOBILE).equals(UserStatus.ONLINE)) {
-                    connectedOn = language.getString("ui.connectedOn.phone");
-                } else {
-                    connectedOn = language.getString("ui.connectedOn.notSure");
-                }
-
-                String status;
-                if (u.getStatus().equals(UserStatus.OFFLINE))
-                    status = language.getString("ui.connect.invisible");
-                else
-                    status = language.getString("ui.connect."+u.getStatus().getStatusString());
-
                 Color color = Color.GREEN;
                 if (u.getRoleColor(message.getServer().get()).isPresent()) {
                     color = u.getRoleColor(message.getServer().get()).get();
@@ -129,8 +97,6 @@ public class UserInfoCommand implements MessageCreateListener {
                 embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()))
                         .addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
                         .addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
-                        .addField(language.getString("ui.status"), status, true)
-                        .addField(language.getString("ui.connectedOn"), connectedOn, true)
                         .setThumbnail(u.getAvatar())
                         .setColor(color);
                 message.getChannel().sendMessage(embedBuilder);

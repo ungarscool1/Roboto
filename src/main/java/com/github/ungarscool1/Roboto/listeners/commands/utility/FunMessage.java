@@ -9,7 +9,7 @@ public class FunMessage implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent event) {
         Message message = event.getMessage();
         if (message.getContent().equals("Make the party blob !")) {
-            message.getChannel().sendMessage("<:partyblob:423936638473994261><:partyblob:423936638473994261><:partyblob:423936638473994261>");
+            message.getChannel().sendMessage("<a:partyblob:423936638473994261><a:partyblob:423936638473994261><a:partyblob:423936638473994261>");
         }
     }
 }

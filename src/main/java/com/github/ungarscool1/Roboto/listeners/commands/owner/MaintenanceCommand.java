@@ -1,7 +1,5 @@
 package com.github.ungarscool1.Roboto.listeners.commands.owner;
 
-import com.github.ungarscool1.Roboto.Main;
-
 import io.sentry.ITransaction;
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
@@ -13,8 +11,6 @@ import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
-import java.util.ResourceBundle;
-
 public class MaintenanceCommand implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
@@ -22,7 +18,7 @@ public class MaintenanceCommand implements MessageCreateListener {
 
         if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
             return;
-        if (message.getContent().equalsIgnoreCase("@@maintenance") && message.getAuthor().isBotOwner()) {
+        if (message.getContent().startsWith("@@maintenance") && message.getAuthor().isBotOwner()) {
 			ITransaction transaction = Sentry.startTransaction("@@maintenance", "command");
             DiscordApi api = event.getApi();
             if (api.getStatus().equals(UserStatus.DO_NOT_DISTURB)) {

@@ -23,7 +23,7 @@ public class KickCommand implements MessageCreateListener {
             return;
         ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(message.getServer().get()));
 
-        if (message.getAuthor().canKickUsersFromServer() && message.getContent().contains("@kick")) {
+        if (message.getAuthor().canKickUsersFromServer() && message.getContent().startsWith("@kick")) {
 			ITransaction transaction = Sentry.startTransaction("@kick", "command");
             String[] args = message.getContent().split(" ");
             EmbedBuilder embed = new EmbedBuilder();
