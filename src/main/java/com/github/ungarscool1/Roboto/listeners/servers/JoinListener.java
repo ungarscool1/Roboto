@@ -15,16 +15,16 @@ import org.javacord.api.listener.server.ServerJoinListener;
 import java.util.Locale;
 
 public class JoinListener implements ServerJoinListener {
-    @Override
-    public void onServerJoin(ServerJoinEvent event) {
+	@Override
+	public void onServerJoin(ServerJoinEvent event) {
 		ITransaction transaction = Sentry.startTransaction("onServerJoin()", "task");
-        DiscordApi api = event.getApi();
-        ServerLanguage serverLanguage = new ServerLanguage();
-        Main.locByServ.put(event.getServer(), new Locale("en", "US"));
-        serverLanguage.addServer(event.getServer());
-        api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
-        Main.dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
-        transaction.setStatus(SpanStatus.OK);
-        transaction.finish();
-    }
+		DiscordApi api = event.getApi();
+		ServerLanguage serverLanguage = new ServerLanguage();
+		Main.locByServ.put(event.getServer(), new Locale("en", "US"));
+		serverLanguage.addServer(event.getServer());
+		api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+		Main.dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
+		transaction.setStatus(SpanStatus.OK);
+		transaction.finish();
+	}
 }

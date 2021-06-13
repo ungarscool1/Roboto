@@ -6,7 +6,7 @@
 
 	<groupId>com.github.ungarscool1</groupId>
 	<artifactId>Roboto</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,12 +35,12 @@
 		<dependency>
     		<groupId>io.sentry</groupId>
     		<artifactId>sentry</artifactId>
-    		<version>5.0.0</version>
+    		<version>5.0.1</version>
 		</dependency>
 		<dependency>
     		<groupId>io.sentry</groupId>
     		<artifactId>sentry-log4j2</artifactId>
-    		<version>5.0.0</version>
+    		<version>5.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.discordbots</groupId>

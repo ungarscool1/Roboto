@@ -89,30 +89,26 @@ public class DiscoboomSubCommand {
 		span = transaction.startChild("player - start music");
 		
 		playerManager.loadItem(url, new AudioLoadResultHandler() {
-			  @Override
-			  public void trackLoaded(AudioTrack track) {
-				  title.concat(track.getInfo().title);
-				  musicManager.scheduler.queue(track);
-				  musicManager.player.setVolume(50);
-			  }
+			@Override
+			public void trackLoaded(AudioTrack track) {
+				title.concat(track.getInfo().title);
+				musicManager.scheduler.queue(track);
+				musicManager.player.setVolume(50);
+			}
 
-			  @Override
-			  public void playlistLoaded(AudioPlaylist playlist) {
-			    for (AudioTrack track : playlist.getTracks()) {
-			    	musicManager.scheduler.queue(track);
-			    }
-			  }
+			@Override
+			public void playlistLoaded(AudioPlaylist playlist) {
+				for (AudioTrack track : playlist.getTracks()) {
+					musicManager.scheduler.queue(track);
+				}
+			}
 
-			  @Override
-			  public void noMatches() {
-			    // Notify the user that we've got nothing
-			  }
+			@Override
+			public void noMatches() {}
 
-			  @Override
-			  public void loadFailed(FriendlyException throwable) {
-			    // Notify the user that everything exploded
-			  }
-			});
+			@Override
+			public void loadFailed(FriendlyException throwable) {}
+		});
 		span.finish(SpanStatus.OK);
 	}
 	
@@ -134,7 +130,7 @@ public class DiscoboomSubCommand {
 		ServerMusicManager musicManager = null;
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 				.setColor(Color.green);
-		
+
 		span.finish(SpanStatus.OK);
 		span = transaction.startChild("Disconnection");
 		if (musicManagers.containsKey(server)) {
@@ -177,14 +173,14 @@ public class DiscoboomSubCommand {
 		event.getChannel().sendMessage(embed);
 		span.finish(SpanStatus.OK);
 	}
-	
+
 	public static void stop(MessageCreateEvent event, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
 		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 				.setDescription(language.getString("discoboom.stop.description"));
-		
+
 		span.finish();
 		span = transaction.startChild("Stopping");
 		musicManager.scheduler.stop();
@@ -206,7 +202,7 @@ public class DiscoboomSubCommand {
 
 	public static void pause(MessageCreateEvent event, ITransaction transaction) {
 		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
-		
+
 		musicManager.player.setPaused(!musicManager.player.isPaused());
 	}
 }

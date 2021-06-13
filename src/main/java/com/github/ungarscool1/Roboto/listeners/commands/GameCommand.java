@@ -25,11 +25,11 @@ public class GameCommand implements MessageCreateListener {
 	public static HashMap<Message, PFC> PFCs = new HashMap<Message, PFC>();
 	public static HashMap<Message, PFCbr> PFCbrs = new HashMap<Message, PFCbr>();
 	public static HashMap<Message, Puissance4> P4 = new HashMap<Message, Puissance4>();
-	
+
 	public GameCommand(DiscordApi api) {
 		this.api = api;
 	}
-	
+
 	public void onMessageCreate(MessageCreateEvent event) {
 		Message message = event.getMessage();
 		if (!message.getServer().isPresent() || message.getAuthor().isBotUser()) {
@@ -90,7 +90,7 @@ public class GameCommand implements MessageCreateListener {
 		}
 		
 	}
-	
+
 	public static void updateGames(HashMap<Message, PFC> pfcs, HashMap<Message, PFCbr> pFCbrs2, HashMap<Message, Puissance4> p4) {
 		PFCs = pfcs;
 		PFCbrs = pFCbrs2;

@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.ApplicationInfo;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.util.logging.ExceptionLogger;
@@ -34,62 +35,63 @@ public class Main {
 	public static DiscordBotListAPI dbl;
 	public static Configuration config;
 	
-    public static void main(String[] args) {
-    	Gson gson = new Gson();
-        try {
-            config = gson.fromJson(new FileReader(new File("config.json")), Configuration.class);
-        } catch (Exception e) {
-            System.err.println("The configuration file is missing.");
-            System.exit(1);
-        }
-        System.out.println("Running on " + config.env + " mode");
-    	Sentry.init(options -> {
-    		  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
-    		  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
-    		  options.setDebug(config.sentry_io_debug);
-    		  options.setRelease("120621-22.2");
-    		  options.setEnvironment(config.env);
-    		  options.setEnableAutoSessionTracking(true);
-    		});
+	public static void main(String[] args) {
+		Gson gson = new Gson();
+		
+		try {
+			config = gson.fromJson(new FileReader(new File("config.json")), Configuration.class);
+		} catch (Exception e) {
+			System.err.println("The configuration file is missing.");
+			System.exit(1);
+		}
+		System.out.println("Running on " + config.env + " mode");
+		Sentry.init(options -> {
+			  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
+			  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
+			  options.setDebug(config.sentry_io_debug);
+			  options.setRelease("130621-dev");
+			  options.setEnvironment(config.env);
+			  options.setEnableAutoSessionTracking(true);
+			});
 		Sentry.startSession();
-        new DiscordApiBuilder()
-        	.setToken(config.bot_token)
-        	.setRecommendedTotalShards()
-        	.join()
-        	.loginAllShards()
-        	.forEach(shardFuture -> shardFuture.thenAcceptAsync(Main::onShardLogin).exceptionally(ExceptionLogger.get()));
-        dbl = new DiscordBotListAPI.Builder()
-        	.token(config.discord_bot_list_key)
-        	.botId("373199180161613824")
-        	.build();
-    }
-    
-    private static void onShardLogin(DiscordApi api) {
+		new DiscordApiBuilder()
+			.setToken(config.bot_token)
+			.setRecommendedTotalShards()
+			.join()
+			.loginAllShards()
+			.forEach(shardFuture -> shardFuture.thenAcceptAsync(Main::onShardLogin).exceptionally(ExceptionLogger.get()));
+		dbl = new DiscordBotListAPI.Builder()
+			.token(config.discord_bot_list_key)
+			.botId("373199180161613824")
+			.build();
+	}
+	
+	private static void onShardLogin(DiscordApi api) {
 		ITransaction transaction = Sentry.startTransaction("onShardLogin()", "Instance initialization");
-        System.out.println("Shard " + api.getCurrentShard() + " logged in!");
-        
-        dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
-        
-        api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
-        
-        api.getServers().forEach(server -> {
+		System.out.println("Shard " + api.getCurrentShard() + " logged in!");
+		
+		dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
+		
+		api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+		
+		api.getServers().forEach(server -> {
 			try {
 				ServerLanguage serverLanguage = new ServerLanguage();
-        		String[] l;
+				String[] l;
 				l = serverLanguage.getServerLanguage(server).split("_");
-        		locByServ.put(server, new Locale(l[0], l[1]));
+				locByServ.put(server, new Locale(l[0], l[1]));
 			} catch (Exception e) {
 				locByServ.put(server, new Locale("en", "US"));
 				new ServerLanguage().addServer(server);
 			}
-        });
-        
-        api.addServerJoinListener(new JoinListener());
-        api.addServerLeaveListener(new LeaveListener());
+		});
+		
+		api.addServerJoinListener(new JoinListener());
+		api.addServerLeaveListener(new LeaveListener());
 
-        api.addMessageCreateListener(new GameCommand(api));
-        api.addMessageCreateListener(new UtilsCommand());
-        api.addMessageCreateListener(new FunMessage());
+		api.addMessageCreateListener(new GameCommand(api));
+		api.addMessageCreateListener(new UtilsCommand());
+		api.addMessageCreateListener(new FunMessage());
 		/**
 		 * Utilities Commands
 		 */
@@ -116,8 +118,8 @@ public class Main {
 
 		api.addReactionAddListener(new ReacListener());
 		transaction.setStatus(SpanStatus.OK);
-        transaction.finish();
-    }
+		transaction.finish();
+	}
 
 
 

@@ -25,14 +25,14 @@ public class ServerLanguage {
 	public ServerLanguage() {
 		ITransaction transaction = Sentry.startTransaction("ServerLanguage()", "task");
 		try {
-            reader = new BufferedReader(new FileReader("serversLanguage.json"));
-    		gson = new GsonBuilder().setPrettyPrinting().create();
-        } catch (FileNotFoundException e) {
-            System.err.println("serversLanguage.json can't be readable / writable / do not exist");
+			reader = new BufferedReader(new FileReader("serversLanguage.json"));
+			gson = new GsonBuilder().setPrettyPrinting().create();
+		} catch (FileNotFoundException e) {
+			System.err.println("serversLanguage.json can't be readable / writable / do not exist");
 			Sentry.captureException(e);
-            transaction.finish(SpanStatus.NOT_FOUND);
-            System.exit(1);
-        }
+			transaction.finish(SpanStatus.NOT_FOUND);
+			System.exit(1);
+		}
 		transaction.finish(SpanStatus.OK);
 	}
 
@@ -51,20 +51,20 @@ public class ServerLanguage {
 		} finally {
 			transaction.finish();
 		}
-    }
-    
-    public String getServerLanguage(Server server) {
-    	JsonObject object = gson.fromJson(reader, JsonObject.class);
-    	String lang;
-    	try {
-    		lang = object.get(server.getIdAsString()).getAsString();
-    	} catch (NullPointerException e) {
-    		setServerLanguage(server, "en_US");
-    		Sentry.captureException(e);
-    		e.printStackTrace();
-    		return "en_US";
-    	}
-    	return lang;
+	}
+	
+	public String getServerLanguage(Server server) {
+		JsonObject object = gson.fromJson(reader, JsonObject.class);
+		String lang;
+		try {
+			lang = object.get(server.getIdAsString()).getAsString();
+		} catch (NullPointerException e) {
+			setServerLanguage(server, "en_US");
+			Sentry.captureException(e);
+			e.printStackTrace();
+			return "en_US";
+		}
+		return lang;
 	}
 	
 	public void addServer(Server server) {

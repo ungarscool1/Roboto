@@ -25,13 +25,14 @@ public class TrackSchedulerThread implements Runnable {
 	private Message message;
 	private AudioTrack track;
 	private long lastPos = -1;
+	private boolean stopped = false;
 	
 	public TrackSchedulerThread(TextChannel channel, TrackScheduler scheduler, AudioTrack track) {
 		this.channel = channel;
 		this.scheduler = scheduler;
 		this.track = track;
 	}
-	
+
 	private EmbedBuilder createEmbed() {
 		StringBuilder title = new StringBuilder()
 				.append("[")
@@ -69,7 +70,7 @@ public class TrackSchedulerThread implements Runnable {
 		embed.setDescription(progress.toString());
 		return embed;
 	}
-	
+
 	private void handleReaction(ReactionAddEvent event) {
 		Reaction react = null;
 		User user = event.requestUser().join();
@@ -80,14 +81,18 @@ public class TrackSchedulerThread implements Runnable {
 		react.getEmoji().asUnicodeEmoji().ifPresent(string -> {
 			if (string.equals("⏯️"))
 				scheduler.pauseResume();
-			else if (string.equals("⏭️"))
+			else if (string.equals("⏭️")) {
 				scheduler.nextTrack();
-			else if (string.equals("⏹️"))
+				message.delete();
+			} else if (string.equals("⏹️")) {
 				scheduler.stop();
+				stopped = true;
+				message.delete();
+			}
 		});
 		react.removeUser(user);
 	}
-	
+
 	public void run() {
 		ITransaction transaction = Sentry.startTransaction("Discoboom player thread", "Discoboom player thread");
 		ISpan span;
@@ -100,12 +105,12 @@ public class TrackSchedulerThread implements Runnable {
 			Sentry.captureException(e);
 			e.printStackTrace();
 		}
-		while (lastPos != track.getPosition() || scheduler.isPaused()) {
+		while ((lastPos != track.getPosition() || scheduler.isPaused()) && !stopped) {
 			span = transaction.startChild("Editing message");
 			message.edit(createEmbed());
 			span.finish();
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				Sentry.captureException(e);
 				e.printStackTrace();

@@ -12,25 +12,25 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 public class MaintenanceCommand implements MessageCreateListener {
-    @Override
-    public void onMessageCreate(MessageCreateEvent event) {
-        Message message = event.getMessage();
+	@Override
+	public void onMessageCreate(MessageCreateEvent event) {
+		Message message = event.getMessage();
 
-        if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
-            return;
-        if (message.getContent().startsWith("@@maintenance") && message.getAuthor().isBotOwner()) {
+		if (!message.getServer().isPresent() || message.getAuthor().isBotUser())
+			return;
+		if (message.getContent().startsWith("@@maintenance") && message.getAuthor().isBotOwner()) {
 			ITransaction transaction = Sentry.startTransaction("@@maintenance", "command");
-            DiscordApi api = event.getApi();
-            if (api.getStatus().equals(UserStatus.DO_NOT_DISTURB)) {
-                message.getChannel().sendMessage("Mode maintenance désactivé !");
-                api.updateStatus(UserStatus.ONLINE);
-                api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
-            } else {
-                message.getChannel().sendMessage("Mode maintenance activé !");
-                api.updateStatus(UserStatus.DO_NOT_DISTURB);
-                api.updateActivity("Maintenance mode...");
-            }
-            transaction.finish(SpanStatus.OK);
-        }
-    }
+			DiscordApi api = event.getApi();
+			if (api.getStatus().equals(UserStatus.DO_NOT_DISTURB)) {
+				message.getChannel().sendMessage("Mode maintenance désactivé !");
+				api.updateStatus(UserStatus.ONLINE);
+				api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
+			} else {
+				message.getChannel().sendMessage("Mode maintenance activé !");
+				api.updateStatus(UserStatus.DO_NOT_DISTURB);
+				api.updateActivity("Maintenance mode...");
+			}
+			transaction.finish(SpanStatus.OK);
+		}
+	}
 }
