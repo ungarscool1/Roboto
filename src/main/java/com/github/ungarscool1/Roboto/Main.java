@@ -49,7 +49,7 @@ public class Main {
 			  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
 			  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
 			  options.setDebug(config.sentry_io_debug);
-			  options.setRelease("130621-dev");
+			  options.setRelease("130621-17.1");
 			  options.setEnvironment(config.env);
 			  options.setEnableAutoSessionTracking(true);
 			});
