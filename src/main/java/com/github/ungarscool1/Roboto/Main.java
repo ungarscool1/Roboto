@@ -39,17 +39,17 @@ public class Main {
 		Gson gson = new Gson();
 		
 		try {
-			config = gson.fromJson(new FileReader(new File("config.json")), Configuration.class);
+			config = gson.fromJson(new FileReader("config.json"), Configuration.class);
 		} catch (Exception e) {
 			System.err.println("The configuration file is missing.");
 			System.exit(1);
 		}
 		System.out.println("Running on " + config.env + " mode");
 		Sentry.init(options -> {
-			  options.setDsn("https://638cad2e6bd84eb488e505925cf6da51@o553695.ingest.sentry.io/5803038");
+			  options.setDsn(config.sentry_io_dsn);
 			  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
 			  options.setDebug(config.sentry_io_debug);
-			  options.setRelease("130621-17.1");
+			  options.setRelease("290821-13.1");
 			  options.setEnvironment(config.env);
 			  options.setEnableAutoSessionTracking(true);
 			});
