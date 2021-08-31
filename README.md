@@ -6,11 +6,14 @@
  - Spanish
 
 ## Commands
- - games
- - ui
- - si
+ - !game
+ - !ui
+ - !si
+ - !vote
+ - !discoboom
  - \@lang
  - \@ban
+ - \@kick
 
 ## Games
 
@@ -59,6 +62,16 @@ Usage: !si
 
 The command will get basic server information.
 
+### Vote (!vote)
+Usage: !vote [param]
+
+Create a poll (unmonitored by Roboto), `param` field in command is used when the poll creation process has been started.
+
+### Discoboom (!discoboom)
+Usage: !discoboom [sub-command] [sub-command argument]
+
+Turn on DiscoBoom mode on Roboto, join you music vc and type ``!discoboom play <replace with your url>``
+
 ## Admin commands
 
 ### Change the bot language (\@lang)
@@ -70,12 +83,6 @@ Available language:
 - English (en_US)
 - French  (fr_FR)
 - Spanish (es_ES)
-
-I working on:
-- German
-- Portuguese
-- Portuguese (BR)
-- Italian
 
 ### Ban user (\@ban)
 Usage: \@ban \<user mention tag\> \<reason\>
@@ -91,4 +98,6 @@ The command will kick the mentionned user.
 
 The reason is displayed to the kicked user in DM and the reason will be displayed in kick reason in your discord server settings.
 
-### Command in development
+## Command in development
+
+- Slash based command (ex: !discoboom -> /discoboom)
