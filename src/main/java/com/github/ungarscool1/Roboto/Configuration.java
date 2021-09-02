@@ -7,4 +7,5 @@ public class Configuration {
 	public boolean sentry_io_debug;
 	public double sentry_io_trace_sample_rate;
 	public String env = "production";
+	public boolean isSetup = false;
 }

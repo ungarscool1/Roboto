@@ -2,9 +2,17 @@ package com.github.ungarscool1.Roboto;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
+import com.github.ungarscool1.Roboto.listeners.slashcommands.music.DiscoboomSlashCommand;
+import com.github.ungarscool1.Roboto.listeners.slashcommands.utility.ReportSlashCommand;
+import com.github.ungarscool1.Roboto.listeners.slashcommands.utility.ServerInfoSlashCommand;
+import com.github.ungarscool1.Roboto.listeners.slashcommands.utility.UserInfoSlashCommand;
+import com.github.ungarscool1.Roboto.listeners.slashcommands.utility.VersionSlashCommand;
 import io.sentry.ITransaction;
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
@@ -19,9 +27,9 @@ import com.google.gson.Gson;
 import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.ApplicationInfo;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.interaction.*;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
@@ -49,7 +57,7 @@ public class Main {
 			  options.setDsn(config.sentry_io_dsn);
 			  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
 			  options.setDebug(config.sentry_io_debug);
-			  options.setRelease("310821-20.1");
+			  options.setRelease("020921-02.10");
 			  options.setEnvironment(config.env);
 			  options.setEnableAutoSessionTracking(true);
 			});
@@ -65,7 +73,84 @@ public class Main {
 			.botId("373199180161613824")
 			.build();
 	}
-	
+
+	private static void setupSlashCommand(DiscordApi api) {
+		if (config.isSetup)
+			return;
+		List<SlashCommandOption> discoboomOptions = new ArrayList<>();
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Help")
+				.setDescription("Display the help")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.build());
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Play")
+				.setDescription("Play music")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.addOption(new SlashCommandOptionBuilder()
+						.setName("url")
+						.setDescription("Track's url")
+						.setRequired(true)
+						.setType(SlashCommandOptionType.STRING)
+						.build()
+				)
+				.build()
+		);
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Pause")
+				.setDescription("Pause the dance floor")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.build()
+		);
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Next")
+				.setDescription("Jump to the next song")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.build()
+		);
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Queue")
+				.setDescription("Show the tracks queue")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.build()
+		);
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Clear")
+				.setDescription("Clear the tracks queue")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.build()
+		);
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Stop")
+				.setDescription("Stop the disco")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.build()
+		);
+		discoboomOptions.add(new SlashCommandOptionBuilder()
+				.setName("Disconnect")
+				.setDescription("Disco(nnect)")
+				.setType(SlashCommandOptionType.SUB_COMMAND)
+				.build()
+		);
+		SlashCommand.with("discoboom", "Enable discoboom mode", discoboomOptions).createGlobal(api).join();
+		SlashCommand.with("help", "Display this help message.").createGlobal(api).join();
+		SlashCommand.with("report", "Report a problem on GitHub").createGlobal(api).join();
+		SlashCommand.with("si", "Get server information").createGlobal(api).join();
+		/*List<SlashCommandOption> uiOptions = new ArrayList<>();
+		uiOptions.add(new SlashCommandOptionBuilder().setRequired(false).setName("user").setDescription("Mentionned user").setType(SlashCommandOptionType.MENTIONABLE).build());
+		SlashCommand.with("ui", "Get user information", uiOptions).createGlobal(api).join();
+		*/SlashCommand.with("version", "Get bot version").createGlobal(api).join();
+		SlashCommand.with("vote", "Create a poll").createGlobal(api).join();
+		config.isSetup = true;
+		try {
+			FileWriter writer = new FileWriter("config.json");
+			writer.write(new Gson().toJson(config));
+			writer.close();
+		} catch (Exception e) {
+			Sentry.captureException(e);
+		}
+	}
+
 	private static void onShardLogin(DiscordApi api) {
 		ITransaction transaction = Sentry.startTransaction("onShardLogin()", "Instance initialization");
 		System.out.println("Shard " + api.getCurrentShard() + " logged in!");
@@ -85,7 +170,19 @@ public class Main {
 				new ServerLanguage().addServer(server);
 			}
 		});
-		
+
+		//  !--------------------------------------------------------------------------------------------! //
+		/**
+		 * Slash Commands: Utility
+		 */
+		api.addSlashCommandCreateListener(new com.github.ungarscool1.Roboto.listeners.slashcommands.utility.HelpCommand());
+		api.addSlashCommandCreateListener(new ReportSlashCommand());
+		api.addSlashCommandCreateListener(new ServerInfoSlashCommand());
+		api.addSlashCommandCreateListener(new UserInfoSlashCommand());
+		api.addSlashCommandCreateListener(new VersionSlashCommand());
+		api.addSlashCommandCreateListener(new DiscoboomSlashCommand());
+		//
+
 		api.addServerJoinListener(new JoinListener());
 		api.addServerLeaveListener(new LeaveListener());
 

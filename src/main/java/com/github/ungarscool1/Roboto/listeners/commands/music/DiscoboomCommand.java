@@ -1,6 +1,7 @@
 package com.github.ungarscool1.Roboto.listeners.commands.music;
 
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
@@ -14,18 +15,20 @@ public class DiscoboomCommand implements MessageCreateListener {
 		Message message = event.getMessage();
 		String args[] = null;
 		ITransaction transaction = null;
+		Server server = null;
 		
 		if (message.isPrivateMessage())
 			return;
 		if (!message.getContent().startsWith("!discoboom"))
 			return;
+		server = message.getServer().get();
 		transaction = Sentry.startTransaction("!discoboom", "command");
 		args = message.getContent().split(" ");
 		if (args.length == 1 || args[1].equalsIgnoreCase("help")) {
-			DiscoboomSubCommand.help(event, transaction);
+			message.getChannel().sendMessage(DiscoboomSubCommand.help(server, transaction));
 			transaction.setDescription("Discoboom help command processing");
 		} else if (args[1].equalsIgnoreCase("play") && args.length >= 3) {
-			DiscoboomSubCommand.play(event, args[2], transaction);
+			DiscoboomSubCommand.play(server, message.getChannel(), message.getUserAuthor().get(), args[2], transaction);
 			transaction.setDescription("Discoboom play command processing");
 		} else if (args[1].equalsIgnoreCase("next")) {
 			DiscoboomSubCommand.next(event, transaction);
@@ -46,7 +49,7 @@ public class DiscoboomCommand implements MessageCreateListener {
 			DiscoboomSubCommand.pause(event, transaction);
 			transaction.setDescription("Discoboom pause command processing");
 		} else {
-			DiscoboomSubCommand.help(event, transaction);
+			DiscoboomSubCommand.help(server, transaction);
 			transaction.setDescription("Discoboom help command processing");
 		}
 		transaction.finish();

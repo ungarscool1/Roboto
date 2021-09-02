@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.javacord.api.entity.channel.ServerVoiceChannel;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -31,9 +32,9 @@ public class DiscoboomSubCommand {
 	static HashMap<Server, ServerMusicManager> musicManagers = new HashMap<>();
 	static AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
 
-	public static void help(MessageCreateEvent event, ITransaction transaction) {
+	public static EmbedBuilder help(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
-		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 			.setDescription(language.getString("discoboom.help.embed.description"))
 			.addField("play", language.getString("discoboom.help.embed.play"))
@@ -45,15 +46,11 @@ public class DiscoboomSubCommand {
 			.addField("disconnect", language.getString("discoboom.help.embed.disconnect"))
 			.setColor(Color.green);
 		span.finish(SpanStatus.OK);
-		span = transaction.startChild("Sending message");
-		event.getChannel().sendMessage(embed);
-		span.finish(SpanStatus.OK);
+		return embed;
 	}
 	
-	public static void play(MessageCreateEvent event, String url, ITransaction transaction) {
+	public static EmbedBuilder play(Server server, TextChannel channel, User user, String url, ITransaction transaction) {
 		ISpan span = transaction.startChild("Player init");
-		User user = null;
-		Server server = event.getServer().get();
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
 		Optional<ServerVoiceChannel> voice = null;
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000");
@@ -61,26 +58,22 @@ public class DiscoboomSubCommand {
 		AudioSourceManagers.registerRemoteSources(playerManager);
 		final String title = "";
 
-		if (!event.getMessageAuthor().isUser())
-			return;
 		if (musicManager.player == null) {
 			musicManager.player = playerManager.createPlayer();
-			musicManager.scheduler = new TrackScheduler(musicManager.player, event.getChannel());
+			musicManager.scheduler = new TrackScheduler(musicManager.player, channel);
 			musicManager.player.addListener(musicManager.scheduler);
-			musicManager.channel = event.getChannel();
+			musicManager.channel = channel;
 		}
-		user = event.getMessageAuthor().asUser().get();
 		voice = server.getConnectedVoiceChannel(user);
 		if (!voice.isPresent()) {
 			embed.setDescription(language.getString("discoboom.play.not_connected"))
 				.setColor(Color.RED);
-			event.getChannel().sendMessage(embed);
 			span.finish(SpanStatus.OK);
-			return;
+			return embed;
 		}
 		playerManager.registerSourceManager(new YoutubeAudioSourceManager());
 		if (musicManager.connection == null) {
-			musicManager.source = new LavaplayerAudioSource(event.getApi(), musicManager.player);
+			musicManager.source = new LavaplayerAudioSource(server.getApi(), musicManager.player);
 			musicManager.connection = voice.get().connect().join();
 			musicManager.connection.setAudioSource(musicManager.source);
 			musicManagers.put(server, musicManager);
@@ -110,6 +103,7 @@ public class DiscoboomSubCommand {
 			public void loadFailed(FriendlyException throwable) {}
 		});
 		span.finish(SpanStatus.OK);
+		return new EmbedBuilder().setTitle("//");
 	}
 	
 	public static void next(MessageCreateEvent event, ITransaction transaction) {
