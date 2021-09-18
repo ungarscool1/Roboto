@@ -1,5 +1,9 @@
 # Roboto
 
+![Maintenability](https://api.codeclimate.com/v1/badges/dbc5a8c82ede3d1a87f3/maintainability)
+![Building](https://github.com/ungarscool1/Roboto-v2/actions/workflows/maven.yml/badge.svg)
+![GitHub Code QL](https://github.com/ungarscool1/Roboto-v2/actions/workflows/codeql-analysis.yml/badge.svg)
+
 ## Supported Languges
  - French
  - English
