@@ -21,7 +21,7 @@ public class JoinListener implements ServerJoinListener {
 		DiscordApi api = event.getApi();
 		ServerLanguage serverLanguage = new ServerLanguage();
 		Main.locByServ.put(event.getServer(), new Locale("en", "US"));
-		serverLanguage.addServer(event.getServer());
+		serverLanguage.save(event.getServer(), true);
 		api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
 		Main.dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
 		transaction.setStatus(SpanStatus.OK);

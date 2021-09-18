@@ -103,7 +103,7 @@ public class Main {
 				locByServ.put(server, new Locale(l[0], l[1]));
 			} catch (Exception e) {
 				locByServ.put(server, new Locale("en", "US"));
-				new ServerLanguage().addServer(server);
+				new ServerLanguage().save(server, true);
 			}
 		});
 

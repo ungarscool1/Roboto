@@ -66,21 +66,14 @@ public class ServerLanguage {
 		}
 		return lang;
 	}
-	
-	public void addServer(Server server) {
-		JsonObject object = gson.fromJson(reader, JsonObject.class);
-		object.addProperty(server.getIdAsString(), "en_US");
-		try (Writer writer = new FileWriter("serversLanguage.json")) {
-			gson.toJson(object, writer);
-		} catch (Exception e) {
-			Sentry.captureException(e);
-			e.printStackTrace();
-		}
-	}
 
-	public void removeServer(Server server) {
+	public void save(Server server, boolean add) {
 		JsonObject object = gson.fromJson(reader,JsonObject.class);
-		object.remove(server.getIdAsString());
+
+		if (add)
+			object.addProperty(server.getIdAsString(), "en_US");
+		else
+			object.remove(server.getIdAsString());
 		try (Writer writer = new FileWriter("serversLanguage.json")) {
 			gson.toJson(object, writer);
 		} catch (Exception e) {
