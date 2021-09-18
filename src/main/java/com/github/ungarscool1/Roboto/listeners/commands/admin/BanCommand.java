@@ -26,27 +26,21 @@ public class BanCommand implements MessageCreateListener {
 		if (message.getAuthor().canBanUsersFromServer() && message.getContent().startsWith("@ban")) {
 			ITransaction transaction = Sentry.startTransaction("@ban", "command");
 			String[] args = message.getContent().split(" ");
-			EmbedBuilder embed = new EmbedBuilder();
+			EmbedBuilder embed = new EmbedBuilder()
+					.setTitle(language.getString("admin.ban.name"))
+					.setColor(Color.RED)
+					.setFooter(language.getString("admin.help.footer"));
 			if (args.length == 1) {
-				embed.setTitle(language.getString("admin.ban.name"))
-						.setDescription(language.getString("admin.ban.missingargs"))
-						.setColor(Color.RED)
-						.setFooter(language.getString("admin.help.footer"));
-				message.getChannel().sendMessage(embed);
+				embed.setDescription(language.getString("admin.ban.missingargs"));
 				transaction.finish(SpanStatus.INVALID_ARGUMENT);
-				return;
-			}
-			if (args.length > 1) {
+			} else if (args.length > 1) {
 				User toBan = null;
 				String description;
 				StringBuilder reason = new StringBuilder();
 				try {
 					toBan = message.getMentionedUsers().get(0);
 				} catch (Exception e) {
-					embed.setTitle(language.getString("admin.ban.name"))
-					.setDescription(language.getString("admin.ban.missingargs"))
-					.setColor(Color.RED)
-					.setFooter(language.getString("admin.help.footer"));
+					embed.setDescription(language.getString("admin.ban.missingargs"));
 					message.getChannel().sendMessage(embed);
 					transaction.finish(SpanStatus.INVALID_ARGUMENT);
 					return;
@@ -56,25 +50,22 @@ public class BanCommand implements MessageCreateListener {
 				else {
 					for (int i = 2; i < args.length; i++)
 						reason.append(args[i] + " ");
-					description = String.format(language.getString("admin.ban.desc"), toBan.getDiscriminatedName(), reason.toString());
+					description = String.format(language.getString("admin.ban.desc"), toBan.getDiscriminatedName(), reason);
 				}
-				embed.setTitle(language.getString("admin.ban.name"))
-						.setDescription(description)
+				embed.setDescription(description)
 						.setAuthor(message.getAuthor())
-						.setFooter(language.getString("admin.help.footer"))
 						.setColor(Color.GREEN);
 				if (args.length == 2)
 					description = language.getString("admin.ban.toBan.desc.default");
 				else
-					description = String.format(language.getString("admin.ban.toBan.desc"), reason.toString());
+					description = String.format(language.getString("admin.ban.toBan.desc"), reason);
 				toBan.sendMessage(new EmbedBuilder().setTitle(language.getString("admin.ban.toBan.name"))
 						.setDescription(description)
-						.setAuthor(message.getAuthor())
-						.setColor(Color.RED));
-				message.getChannel().sendMessage(embed);
+						.setAuthor(message.getAuthor()));
 				message.getServer().get().banUser(toBan, 0, reason.toString());
 				transaction.finish(SpanStatus.OK);
 			}
+			message.getChannel().sendMessage(embed);
 		}
 	}
 }
