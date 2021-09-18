@@ -62,93 +62,56 @@ public class VoteCommand implements MessageCreateListener {
 				message.delete("Remove vote creation message");
 				Message msg = null;
 				if (res.equals(VoteEnum.DESCRIPTION)) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.desc"))).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.desc"))).join();
 				} else if (res.equals(VoteEnum.MULTI)) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.plus2"))).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.plus2"))).join();
 				} else if(res.equals(VoteEnum.ENDED)) {
 					Vote vote = votes.get(user);
-					try {
-						event.getChannel().sendMessage(new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())))).get().addReactions("👍","👎");
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
+					event.getChannel().sendMessage(new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())))).join().addReactions("👍","👎");
 					votes.remove(user);
 				} else if(res.equals(VoteEnum.OPTIONNUMBERS)) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.howManyAnwser"))).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.howManyAnwser"))).join();
 				} else if(res.equals(VoteEnum.FILL) || res.equals(VoteEnum.OPTION)) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + (votes.get(user).getWhere() - 3) + ")")).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + (votes.get(user).getWhere() - 3) + ")")).join();
 				} else if(res.equals(VoteEnum.MULTIPLE_ENDED)) {
 					Vote vote = votes.get(user);
 					EmbedBuilder embed = new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())));
-					try {
-						for(int i = 0; i < vote.getOptions().length; i++) {
-							embed.addField(language.getString("vote.answser") + " n°" + (i + 1), vote.getOptions()[i]);
-						}
-						msg = event.getChannel().sendMessage(embed).join();
-						if (vote.getOptions().length == 1) {
-							msg.addReaction("1⃣").join();
-						}
-						if (vote.getOptions().length == 2) {
-							msg.addReactions("1⃣", "2⃣").join();
-						}
-						if (vote.getOptions().length == 3) {
-							msg.addReactions("1⃣", "2⃣", "3⃣").join();
-						}
-						if (vote.getOptions().length == 4) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣").join();
-						}
-						if (vote.getOptions().length == 5) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣").join();
-						}
-						if (vote.getOptions().length == 6) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣");
-						}
-						if (vote.getOptions().length == 7) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣");
-						}
-						if (vote.getOptions().length == 8) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣");
-						}
-						if (vote.getOptions().length == 9) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣");
-						}
-						if (vote.getOptions().length == 10) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟");
-						}
-						return;
-					} catch (Exception e) {
-						Sentry.captureException(e);
-						transaction.setStatus(SpanStatus.UNKNOWN_ERROR);
-						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.unkown_error")).setColor(Color.RED));
-					} finally {
-						votes.remove(user);
+					for(int i = 0; i < vote.getOptions().length; i++) {
+						embed.addField(language.getString("vote.answser") + " n°" + (i + 1), vote.getOptions()[i]);
 					}
+					msg = event.getChannel().sendMessage(embed).join();
+					if (vote.getOptions().length == 1) {
+						msg.addReaction("1⃣").join();
+					}
+					if (vote.getOptions().length == 2) {
+						msg.addReactions("1⃣", "2⃣").join();
+					}
+					if (vote.getOptions().length == 3) {
+						msg.addReactions("1⃣", "2⃣", "3⃣").join();
+					}
+					if (vote.getOptions().length == 4) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣").join();
+					}
+					if (vote.getOptions().length == 5) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣").join();
+					}
+					if (vote.getOptions().length == 6) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣");
+					}
+					if (vote.getOptions().length == 7) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣");
+					}
+					if (vote.getOptions().length == 8) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣");
+					}
+					if (vote.getOptions().length == 9) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣");
+					}
+					if (vote.getOptions().length == 10) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟");
+					}
+					votes.remove(user);
+					return;
 				}
 				voteMsg.put(user, msg);
 			}
