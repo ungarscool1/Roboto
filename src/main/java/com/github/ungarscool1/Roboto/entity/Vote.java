@@ -1,76 +1,42 @@
 package com.github.ungarscool1.Roboto.entity;
 
+import com.github.ungarscool1.Roboto.enums.VoteEnum;
 import org.javacord.api.entity.user.User;
 
 public class Vote {
 	private String name;
 	private String description;
-	private int nombreOption;
+	private int optionsNumber;
 	private String[] options;
 	private boolean multi;
-	private int where;
+	private int where = 0;
 	
-	public Vote(User user) {
-		where = 0;
-	}
-	
-	public String builder(String option) {
-		if (option.equals("")) {
-			if (where-1 == 0) {
-				return "description";
-			} else if (where-1 == 1) {
-				return "multi";
-			} else if (where-1 == 2) {
-				return "nbrOption";
-			} else if (where-1 == 3) {
-				return "option1 / " + nombreOption;
-			} else {
-				return "option";
-			}
-		}
+	public VoteEnum builder(String option) {
+		if (option.equals(""))
+			return (where - 1 >= 0 && where -1 <= 3) ? VoteEnum.findByValue(where - 1) : VoteEnum.FILL;
 		where++;
-		if (where-1 == 0) {
+		if (where-1 == 0)
 			setName(option);
-			return "description";
-		} else if (where-1 == 1) {
+		else if (where-1 == 1)
 			setDescription(option);
-			return "multi";
-		} else if (where-1 == 2) {
+		else if (where-1 == 2) {
 			if (option.equalsIgnoreCase("oui") || option.equalsIgnoreCase("ui") || option.equalsIgnoreCase("yes") || option.equalsIgnoreCase("yep") || option.equalsIgnoreCase("yop")) {
 				multi = true;
-				return "nbrOption";
-			} else if (option.equalsIgnoreCase("non") || option.equalsIgnoreCase("nan") || option.equalsIgnoreCase("nah") || option.equalsIgnoreCase("no") || option.equalsIgnoreCase("nope")){
-				return "fini";
-			} else {
+				return VoteEnum.OPTIONNUMBERS;
+			} else if (option.equalsIgnoreCase("non") || option.equalsIgnoreCase("nan") || option.equalsIgnoreCase("nah") || option.equalsIgnoreCase("no") || option.equalsIgnoreCase("nope"))
+				return VoteEnum.ENDED;
+			else
 				where--;
-				return "multi";
-			}
 		} else if (where-1 == 3) {
-			try {
-				nombreOption = Integer.parseInt(option);
-			} catch (Exception e) {
-				where--;
-				return "nbrOption";
-			}
-			if (nombreOption < 3 || nombreOption > 10) {
-				where--;
-				return "nbrOption";
-			}
-			options = new String[nombreOption];
-			return "option1 / " + nombreOption;
+			setOptionNumber(option);
 		} else {
-			int curopt = where - 4;
-			options[curopt-1] = option;
-			if (curopt < nombreOption) {
-				return "option" + (curopt + 1) + " / " + nombreOption;
-			} else {
-				return "fin multi";
+			options[where - 5] = option;
+			if (where - 4 >= optionsNumber) {
+				return VoteEnum.MULTIPLE_ENDED;
 			}
 		}
-		
+		return (where - 1 >= 0 && where -1 <= 3) ? VoteEnum.findByValue(where - 1) : VoteEnum.FILL;
 	}
-	
-	
 
 	public String getName() {
 		return name;
@@ -90,6 +56,21 @@ public class Vote {
 
 	public String[] getOptions() {
 		return this.options;
+	}
+
+	public int getWhere() {
+		return where;
+	}
+
+	private void setOptionNumber(String option) {
+		try {
+			optionsNumber = Integer.parseInt(option);
+		} catch (Exception e) {
+			where--;
+		}
+		if (optionsNumber < 3 || optionsNumber > 10)
+			where--;
+		options = new String[optionsNumber];
 	}
 	
 }

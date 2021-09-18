@@ -2,11 +2,9 @@ package com.github.ungarscool1.Roboto.listeners.commands;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletionException;
 
+import com.github.ungarscool1.Roboto.enums.VoteEnum;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -48,7 +46,7 @@ public class VoteCommand implements MessageCreateListener {
 			if (!votes.containsKey(message.getAuthor().asUser().get())) {
 				message.delete("Remove vote creation message");
 				Message msg = null;
-				votes.put(user, new Vote(message.getAuthor().asUser().get()));
+				votes.put(user, new Vote());
 				try {
 					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.name"))).get();
 				} catch (Exception e) {
@@ -59,11 +57,11 @@ public class VoteCommand implements MessageCreateListener {
 				}
 				voteMsg.put(user, msg);
 			} else {
-				String res = votes.get(user).builder(message.getContent().substring(6));
+				VoteEnum res = votes.get(user).builder(message.getContent().substring(6));
 				voteMsg.get(user).delete("Remove vote creation message");
 				message.delete("Remove vote creation message");
 				Message msg = null;
-				if (res.equals("description")) {
+				if (res.equals(VoteEnum.DESCRIPTION)) {
 					try {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.desc"))).get();
 					} catch (Exception e) {
@@ -71,7 +69,7 @@ public class VoteCommand implements MessageCreateListener {
 						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
-				} else if (res.equals("multi")) {
+				} else if (res.equals(VoteEnum.MULTI)) {
 					try {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.plus2"))).get();
 					} catch (Exception e) {
@@ -79,7 +77,7 @@ public class VoteCommand implements MessageCreateListener {
 						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
-				} else if(res.equals("fini")) {
+				} else if(res.equals(VoteEnum.ENDED)) {
 					Vote vote = votes.get(user);
 					try {
 						event.getChannel().sendMessage(new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())))).get().addReactions("👍","👎");
@@ -89,7 +87,7 @@ public class VoteCommand implements MessageCreateListener {
 						return;
 					}
 					votes.remove(user);
-				} else if(res.equals("nbrOption")) {
+				} else if(res.equals(VoteEnum.OPTIONNUMBERS)) {
 					try {
 						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.howManyAnwser"))).get();
 					} catch (Exception e) {
@@ -97,15 +95,15 @@ public class VoteCommand implements MessageCreateListener {
 						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
-				} else if(res.contains("option")) {
+				} else if(res.equals(VoteEnum.FILL) || res.equals(VoteEnum.OPTION)) {
 					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + res.substring(6) + ")")).get();
+						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + (votes.get(user).getWhere() - 3) + ")")).get();
 					} catch (Exception e) {
 						onError(user, event.getChannel(), language);
 						transaction.setStatus(SpanStatus.DATA_LOSS);
 						return;
 					}
-				} else if(res.equals("fin multi")) {
+				} else if(res.equals(VoteEnum.MULTIPLE_ENDED)) {
 					Vote vote = votes.get(user);
 					EmbedBuilder embed = new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())));
 					try {
@@ -143,18 +141,13 @@ public class VoteCommand implements MessageCreateListener {
 						if (vote.getOptions().length == 10) {
 							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟");
 						}
-						votes.remove(user);
 						return;
-					} catch (MissingResourceException e) {
-						votes.remove(user);
-						Sentry.captureException(e);
-						transaction.setStatus(SpanStatus.UNKNOWN_ERROR);
-						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.ressources")).setColor(Color.RED));
-					} catch (CancellationException | CompletionException e) {
-						votes.remove(user);
+					} catch (Exception e) {
 						Sentry.captureException(e);
 						transaction.setStatus(SpanStatus.UNKNOWN_ERROR);
 						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.unkown_error")).setColor(Color.RED));
+					} finally {
+						votes.remove(user);
 					}
 				}
 				voteMsg.put(user, msg);
