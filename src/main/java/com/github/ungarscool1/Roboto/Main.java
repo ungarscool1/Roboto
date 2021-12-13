@@ -57,7 +57,7 @@ public class Main {
 			  options.setDsn(config.sentry_io_dsn);
 			  options.setTracesSampleRate(config.sentry_io_trace_sample_rate);
 			  options.setDebug(config.sentry_io_debug);
-			  options.setRelease("020921-02.10");
+			  options.setRelease("131221-20.1");
 			  options.setEnvironment(config.env);
 			  options.setEnableAutoSessionTracking(true);
 			});

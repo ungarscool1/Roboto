@@ -31,9 +31,9 @@ public class VersionSlashCommand implements SlashCommandCreateListener {
         int users = api.getServers().stream().mapToInt(Server::getMemberCount).sum();
         try {
             embedBuilder.setTitle(language.getString("version.name"))
-                    .addField("Version", "3.1.0")
+                    .addField("Version", "3.1.1")
                     .addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-                    .addField("Build", "020921-02.10")
+                    .addField("Build", "131221-20.1")
                     .addField("Bot owner", api.getOwner().get().getDiscriminatedName())
                     .addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
                     .addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
