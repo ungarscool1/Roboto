@@ -184,16 +184,16 @@ public class DiscoboomSubCommand {
 		return embed;
 	}
 
-	public static void clear(MessageCreateEvent event, ITransaction transaction) {
+	public static EmbedBuilder clear(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
-		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
-		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
+		ServerMusicManager musicManager = musicManagers.get(server);
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 				.setDescription(language.getString("discoboom.clear.description"));
 
 		musicManager.scheduler.clearQueue();
 		span.finish();
-		event.getChannel().sendMessage(embed);
+		return embed;
 	}
 
 	public static EmbedBuilder pause(Server server, ITransaction transaction) {
