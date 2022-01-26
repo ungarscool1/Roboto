@@ -106,15 +106,15 @@ public class DiscoboomSubCommand {
 		return new EmbedBuilder().setTitle("Added to queue");
 	}
 	
-	public static void next(MessageCreateEvent event, ITransaction transaction) {
+	public static EmbedBuilder next(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Next init");
-		Server server = event.getServer().get();
 		ServerMusicManager musicManager = musicManagers.get(server);
 		
 		span.finish();
 		span = transaction.startChild("Next function");
 		musicManager.scheduler.nextTrack();
 		span.finish();
+		return new EmbedBuilder().setTitle("Changing to the next sound");
 	}
 	
 	public static void disconnect(MessageCreateEvent event, ITransaction transaction) {
