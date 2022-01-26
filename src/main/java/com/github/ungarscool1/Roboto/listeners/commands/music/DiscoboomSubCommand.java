@@ -170,10 +170,10 @@ public class DiscoboomSubCommand {
 		return embed;
 	}
 
-	public static void stop(MessageCreateEvent event, ITransaction transaction) {
+	public static EmbedBuilder stop(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
-		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
-		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
+		ServerMusicManager musicManager = musicManagers.get(server);
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 				.setDescription(language.getString("discoboom.stop.description"));
 
@@ -181,7 +181,7 @@ public class DiscoboomSubCommand {
 		span = transaction.startChild("Stopping");
 		musicManager.scheduler.stop();
 		span.finish();
-		event.getChannel().sendMessage(embed);
+		return embed;
 	}
 
 	public static void clear(MessageCreateEvent event, ITransaction transaction) {
