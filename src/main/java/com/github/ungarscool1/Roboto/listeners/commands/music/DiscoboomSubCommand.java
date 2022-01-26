@@ -147,21 +147,25 @@ public class DiscoboomSubCommand {
 		StringBuilder title = new StringBuilder();
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
 		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
-		List<AudioTrack> tracks = musicManager.scheduler.getTrackList();
+		List<AudioTrack> tracks = musicManager == null ? null : musicManager.scheduler.getTrackList();
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 			.setDescription(language.getString("discoboom.queue.description"));
 
-		title.append("[")
-		.append(musicManager.player.getPlayingTrack().getInfo().title)
-		.append("](")
-		.append(musicManager.player.getPlayingTrack().getInfo().uri)
-		.append(")\n");
-		tracks.forEach(track -> title.append("• [")
-				.append(track.getInfo().title)
-				.append("](")
-				.append(track.getInfo().uri)
-				.append(")\n"));
-		embed.setDescription(String.format("▶️ %s", title.toString()));
+		if (musicManager != null && musicManager.player.getPlayingTrack() != null) {
+			title.append("[")
+					.append(musicManager.player.getPlayingTrack().getInfo().title)
+					.append("](")
+					.append(musicManager.player.getPlayingTrack().getInfo().uri)
+					.append(")\n");
+			tracks.forEach(track -> title.append("• [")
+					.append(track.getInfo().title)
+					.append("](")
+					.append(track.getInfo().uri)
+					.append(")\n"));
+			embed.setDescription(String.format("▶️ %s", title.toString()));
+		} else {
+			embed.setDescription(language.getString("discoboom.queue.empty"));
+		}
 		span.finish(SpanStatus.OK);
 		span = transaction.startChild("Sending message");
 		event.getChannel().sendMessage(embed);
