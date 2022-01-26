@@ -14,9 +14,9 @@ public class VersionCommand {
         int users = api.getServers().stream().mapToInt(Server::getMemberCount).sum();
         User user = api.getOwner().join();
         embedBuilder.setTitle(language.getString("version.name"))
-                .addField("Version", "3.1.0")
+                .addField("Version", "3.2.0-DEV")
                 .addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-                .addField("Build", "020921-02.10")
+                .addField("Build", "270122-00.1")
                 .addField("Bot owner", user.getDiscriminatedName())
                 .addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
                 .addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
