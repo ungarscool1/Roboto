@@ -1,6 +1,7 @@
 package com.github.ungarscool1.Roboto.listeners.slashcommands.utility;
 
 import com.github.ungarscool1.Roboto.Main;
+import com.github.ungarscool1.Roboto.commands.utility.ReportCommand;
 import io.sentry.ITransaction;
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
@@ -24,16 +25,7 @@ public class ReportSlashCommand implements SlashCommandCreateListener {
         if (!interaction.getCommandName().equals("report"))
             return;
         ITransaction transaction = Sentry.startTransaction("/report", "Slash Command");
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Report")
-                .setDescription("Create issue on GitHub")
-                .setUrl("https://github.com/ungarscool1/Roboto-v2/issues")
-                .addField("Link", "https://github.com/ungarscool1/Roboto-v2/issues")
-                .addField("Template", "https://github.com/ungarscool1/Roboto-v2/issues/new?assignees=&labels=bug&template=bug_report.md&title=")
-                .addField("Feature in progress", "This feature is not finished ! However, you can create an issue on GitHub")
-                .setColor(Color.GREEN)
-                .setFooter("Roboto v.3 by Ungarscool1");
-        interaction.createImmediateResponder().addEmbed(embedBuilder).respond().join();
+        interaction.createImmediateResponder().addEmbed(ReportCommand.output()).respond().join();
         transaction.finish(SpanStatus.OK);
     }
 }

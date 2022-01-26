@@ -1,11 +1,8 @@
 package com.github.ungarscool1.Roboto;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import com.github.ungarscool1.Roboto.listeners.slashcommands.music.DiscoboomSlashCommand;
@@ -29,7 +26,6 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.server.Server;
-import org.javacord.api.interaction.*;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 import com.github.ungarscool1.Roboto.listeners.ReacListener;
@@ -75,72 +71,12 @@ public class Main {
 	}
 
 	private static void setupSlashCommand(DiscordApi api) {
+		SlashCommands commands = null;
+
 		if (config.isSetup)
 			return;
-		List<SlashCommandOption> discoboomOptions = new ArrayList<>();
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Help")
-				.setDescription("Display the help")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.build());
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Play")
-				.setDescription("Play music")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.addOption(new SlashCommandOptionBuilder()
-						.setName("url")
-						.setDescription("Track's url")
-						.setRequired(true)
-						.setType(SlashCommandOptionType.STRING)
-						.build()
-				)
-				.build()
-		);
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Pause")
-				.setDescription("Pause the dance floor")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.build()
-		);
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Next")
-				.setDescription("Jump to the next song")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.build()
-		);
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Queue")
-				.setDescription("Show the tracks queue")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.build()
-		);
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Clear")
-				.setDescription("Clear the tracks queue")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.build()
-		);
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Stop")
-				.setDescription("Stop the disco")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.build()
-		);
-		discoboomOptions.add(new SlashCommandOptionBuilder()
-				.setName("Disconnect")
-				.setDescription("Disco(nnect)")
-				.setType(SlashCommandOptionType.SUB_COMMAND)
-				.build()
-		);
-		SlashCommand.with("discoboom", "Enable discoboom mode", discoboomOptions).createGlobal(api).join();
-		SlashCommand.with("help", "Display this help message.").createGlobal(api).join();
-		SlashCommand.with("report", "Report a problem on GitHub").createGlobal(api).join();
-		SlashCommand.with("si", "Get server information").createGlobal(api).join();
-		/*List<SlashCommandOption> uiOptions = new ArrayList<>();
-		uiOptions.add(new SlashCommandOptionBuilder().setRequired(false).setName("user").setDescription("Mentionned user").setType(SlashCommandOptionType.MENTIONABLE).build());
-		SlashCommand.with("ui", "Get user information", uiOptions).createGlobal(api).join();
-		*/SlashCommand.with("version", "Get bot version").createGlobal(api).join();
-		SlashCommand.with("vote", "Create a poll").createGlobal(api).join();
+		commands = new SlashCommands(api);
+		commands.setup();
 		config.isSetup = true;
 		try {
 			FileWriter writer = new FileWriter("config.json");
@@ -167,7 +103,7 @@ public class Main {
 				locByServ.put(server, new Locale(l[0], l[1]));
 			} catch (Exception e) {
 				locByServ.put(server, new Locale("en", "US"));
-				new ServerLanguage().addServer(server);
+				new ServerLanguage().save(server, true);
 			}
 		});
 

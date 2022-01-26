@@ -1,5 +1,6 @@
 package com.github.ungarscool1.Roboto.listeners.commands.utility;
 
+import com.github.ungarscool1.Roboto.commands.utility.HelpCommand;
 import io.sentry.ITransaction;
 import io.sentry.Sentry;
 import io.sentry.SpanStatus;
@@ -19,16 +20,7 @@ public class ReportCommand implements MessageCreateListener {
 			return;
 		if (message.getContent().startsWith("!report")) {
 			ITransaction transaction = Sentry.startTransaction("!report", "command");
-			EmbedBuilder embed = new EmbedBuilder();
-			embed.setTitle("Report")
-					.setDescription("Create issue on GitHub")
-					.setUrl("https://github.com/ungarscool1/Roboto-v2/issues")
-					.addField("Link", "https://github.com/ungarscool1/Roboto-v2/issues")
-					.addField("Template", "https://github.com/ungarscool1/Roboto-v2/issues/new?assignees=&labels=bug&template=bug_report.md&title=")
-					.addField("Feature in progress", "This feature is not finished ! However, you can create an issue on GitHub")
-					.setColor(Color.GREEN)
-					.setFooter("Roboto v.3 by Ungarscool1");
-			message.getChannel().sendMessage(embed);
+			message.getChannel().sendMessage(com.github.ungarscool1.Roboto.commands.utility.ReportCommand.output());
 			transaction.finish(SpanStatus.OK);
 		}
 	}

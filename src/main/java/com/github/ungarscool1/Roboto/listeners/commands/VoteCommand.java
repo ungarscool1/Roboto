@@ -2,11 +2,9 @@ package com.github.ungarscool1.Roboto.listeners.commands;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletionException;
 
+import com.github.ungarscool1.Roboto.enums.VoteEnum;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -48,7 +46,7 @@ public class VoteCommand implements MessageCreateListener {
 			if (!votes.containsKey(message.getAuthor().asUser().get())) {
 				message.delete("Remove vote creation message");
 				Message msg = null;
-				votes.put(user, new Vote(message.getAuthor().asUser().get()));
+				votes.put(user, new Vote());
 				try {
 					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.name"))).get();
 				} catch (Exception e) {
@@ -59,103 +57,61 @@ public class VoteCommand implements MessageCreateListener {
 				}
 				voteMsg.put(user, msg);
 			} else {
-				String res = votes.get(user).builder(message.getContent().substring(6));
+				VoteEnum res = votes.get(user).builder(message.getContent().substring(6));
 				voteMsg.get(user).delete("Remove vote creation message");
 				message.delete("Remove vote creation message");
 				Message msg = null;
-				if (res.equals("description")) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.desc"))).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
-				} else if (res.equals("multi")) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.plus2"))).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
-				} else if(res.equals("fini")) {
+				if (res.equals(VoteEnum.DESCRIPTION)) {
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.desc"))).join();
+				} else if (res.equals(VoteEnum.MULTI)) {
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.plus2"))).join();
+				} else if(res.equals(VoteEnum.ENDED)) {
 					Vote vote = votes.get(user);
-					try {
-						event.getChannel().sendMessage(new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())))).get().addReactions("👍","👎");
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
+					event.getChannel().sendMessage(new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())))).join().addReactions("👍","👎");
 					votes.remove(user);
-				} else if(res.equals("nbrOption")) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.howManyAnwser"))).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
-				} else if(res.contains("option")) {
-					try {
-						msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + res.substring(6) + ")")).get();
-					} catch (Exception e) {
-						onError(user, event.getChannel(), language);
-						transaction.setStatus(SpanStatus.DATA_LOSS);
-						return;
-					}
-				} else if(res.equals("fin multi")) {
+				} else if(res.equals(VoteEnum.OPTIONNUMBERS)) {
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.set.howManyAnwser"))).join();
+				} else if(res.equals(VoteEnum.FILL) || res.equals(VoteEnum.OPTION)) {
+					msg = event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("vote.title")).setDescription(language.getString("vote.answser") + " (" + (votes.get(user).getWhere() - 3) + ")")).join();
+				} else if(res.equals(VoteEnum.MULTIPLE_ENDED)) {
 					Vote vote = votes.get(user);
 					EmbedBuilder embed = new EmbedBuilder().setTitle(vote.getName()).setDescription(vote.getDescription()).setColor(new Color(107, 135, 232)).setFooter(String.format(language.getString("vote.createdBy"), user.getDisplayName(message.getServer().get())));
-					try {
-						for(int i = 0; i < vote.getOptions().length; i++) {
-							embed.addField(language.getString("vote.answser") + " n°" + (i + 1), vote.getOptions()[i]);
-						}
-						msg = event.getChannel().sendMessage(embed).join();
-						if (vote.getOptions().length == 1) {
-							msg.addReaction("1⃣").join();
-						}
-						if (vote.getOptions().length == 2) {
-							msg.addReactions("1⃣", "2⃣").join();
-						}
-						if (vote.getOptions().length == 3) {
-							msg.addReactions("1⃣", "2⃣", "3⃣").join();
-						}
-						if (vote.getOptions().length == 4) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣").join();
-						}
-						if (vote.getOptions().length == 5) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣").join();
-						}
-						if (vote.getOptions().length == 6) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣");
-						}
-						if (vote.getOptions().length == 7) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣");
-						}
-						if (vote.getOptions().length == 8) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣");
-						}
-						if (vote.getOptions().length == 9) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣");
-						}
-						if (vote.getOptions().length == 10) {
-							msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟");
-						}
-						votes.remove(user);
-						return;
-					} catch (MissingResourceException e) {
-						votes.remove(user);
-						Sentry.captureException(e);
-						transaction.setStatus(SpanStatus.UNKNOWN_ERROR);
-						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.ressources")).setColor(Color.RED));
-					} catch (CancellationException | CompletionException e) {
-						votes.remove(user);
-						Sentry.captureException(e);
-						transaction.setStatus(SpanStatus.UNKNOWN_ERROR);
-						event.getChannel().sendMessage(new EmbedBuilder().setTitle(language.getString("errors.title")).setDescription(language.getString("errors.unkown_error")).setColor(Color.RED));
+					for(int i = 0; i < vote.getOptions().length; i++) {
+						embed.addField(language.getString("vote.answser") + " n°" + (i + 1), vote.getOptions()[i]);
 					}
+					msg = event.getChannel().sendMessage(embed).join();
+					if (vote.getOptions().length == 1) {
+						msg.addReaction("1⃣").join();
+					}
+					if (vote.getOptions().length == 2) {
+						msg.addReactions("1⃣", "2⃣").join();
+					}
+					if (vote.getOptions().length == 3) {
+						msg.addReactions("1⃣", "2⃣", "3⃣").join();
+					}
+					if (vote.getOptions().length == 4) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣").join();
+					}
+					if (vote.getOptions().length == 5) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣").join();
+					}
+					if (vote.getOptions().length == 6) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣");
+					}
+					if (vote.getOptions().length == 7) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣");
+					}
+					if (vote.getOptions().length == 8) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣");
+					}
+					if (vote.getOptions().length == 9) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣");
+					}
+					if (vote.getOptions().length == 10) {
+						msg.addReactions("1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟");
+					}
+					votes.remove(user);
+					return;
 				}
 				voteMsg.put(user, msg);
 			}

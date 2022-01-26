@@ -19,7 +19,7 @@ public class LeaveListener implements ServerLeaveListener {
 		DiscordApi api = event.getApi();
 		ServerLanguage serverLanguage = new ServerLanguage();
 		Main.locByServ.remove(event.getServer());
-		serverLanguage.removeServer(event.getServer());
+		serverLanguage.save(event.getServer(), false);
 		api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
 		Main.dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
 		transaction.finish(SpanStatus.OK);

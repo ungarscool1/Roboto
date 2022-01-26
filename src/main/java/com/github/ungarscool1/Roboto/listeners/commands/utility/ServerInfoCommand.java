@@ -28,33 +28,8 @@ public class ServerInfoCommand implements MessageCreateListener {
 		if (message.getContent().startsWith("!si")) {
 			ITransaction transaction = Sentry.startTransaction("!si", "command");
 			Server server = message.getServer().get();
-			EmbedBuilder embedBuilder = new EmbedBuilder();
 
-			// Get and convert join date to human readable value
-			Date creationDate = Date.from(server.getCreationTimestamp());
-			SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
-
-			// Get member and bot count
-			int[] members = {0, 0};
-			server.getMembers().forEach(member -> {
-				if (member.isBot())
-					members[0]++;
-				else
-					members[1]++;
-			});
-
-			try {
-				embedBuilder.setTitle(String.format(language.getString("si.title"), server.getName()))
-						.addField(language.getString("si.id"), server.getIdAsString(), true)
-						.addField(language.getString("si.creation.date"), formatter.format(creationDate), true)
-						.addField(language.getString("si.owner"), server.requestOwner().get().getDiscriminatedName())
-						.addField(language.getString("si.memberscount"), members[1] + " " + language.getString("si.members"))
-						.addField(language.getString("si.botscount"), members[0] + " bots")
-						.setColor(Color.GREEN);
-			} catch (Exception e) {
-				Sentry.captureException(e);
-			}
-			message.getChannel().sendMessage(embedBuilder);
+			message.getChannel().sendMessage(com.github.ungarscool1.Roboto.commands.utility.ServerInfoCommand.output(language, server));
 			transaction.finish(SpanStatus.OK);
 		}
 	}
