@@ -103,7 +103,7 @@ public class DiscoboomSubCommand {
 			public void loadFailed(FriendlyException throwable) {}
 		});
 		span.finish(SpanStatus.OK);
-		return new EmbedBuilder().setTitle("//");
+		return new EmbedBuilder().setTitle("Added to queue");
 	}
 	
 	public static void next(MessageCreateEvent event, ITransaction transaction) {
