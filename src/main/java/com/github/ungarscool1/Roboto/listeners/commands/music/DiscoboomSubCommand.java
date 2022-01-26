@@ -196,9 +196,10 @@ public class DiscoboomSubCommand {
 		event.getChannel().sendMessage(embed);
 	}
 
-	public static void pause(MessageCreateEvent event, ITransaction transaction) {
-		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
+	public static EmbedBuilder pause(Server server, ITransaction transaction) {
+		ServerMusicManager musicManager = musicManagers.get(server);
 
 		musicManager.player.setPaused(!musicManager.player.isPaused());
+		return new EmbedBuilder().setTitle("Paused");
 	}
 }

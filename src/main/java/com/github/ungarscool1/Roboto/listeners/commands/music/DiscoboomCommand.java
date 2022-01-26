@@ -46,7 +46,7 @@ public class DiscoboomCommand implements MessageCreateListener {
 			DiscoboomSubCommand.clear(event, transaction);
 			transaction.setDescription("Discoboom clear command processing");
 		} else if (args[1].equalsIgnoreCase("pause")) {
-			DiscoboomSubCommand.pause(event, transaction);
+			DiscoboomSubCommand.pause(server, transaction);
 			transaction.setDescription("Discoboom pause command processing");
 		} else {
 			DiscoboomSubCommand.help(server, transaction);
