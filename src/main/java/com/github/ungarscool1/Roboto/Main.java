@@ -60,6 +60,7 @@ public class Main {
 		Sentry.startSession();
 		new DiscordApiBuilder()
 			.setToken(config.bot_token)
+			.setAllIntents()
 			.setRecommendedTotalShards()
 			.join()
 			.loginAllShards()
