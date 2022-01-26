@@ -34,7 +34,7 @@ public class DiscoboomCommand implements MessageCreateListener {
 			DiscoboomSubCommand.next(event, transaction);
 			transaction.setDescription("Discoboom next command processing");
 		} else if (args[1].equalsIgnoreCase("queue")) {
-			DiscoboomSubCommand.getQueue(event, transaction);
+			event.getChannel().sendMessage(DiscoboomSubCommand.getQueue(server, transaction));
 			transaction.setDescription("Discoboom queue command processing");
 		} else if (args[1].equalsIgnoreCase("disconnect")) {
 			DiscoboomSubCommand.disconnect(event, transaction);

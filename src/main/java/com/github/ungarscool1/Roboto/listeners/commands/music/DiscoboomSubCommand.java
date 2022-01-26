@@ -142,11 +142,11 @@ public class DiscoboomSubCommand {
 		span.finish(SpanStatus.OK);
 	}
 
-	public static void getQueue(MessageCreateEvent event, ITransaction transaction) {
+	public static EmbedBuilder getQueue(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
 		StringBuilder title = new StringBuilder();
-		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
-		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
+		ServerMusicManager musicManager = musicManagers.get(server);
 		List<AudioTrack> tracks = musicManager == null ? null : musicManager.scheduler.getTrackList();
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 			.setDescription(language.getString("discoboom.queue.description"));
@@ -167,9 +167,7 @@ public class DiscoboomSubCommand {
 			embed.setDescription(language.getString("discoboom.queue.empty"));
 		}
 		span.finish(SpanStatus.OK);
-		span = transaction.startChild("Sending message");
-		event.getChannel().sendMessage(embed);
-		span.finish(SpanStatus.OK);
+		return embed;
 	}
 
 	public static void stop(MessageCreateEvent event, ITransaction transaction) {
