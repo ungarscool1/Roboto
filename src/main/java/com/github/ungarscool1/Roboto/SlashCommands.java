@@ -19,6 +19,7 @@ public class SlashCommands {
     public void setup() {
         discoboomSetup();
         smallCommandSetup();
+        userInformationSetup();
     }
 
     private void discoboomSetup() {
@@ -78,6 +79,15 @@ public class SlashCommands {
                 .build()
         );
         SlashCommand.with("discoboom", "Enable discoboom mode", discoboomOptions).createGlobal(api).join();
+    }
+
+    private void userInformationSetup() {
+        SlashCommand.with("ui", "Get user information").addOption(new SlashCommandOptionBuilder()
+                .setName("user")
+                .setDescription("User mention tag")
+                .setRequired(true)
+                .setType(SlashCommandOptionType.USER)
+                .build()).createGlobal(api).join();
     }
 
     private void smallCommandSetup() {
