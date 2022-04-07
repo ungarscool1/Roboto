@@ -197,7 +197,7 @@ public class Puissance4 {
 						Sentry.captureException(e);
 					}
 		    		 Emoji emoji = event.getEmoji();
-		    		 if (event.getUser().equals(players.get(player - 1)) && event.getMessage().isPresent()) {
+		    		 if (event.requestUser().join().equals(players.get(player - 1)) && event.getMessage().isPresent()) {
 		    			 if (emoji.asUnicodeEmoji().isPresent() && event.getMessage().get().equals(lastMessage)) {
 		    				 String finalEmoji = emoji.asUnicodeEmoji().get();
 							 switch (finalEmoji) {
