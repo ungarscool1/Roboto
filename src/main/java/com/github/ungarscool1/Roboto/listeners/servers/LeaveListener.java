@@ -21,7 +21,6 @@ public class LeaveListener implements ServerLeaveListener {
 		Main.locByServ.remove(event.getServer());
 		serverLanguage.removeServer(event.getServer());
 		api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
-		Main.dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
 		transaction.finish(SpanStatus.OK);
 	}
 }

@@ -23,7 +23,6 @@ public class JoinListener implements ServerJoinListener {
 		Main.locByServ.put(event.getServer(), new Locale("en", "US"));
 		serverLanguage.addServer(event.getServer());
 		api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
-		Main.dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
 		transaction.setStatus(SpanStatus.OK);
 		transaction.finish();
 	}

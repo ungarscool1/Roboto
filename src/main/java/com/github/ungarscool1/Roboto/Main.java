@@ -24,7 +24,6 @@ import com.github.ungarscool1.Roboto.listeners.commands.utility.*;
 import com.github.ungarscool1.Roboto.listeners.servers.*;
 import com.google.gson.Gson;
 
-import org.discordbots.api.client.DiscordBotListAPI;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
@@ -40,7 +39,6 @@ import com.github.ungarscool1.Roboto.listeners.commands.VoteCommand;
 public class Main {
 	
 	public static HashMap<Server, Locale> locByServ = new HashMap<>();
-	public static DiscordBotListAPI dbl;
 	public static Configuration config;
 	
 	public static void main(String[] args) {
@@ -68,10 +66,6 @@ public class Main {
 			.join()
 			.loginAllShards()
 			.forEach(shardFuture -> shardFuture.thenAcceptAsync(Main::onShardLogin).exceptionally(ExceptionLogger.get()));
-		dbl = new DiscordBotListAPI.Builder()
-			.token(config.discord_bot_list_key)
-			.botId("373199180161613824")
-			.build();
 	}
 
 	private static void setupSlashCommand(DiscordApi api) {
@@ -154,8 +148,6 @@ public class Main {
 	private static void onShardLogin(DiscordApi api) {
 		ITransaction transaction = Sentry.startTransaction("onShardLogin()", "Instance initialization");
 		System.out.println("Shard " + api.getCurrentShard() + " logged in!");
-		
-		dbl.setStats(api.getCurrentShard(), api.getTotalShards(), api.getServers().size());
 		
 		api.updateActivity(ActivityType.LISTENING, api.getServers().size() + " servers");
 		
