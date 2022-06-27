@@ -32,7 +32,7 @@ public class UserInfoSlashCommand implements SlashCommandCreateListener {
         if (!interaction.getCommandName().equals("ui"))
             return;
         ITransaction transaction = Sentry.startTransaction("/ui", "Slash Command");
-        SlashCommandInteractionOption option = interaction.getFirstOption().isPresent() ? interaction.getFirstOption().get() : null;
+        SlashCommandInteractionOption option = interaction.getOptionByIndex(0).isPresent() ? interaction.getOptionByIndex(0).get() : null;
 
         transaction.setStatus(SpanStatus.OK);
         if (option != null) {
