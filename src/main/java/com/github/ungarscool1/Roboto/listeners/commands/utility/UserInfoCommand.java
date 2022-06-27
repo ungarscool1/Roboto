@@ -85,7 +85,7 @@ public class UserInfoCommand implements MessageCreateListener {
 				User u = message.getAuthor().asUser().get();
 
 				// Get and convert join date to human readable value
-				Date joinDate = Date.from(u.getJoinedAtTimestamp(message.getServer().get()).get());
+				Date joinDate = u.getJoinedAtTimestamp(message.getServer().get()).isPresent() ? Date.from(u.getJoinedAtTimestamp(message.getServer().get()).get()) : null;
 				Date creationDate = Date.from(u.getCreationTimestamp());
 				SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 
@@ -95,7 +95,7 @@ public class UserInfoCommand implements MessageCreateListener {
 				}
 
 				embedBuilder.setTitle(String.format(language.getString("ui.title"), u.getName()))
-						.addField(language.getString("ui.join.date"), formatter.format(joinDate), true)
+						.addField(language.getString("ui.join.date"), joinDate != null ? formatter.format(joinDate) : "Failed to fetch join date", true)
 						.addField(language.getString("ui.register.date"), formatter.format(creationDate), true)
 						.setThumbnail(u.getAvatar())
 						.setColor(color);
