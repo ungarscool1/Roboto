@@ -31,9 +31,9 @@ public class VersionCommand implements MessageCreateListener {
 			int users = api.getServers().stream().mapToInt(Server::getMemberCount).sum();
 			try {
 				embedBuilder.setTitle(language.getString("version.name"))
-						.addField("Version", "3.1.3")
+						.addField("Version", "3.1.4")
 						.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
-						.addField("Build", "270622-21.1")
+						.addField("Build", "200523-23.4")
 						.addField("Bot owner", api.getOwner().get().join().getDiscriminatedName())
 						.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
 						.addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
