@@ -129,9 +129,8 @@ public class DiscoboomSubCommand {
 		span.finish();
 	}
 	
-	public static void disconnect(MessageCreateEvent event, ITransaction transaction) {
+	public static EmbedBuilder disconnect(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
-		Server server = event.getServer().get();
 		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
 		ServerMusicManager musicManager = null;
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
@@ -149,9 +148,7 @@ public class DiscoboomSubCommand {
 			embed.setDescription(language.getString("discoboom.disconnect.error"));
 		}
 		span.finish(SpanStatus.OK);
-		span = transaction.startChild("Sending");
-		event.getChannel().sendMessage(embed);
-		span.finish(SpanStatus.OK);
+		return embed;
 	}
 
 	public static EmbedBuilder getQueue(Server server, ITransaction transaction) {

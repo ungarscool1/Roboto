@@ -36,6 +36,8 @@ public class DiscoboomSlashCommand implements SlashCommandCreateListener {
             embedBuilder = DiscoboomSubCommand.play(server, interaction.getChannel().get(), interaction.getUser(), arg, transaction);
         else if (interaction.getOptionByName("Queue").isPresent())
             embedBuilder = DiscoboomSubCommand.getQueue(server, transaction);
+        else if (interaction.getOptionByName("Disconnect").isPresent())
+            embedBuilder = DiscoboomSubCommand.disconnect(server, transaction);
         else
             embedBuilder = DiscoboomSubCommand.help(server, transaction);
         interaction.createImmediateResponder().addEmbed(embedBuilder).respond().join();
