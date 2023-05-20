@@ -161,6 +161,7 @@ public class Main {
 				new ServerLanguage().addServer(server);
 			}
 		});
+		setupSlashCommand(api);
 
 		//  !--------------------------------------------------------------------------------------------! //
 		/**
