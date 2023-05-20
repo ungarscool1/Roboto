@@ -55,12 +55,14 @@ public class TrackSchedulerThread implements Runnable {
 				.addField(scheduler.language.getString("discoboom.play.author"), track.getInfo().author);
 
 		lastPos = track.getPosition();
-		progress.append("[");
-		for (i = 0; i < calc; i++)
-			progress.append("▬");
-		progress.append("](")
-			.append(track.getInfo().uri)
-			.append(")");
+		if (calc > 0) {
+			progress.append("[");
+			for (i = 0; i < calc; i++)
+				progress.append("▬");
+			progress.append("](")
+				.append(track.getInfo().uri)
+				.append(")");
+		}
 		for (int j = 0; j + i < 14; j++)
 			progress.append("▬");
 		progress.append(" ")
@@ -107,6 +109,8 @@ public class TrackSchedulerThread implements Runnable {
 		}
 		while ((lastPos != track.getPosition() || scheduler.isPaused()) && !stopped) {
 			span = transaction.startChild("Editing message");
+			span.setData("url", track.getInfo().uri);
+			span.setData("progress", track.getPosition() + "/" + track.getDuration());
 			message.edit(createEmbed());
 			span.finish();
 			try {
@@ -116,6 +120,7 @@ public class TrackSchedulerThread implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		System.out.printf("lastPos: %d | curPos: %d | scheduler paused: %d | stopped ? %d\n", lastPos, track.getPosition(), scheduler.isPaused() ? 1 : 0, stopped ? 1 : 0);
 		message.delete();
 		transaction.finish(SpanStatus.OK);
 	}

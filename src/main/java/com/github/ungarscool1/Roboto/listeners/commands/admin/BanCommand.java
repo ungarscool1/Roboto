@@ -72,7 +72,7 @@ public class BanCommand implements MessageCreateListener {
 						.setAuthor(message.getAuthor())
 						.setColor(Color.RED));
 				message.getChannel().sendMessage(embed);
-				message.getServer().get().banUser(toBan, 0, reason.toString());
+				message.getServer().get().banUser(toBan, 0, null, description);
 				transaction.finish(SpanStatus.OK);
 			}
 		}

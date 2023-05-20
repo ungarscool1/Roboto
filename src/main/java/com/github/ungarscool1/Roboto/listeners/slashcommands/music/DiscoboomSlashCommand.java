@@ -28,12 +28,14 @@ public class DiscoboomSlashCommand implements SlashCommandCreateListener {
         if (!interaction.getCommandName().equals("discoboom"))
             return;
         ITransaction transaction = Sentry.startTransaction("/discoboom", "Slash Command");
-        String arg = interaction.getOptionByIndex(1).isPresent() ? interaction.getOptionByIndex(1).get().getStringValue().get() : null;
+        String arg = interaction.getArgumentByIndex(0).isPresent() ? interaction.getArgumentByIndex(0).get().getStringValue().get() : null;
         EmbedBuilder embedBuilder = null;
         if (interaction.getOptionByName("Help").isPresent())
             embedBuilder = DiscoboomSubCommand.help(server, transaction);
         else if (interaction.getOptionByName("Play").isPresent())
             embedBuilder = DiscoboomSubCommand.play(server, interaction.getChannel().get(), interaction.getUser(), arg, transaction);
+        else if (interaction.getOptionByName("Queue").isPresent())
+            embedBuilder = DiscoboomSubCommand.getQueue(server, transaction);
         else
             embedBuilder = DiscoboomSubCommand.help(server, transaction);
         interaction.createImmediateResponder().addEmbed(embedBuilder).respond().join();

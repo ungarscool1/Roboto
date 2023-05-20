@@ -34,7 +34,7 @@ public class VersionCommand implements MessageCreateListener {
 						.addField("Version", "3.1.3")
 						.addField(language.getString("version.lib.name"), language.getString("version.lib.desc"))
 						.addField("Build", "270622-21.1")
-						.addField("Bot owner", api.getOwner().get().getDiscriminatedName())
+						.addField("Bot owner", api.getOwner().get().join().getDiscriminatedName())
 						.addField(language.getString("version.github"), "https://github.com/ungarscool1/Roboto-v2")
 						.addField(language.getString("version.listen.user"), users + " " + language.getString("version.users"))
 						.addField(language.getString("version.listen"), api.getServers().size() + " " + language.getString("version.servers"))

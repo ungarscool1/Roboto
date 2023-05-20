@@ -18,6 +18,8 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -72,6 +74,7 @@ public class DiscoboomSubCommand {
 			return embed;
 		}
 		playerManager.registerSourceManager(new YoutubeAudioSourceManager());
+		playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
 		if (musicManager.connection == null) {
 			musicManager.source = new LavaplayerAudioSource(server.getApi(), musicManager.player);
 			musicManager.connection = voice.get().connect().join();
@@ -80,7 +83,7 @@ public class DiscoboomSubCommand {
 		}
 		span.finish(SpanStatus.OK);
 		span = transaction.startChild("player - start music");
-		
+		System.out.printf("url: %s\n", url);
 		playerManager.loadItem(url, new AudioLoadResultHandler() {
 			@Override
 			public void trackLoaded(AudioTrack track) {
@@ -97,10 +100,19 @@ public class DiscoboomSubCommand {
 			}
 
 			@Override
-			public void noMatches() {}
+			public void noMatches() {
+				System.out.println("No matches");
+				embed.setDescription(language.getString("discoboom.play.no_matches"))
+					.setColor(Color.RED);
+			}
 
 			@Override
-			public void loadFailed(FriendlyException throwable) {}
+			public void loadFailed(FriendlyException throwable) {
+				System.out.println("Error while loading music");
+				System.out.println(throwable.getMessage());
+				embed.setDescription(language.getString("discoboom.play.error"))
+					.setColor(Color.RED);
+			}
 		});
 		span.finish(SpanStatus.OK);
 		return new EmbedBuilder().setTitle("//");
@@ -142,20 +154,27 @@ public class DiscoboomSubCommand {
 		span.finish(SpanStatus.OK);
 	}
 
-	public static void getQueue(MessageCreateEvent event, ITransaction transaction) {
+	public static EmbedBuilder getQueue(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
 		StringBuilder title = new StringBuilder();
-		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
-		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
+		ServerMusicManager musicManager = musicManagers.get(server);
+		if (musicManager == null)
+			return new EmbedBuilder().setTitle("DiscoBoom 2000")
+				.setDescription(language.getString("discoboom.queue.empty"));
 		List<AudioTrack> tracks = musicManager.scheduler.getTrackList();
 		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
 			.setDescription(language.getString("discoboom.queue.description"));
 
-		title.append("[")
-		.append(musicManager.player.getPlayingTrack().getInfo().title)
-		.append("](")
-		.append(musicManager.player.getPlayingTrack().getInfo().uri)
-		.append(")\n");
+		if (tracks == null)
+			return embed.setDescription(language.getString("discoboom.queue.empty"));
+		if (musicManager.player.getPlayingTrack() != null) {
+			title.append("[")
+			.append(musicManager.player.getPlayingTrack().getInfo().title)
+			.append("](")
+			.append(musicManager.player.getPlayingTrack().getInfo().uri)
+			.append(")\n");
+		}
 		tracks.forEach(track -> title.append("• [")
 				.append(track.getInfo().title)
 				.append("](")
@@ -163,9 +182,7 @@ public class DiscoboomSubCommand {
 				.append(")\n"));
 		embed.setDescription(String.format("▶️ %s", title.toString()));
 		span.finish(SpanStatus.OK);
-		span = transaction.startChild("Sending message");
-		event.getChannel().sendMessage(embed);
-		span.finish(SpanStatus.OK);
+		return embed;
 	}
 
 	public static void stop(MessageCreateEvent event, ITransaction transaction) {
