@@ -18,7 +18,6 @@ import io.sentry.Sentry;
 import io.sentry.SpanStatus;
 
 import com.github.ungarscool1.Roboto.listeners.commands.admin.*;
-import com.github.ungarscool1.Roboto.listeners.commands.music.DiscoboomCommand;
 import com.github.ungarscool1.Roboto.listeners.commands.owner.*;
 import com.github.ungarscool1.Roboto.listeners.commands.utility.*;
 import com.github.ungarscool1.Roboto.listeners.servers.*;
@@ -190,7 +189,6 @@ public class Main {
 		api.addMessageCreateListener(new UserInfoCommand());
 		api.addMessageCreateListener(new VersionCommand());
 		api.addMessageCreateListener(new VoteCommand());
-		api.addMessageCreateListener(new DiscoboomCommand());
 		/**
 		 * Admin commands
 		 */
