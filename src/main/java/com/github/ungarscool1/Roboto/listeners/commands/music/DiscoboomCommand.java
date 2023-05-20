@@ -31,7 +31,7 @@ public class DiscoboomCommand implements MessageCreateListener {
 			DiscoboomSubCommand.play(server, message.getChannel(), message.getUserAuthor().get(), args[2], transaction);
 			transaction.setDescription("Discoboom play command processing");
 		} else if (args[1].equalsIgnoreCase("next")) {
-			DiscoboomSubCommand.next(event, transaction);
+			DiscoboomSubCommand.next(event.getServer().get(), transaction);
 			transaction.setDescription("Discoboom next command processing");
 		} else if (args[1].equalsIgnoreCase("queue")) {
 			DiscoboomSubCommand.getQueue(event.getServer().get(), transaction);
@@ -43,10 +43,10 @@ public class DiscoboomCommand implements MessageCreateListener {
 			DiscoboomSubCommand.stop(event, transaction);
 			transaction.setDescription("Discoboom stop command processing");
 		} else if (args[1].equalsIgnoreCase("clear")) {
-			DiscoboomSubCommand.clear(event, transaction);
+			DiscoboomSubCommand.clear(event.getServer().get(), transaction);
 			transaction.setDescription("Discoboom clear command processing");
 		} else if (args[1].equalsIgnoreCase("pause")) {
-			DiscoboomSubCommand.pause(event, transaction);
+			DiscoboomSubCommand.pause(event.getServer().get(), transaction);
 			transaction.setDescription("Discoboom pause command processing");
 		} else {
 			DiscoboomSubCommand.help(server, transaction);

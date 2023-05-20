@@ -118,9 +118,8 @@ public class DiscoboomSubCommand {
 		return new EmbedBuilder().setTitle("//");
 	}
 	
-	public static void next(MessageCreateEvent event, ITransaction transaction) {
+	public static void next(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Next init");
-		Server server = event.getServer().get();
 		ServerMusicManager musicManager = musicManagers.get(server);
 		
 		span.finish();
@@ -196,20 +195,17 @@ public class DiscoboomSubCommand {
 		event.getChannel().sendMessage(embed);
 	}
 
-	public static void clear(MessageCreateEvent event, ITransaction transaction) {
+	public static void clear(Server server, ITransaction transaction) {
 		ISpan span = transaction.startChild("Writing message");
-		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
-		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(event.getServer().get()));
-		EmbedBuilder embed = new EmbedBuilder().setTitle("DiscoBoom 2000")
-				.setDescription(language.getString("discoboom.clear.description"));
+		ServerMusicManager musicManager = musicManagers.get(server);
+		ResourceBundle language = ResourceBundle.getBundle("lang.lang", Main.locByServ.get(server));
 
 		musicManager.scheduler.clearQueue();
 		span.finish();
-		event.getChannel().sendMessage(embed);
 	}
 
-	public static void pause(MessageCreateEvent event, ITransaction transaction) {
-		ServerMusicManager musicManager = musicManagers.get(event.getServer().get());
+	public static void pause(Server server, ITransaction transaction) {
+		ServerMusicManager musicManager = musicManagers.get(server);
 
 		musicManager.player.setPaused(!musicManager.player.isPaused());
 	}

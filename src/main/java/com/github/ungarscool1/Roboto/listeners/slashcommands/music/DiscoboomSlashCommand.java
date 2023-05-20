@@ -34,7 +34,17 @@ public class DiscoboomSlashCommand implements SlashCommandCreateListener {
             embedBuilder = DiscoboomSubCommand.help(server, transaction);
         else if (interaction.getOptionByName("Play").isPresent())
             embedBuilder = DiscoboomSubCommand.play(server, interaction.getChannel().get(), interaction.getUser(), arg, transaction);
-        else if (interaction.getOptionByName("Queue").isPresent())
+        else if (interaction.getOptionByName("Pause").isPresent()) {
+            DiscoboomSubCommand.pause(server, transaction);
+            embedBuilder = new EmbedBuilder().setTitle("Discoboom 2000").setDescription("Paused");
+        } else if (interaction.getOptionByName("Next").isPresent()) {
+            DiscoboomSubCommand.pause(server, transaction);
+            DiscoboomSubCommand.next(server, transaction);
+            embedBuilder = new EmbedBuilder().setTitle("Discoboom 2000").setDescription("Skipped");
+        } else if (interaction.getOptionByName("Clear").isPresent()) {
+            DiscoboomSubCommand.clear(server, transaction);
+            embedBuilder = new EmbedBuilder().setTitle("Discoboom 2000").setDescription(language.getString("discoboom.clear.description"));
+        } else if (interaction.getOptionByName("Queue").isPresent())
             embedBuilder = DiscoboomSubCommand.getQueue(server, transaction);
         else if (interaction.getOptionByName("Disconnect").isPresent())
             embedBuilder = DiscoboomSubCommand.disconnect(server, transaction);
