@@ -120,7 +120,25 @@ public class TrackSchedulerThread implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		System.out.printf("lastPos: %d | curPos: %d | scheduler paused: %d | stopped ? %d\n", lastPos, track.getPosition(), scheduler.isPaused() ? 1 : 0, stopped ? 1 : 0);
+		// if the queue is empty, add a thread for a timer of 5 minutes, if this delay is reached, the bot will leave the channel
+		if (scheduler.getTrackList() == null || scheduler.getTrackList().isEmpty()) {
+			span = transaction.startChild("Timer");
+			span.setData("time", 5);
+			try {
+				Thread.sleep(300_000);
+			} catch (InterruptedException e) {
+				Sentry.captureException(e);
+				e.printStackTrace();
+			}
+			if (scheduler.getTrackList() == null || scheduler.getTrackList().isEmpty()) {
+				ServerMusicManager musicManager = null;
+				musicManager = DiscoboomSubCommand.musicManagers.get(message.getServer().get());
+				musicManager.connection.close();
+				musicManager.player.destroy();
+				DiscoboomSubCommand.musicManagers.remove(message.getServer().get());
+			}
+			span.finish();
+		}
 		message.delete();
 		transaction.finish(SpanStatus.OK);
 	}
