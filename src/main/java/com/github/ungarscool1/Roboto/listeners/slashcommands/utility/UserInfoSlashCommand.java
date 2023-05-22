@@ -9,14 +9,12 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
 import org.javacord.api.interaction.SlashCommandInteraction;
-import org.javacord.api.interaction.SlashCommandInteractionOption;
 import org.javacord.api.listener.interaction.SlashCommandCreateListener;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.regex.Pattern;
 
 public class UserInfoSlashCommand implements SlashCommandCreateListener {
     @Override
@@ -32,31 +30,20 @@ public class UserInfoSlashCommand implements SlashCommandCreateListener {
         if (!interaction.getCommandName().equals("ui"))
             return;
         ITransaction transaction = Sentry.startTransaction("/ui", "Slash Command");
-        SlashCommandInteractionOption option = interaction.getOptionByIndex(0).isPresent() ? interaction.getOptionByIndex(0).get() : null;
+        String arg = interaction.getArgumentByIndex(0).isPresent() ? interaction.getArgumentByIndex(0).get().getMentionableValue().get().getMentionTag() : null;
 
         transaction.setStatus(SpanStatus.OK);
-        if (option != null) {
-            String user = option.getStringValue().get();
+        if (arg != null) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             boolean doExist = false;
 
-            if (Pattern.matches("[0-9]+", user) && server.getMemberById(user).isPresent()) {
-                doExist = true;
-            } else if (Pattern.matches("([a-zA-Z0-9]+.#.[0-9]+)", user) && server.getMemberByDiscriminatedNameIgnoreCase(user).isPresent()) {
-                doExist = true;
-                user = server.getMemberByDiscriminatedNameIgnoreCase(user).get().getIdAsString();
-            } else if (user.contains("<@") && user.contains(">")) {
-                if (user.contains("!")) {
-                    user = user.substring(3, user.indexOf(">"));
-                } else {
-                    user = user.substring(2, user.indexOf(">"));
-                }
-                if (server.getMemberById(user).isPresent()) {
-                    doExist = true;
-                }
+            if (arg.contains("!")) {
+                arg = arg.substring(3, arg.indexOf(">"));
+            } else {
+                arg = arg.substring(2, arg.indexOf(">"));
             }
-            if (doExist) {
-                User u = server.getMemberById(user).get();
+            if (server.getMemberById(arg).isPresent()) {
+                User u = server.getMemberById(arg).get();
                 Date joinDate = Date.from(u.getJoinedAtTimestamp(server).get());
                 Date creationDate = Date.from(u.getCreationTimestamp());
                 SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
@@ -76,8 +63,8 @@ public class UserInfoSlashCommand implements SlashCommandCreateListener {
 
             } else {
                 embedBuilder.setTitle(language.getString("ui.notFound"))
-                        .addField(language.getString("ui.searchedUser"), user)
-                        .setDescription(String.format(language.getString("ui.notFound.desc"), user))
+                        .addField(language.getString("ui.searchedUser"), arg)
+                        .setDescription(String.format(language.getString("ui.notFound.desc"), arg))
                         .setColor(Color.ORANGE);
                 transaction.setStatus(SpanStatus.NOT_FOUND);
             }
@@ -87,7 +74,7 @@ public class UserInfoSlashCommand implements SlashCommandCreateListener {
             User u = interaction.getUser();
 
             // Get and convert join date to human readable value
-            Date joinDate = Date.from(u.getJoinedAtTimestamp(server).get());
+            Date joinDate = Date.from(u.getJoinedAtTimestamp(server).isPresent() ? u.getJoinedAtTimestamp(server).get() : u.getCreationTimestamp());
             Date creationDate = Date.from(u.getCreationTimestamp());
             SimpleDateFormat formatter = new SimpleDateFormat(language.getString("ui.date.format"));
 

@@ -63,6 +63,7 @@ public class Main {
 			.setToken(config.bot_token)
 			.setRecommendedTotalShards()
 			.join()
+			.setAllIntents()
 			.loginAllShards()
 			.forEach(shardFuture -> shardFuture.thenAcceptAsync(Main::onShardLogin).exceptionally(ExceptionLogger.get()));
 	}
@@ -129,10 +130,10 @@ public class Main {
 		SlashCommand.with("help", "Display this help message.").createGlobal(api).join();
 		SlashCommand.with("report", "Report a problem on GitHub").createGlobal(api).join();
 		SlashCommand.with("si", "Get server information").createGlobal(api).join();
-		/*List<SlashCommandOption> uiOptions = new ArrayList<>();
+		List<SlashCommandOption> uiOptions = new ArrayList<>();
 		uiOptions.add(new SlashCommandOptionBuilder().setRequired(false).setName("user").setDescription("Mentionned user").setType(SlashCommandOptionType.MENTIONABLE).build());
 		SlashCommand.with("ui", "Get user information", uiOptions).createGlobal(api).join();
-		*/SlashCommand.with("version", "Get bot version").createGlobal(api).join();
+		SlashCommand.with("version", "Get bot version").createGlobal(api).join();
 		SlashCommand.with("vote", "Create a poll").createGlobal(api).join();
 		config.isSetup = true;
 		try {
