@@ -1,6 +1,5 @@
 package com.github.ungarscool1.Roboto;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -187,8 +186,6 @@ public class Main {
 		 */
 		api.addMessageCreateListener(new HelpCommand());
 		api.addMessageCreateListener(new ReportCommand());
-		api.addMessageCreateListener(new ServerInfoCommand());
-		api.addMessageCreateListener(new UserInfoCommand());
 		api.addMessageCreateListener(new VersionCommand());
 		api.addMessageCreateListener(new VoteCommand());
 		/**
