@@ -1,5 +1,8 @@
 # Roboto
 
+> [!NOTE]
+> Roboto is not maintained anymore and not online since many years.
+
 ## Supported Languges
  - French
  - English
@@ -25,11 +28,11 @@ The bot include 3 games:
  ### Rock Paper Scissors
  
  The game knowed by everyone is available on Discord.
- You say in any channel !game pfc the bot create a game instence for your party
+ You say in any channel !game pfc the bot create a game instance for your party
  
  Rules:
-  - You have 3 choises Rock, Paper and Scissors
-  - You select your choise in message in bot's dm and when your friend select his choise too you can see the result
+  - You have 3 choices Rock, Paper and Scissors
+  - You select your choice in message in bot's dm and when your friend select his choise too you can see the result
   - Rock beat Scissors, Paper beat Rock and Scissors beat Paper
   
  ### Rock Paper Scissors: Battle Royale
@@ -39,12 +42,12 @@ The bot include 3 games:
  
  ### Connect 4
  
- Objective: The aim for both players is to make a straight line of four own pieces; the line can be vertical, horizontal or diagonal.
+ Objective: The goal for both players is to make a straight line of four own pieces; the line can be vertical, horizontal or diagonal.
  
  ### Game in progress
   - Werewolf
   - Hangman
-  - Random event (if Roboto listens to more than 100 servers, the principle is to ensure that players from different servers can play together in a good mood)
+  - Random event (if Roboto listens more than 100 servers, the principle is to ensure that players from different servers can play together in a good mood)
 
 ## Utility commands
 
